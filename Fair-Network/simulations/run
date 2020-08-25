@@ -1,0 +1,4 @@
+#!/bin/sh
+cd `dirname $0`
+../src/fair_network -n .:../src $*
+# for shared lib, use: opp_run -l ../src/fair_network -n .:../src $*
