@@ -4,24 +4,20 @@ module PacketGenerator
 {
 	parameters:
         int MAXIMUM_PACKET_SIZE = default(75);
+        int NUM_SENDERS = default(2);
         
     gates:
         output out;
     
     submodules:
-        sender1: Sender{
-        	id = 1;
-        }
-        
-        sender2: Sender{
-        	id = 2;
-        }
+        senders[NUM_SENDERS]: Sender;
         
         hub: SendersHub;
         
         connections:
-        	sender1.out --> hub.in++;
-        	sender2.out --> hub.in++;
+        	for i = 0..NUM_SENDERS-1 {
+        		senders[i].out --> hub.in++;   
+        	}
         	
         	hub.out --> out;
 }

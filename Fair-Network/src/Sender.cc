@@ -19,7 +19,6 @@ Packet* Sender::generatePacket()
     int maxDim = getParentModule()->par("MAXIMUM_PACKET_SIZE").intValue();
 
     packet->setSize(intuniform(0, maxDim));
-    packet->setDestination(par("id").intValue());
 
     return packet;
 }
