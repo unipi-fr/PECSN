@@ -1,5 +1,5 @@
 //
-// Generated file, do not edit! Created by nedtool 5.6 from Packet.msg.
+// Generated file, do not edit! Created by nedtool 5.6 from Frame.msg.
 //
 
 // Disable warnings about unused variables, empty switch stmts, etc:
@@ -26,7 +26,7 @@
 
 #include <iostream>
 #include <sstream>
-#include "Packet_m.h"
+#include "Frame_m.h"
 
 namespace omnetpp {
 
@@ -177,24 +177,22 @@ inline std::ostream& operator<<(std::ostream& out, const std::vector<T,A>& vec)
     return out;
 }
 
-Register_Class(Packet)
+Register_Class(Frame)
 
-Packet::Packet(const char *name, short kind) : ::omnetpp::cPacket(name,kind)
+Frame::Frame(const char *name, short kind) : ::omnetpp::cPacket(name,kind)
 {
-    this->size = 0;
-    this->destination = 0;
 }
 
-Packet::Packet(const Packet& other) : ::omnetpp::cPacket(other)
+Frame::Frame(const Frame& other) : ::omnetpp::cPacket(other)
 {
     copy(other);
 }
 
-Packet::~Packet()
+Frame::~Frame()
 {
 }
 
-Packet& Packet::operator=(const Packet& other)
+Frame& Frame::operator=(const Frame& other)
 {
     if (this==&other) return *this;
     ::omnetpp::cPacket::operator=(other);
@@ -202,66 +200,40 @@ Packet& Packet::operator=(const Packet& other)
     return *this;
 }
 
-void Packet::copy(const Packet& other)
+void Frame::copy(const Frame& other)
 {
-    this->size = other.size;
-    this->destination = other.destination;
-    this->RBs = other.RBs;
+    this->packets = other.packets;
 }
 
-void Packet::parsimPack(omnetpp::cCommBuffer *b) const
+void Frame::parsimPack(omnetpp::cCommBuffer *b) const
 {
     ::omnetpp::cPacket::parsimPack(b);
-    doParsimPacking(b,this->size);
-    doParsimPacking(b,this->destination);
-    doParsimPacking(b,this->RBs);
+    doParsimPacking(b,this->packets);
 }
 
-void Packet::parsimUnpack(omnetpp::cCommBuffer *b)
+void Frame::parsimUnpack(omnetpp::cCommBuffer *b)
 {
     ::omnetpp::cPacket::parsimUnpack(b);
-    doParsimUnpacking(b,this->size);
-    doParsimUnpacking(b,this->destination);
-    doParsimUnpacking(b,this->RBs);
+    doParsimUnpacking(b,this->packets);
 }
 
-int Packet::getSize() const
+PacketVector& Frame::getPackets()
 {
-    return this->size;
+    return this->packets;
 }
 
-void Packet::setSize(int size)
+void Frame::setPackets(const PacketVector& packets)
 {
-    this->size = size;
+    this->packets = packets;
 }
 
-int Packet::getDestination() const
-{
-    return this->destination;
-}
-
-void Packet::setDestination(int destination)
-{
-    this->destination = destination;
-}
-
-IntVector& Packet::getRBs()
-{
-    return this->RBs;
-}
-
-void Packet::setRBs(const IntVector& RBs)
-{
-    this->RBs = RBs;
-}
-
-class PacketDescriptor : public omnetpp::cClassDescriptor
+class FrameDescriptor : public omnetpp::cClassDescriptor
 {
   private:
     mutable const char **propertynames;
   public:
-    PacketDescriptor();
-    virtual ~PacketDescriptor();
+    FrameDescriptor();
+    virtual ~FrameDescriptor();
 
     virtual bool doesSupport(omnetpp::cObject *obj) const override;
     virtual const char **getPropertyNames() const override;
@@ -283,24 +255,24 @@ class PacketDescriptor : public omnetpp::cClassDescriptor
     virtual void *getFieldStructValuePointer(void *object, int field, int i) const override;
 };
 
-Register_ClassDescriptor(PacketDescriptor)
+Register_ClassDescriptor(FrameDescriptor)
 
-PacketDescriptor::PacketDescriptor() : omnetpp::cClassDescriptor("Packet", "omnetpp::cPacket")
+FrameDescriptor::FrameDescriptor() : omnetpp::cClassDescriptor("Frame", "omnetpp::cPacket")
 {
     propertynames = nullptr;
 }
 
-PacketDescriptor::~PacketDescriptor()
+FrameDescriptor::~FrameDescriptor()
 {
     delete[] propertynames;
 }
 
-bool PacketDescriptor::doesSupport(omnetpp::cObject *obj) const
+bool FrameDescriptor::doesSupport(omnetpp::cObject *obj) const
 {
-    return dynamic_cast<Packet *>(obj)!=nullptr;
+    return dynamic_cast<Frame *>(obj)!=nullptr;
 }
 
-const char **PacketDescriptor::getPropertyNames() const
+const char **FrameDescriptor::getPropertyNames() const
 {
     if (!propertynames) {
         static const char *names[] = {  nullptr };
@@ -311,19 +283,19 @@ const char **PacketDescriptor::getPropertyNames() const
     return propertynames;
 }
 
-const char *PacketDescriptor::getProperty(const char *propertyname) const
+const char *FrameDescriptor::getProperty(const char *propertyname) const
 {
     omnetpp::cClassDescriptor *basedesc = getBaseClassDescriptor();
     return basedesc ? basedesc->getProperty(propertyname) : nullptr;
 }
 
-int PacketDescriptor::getFieldCount() const
+int FrameDescriptor::getFieldCount() const
 {
     omnetpp::cClassDescriptor *basedesc = getBaseClassDescriptor();
-    return basedesc ? 3+basedesc->getFieldCount() : 3;
+    return basedesc ? 1+basedesc->getFieldCount() : 1;
 }
 
-unsigned int PacketDescriptor::getFieldTypeFlags(int field) const
+unsigned int FrameDescriptor::getFieldTypeFlags(int field) const
 {
     omnetpp::cClassDescriptor *basedesc = getBaseClassDescriptor();
     if (basedesc) {
@@ -332,14 +304,12 @@ unsigned int PacketDescriptor::getFieldTypeFlags(int field) const
         field -= basedesc->getFieldCount();
     }
     static unsigned int fieldTypeFlags[] = {
-        FD_ISEDITABLE,
-        FD_ISEDITABLE,
         FD_ISCOMPOUND,
     };
-    return (field>=0 && field<3) ? fieldTypeFlags[field] : 0;
+    return (field>=0 && field<1) ? fieldTypeFlags[field] : 0;
 }
 
-const char *PacketDescriptor::getFieldName(int field) const
+const char *FrameDescriptor::getFieldName(int field) const
 {
     omnetpp::cClassDescriptor *basedesc = getBaseClassDescriptor();
     if (basedesc) {
@@ -348,24 +318,20 @@ const char *PacketDescriptor::getFieldName(int field) const
         field -= basedesc->getFieldCount();
     }
     static const char *fieldNames[] = {
-        "size",
-        "destination",
-        "RBs",
+        "packets",
     };
-    return (field>=0 && field<3) ? fieldNames[field] : nullptr;
+    return (field>=0 && field<1) ? fieldNames[field] : nullptr;
 }
 
-int PacketDescriptor::findField(const char *fieldName) const
+int FrameDescriptor::findField(const char *fieldName) const
 {
     omnetpp::cClassDescriptor *basedesc = getBaseClassDescriptor();
     int base = basedesc ? basedesc->getFieldCount() : 0;
-    if (fieldName[0]=='s' && strcmp(fieldName, "size")==0) return base+0;
-    if (fieldName[0]=='d' && strcmp(fieldName, "destination")==0) return base+1;
-    if (fieldName[0]=='R' && strcmp(fieldName, "RBs")==0) return base+2;
+    if (fieldName[0]=='p' && strcmp(fieldName, "packets")==0) return base+0;
     return basedesc ? basedesc->findField(fieldName) : -1;
 }
 
-const char *PacketDescriptor::getFieldTypeString(int field) const
+const char *FrameDescriptor::getFieldTypeString(int field) const
 {
     omnetpp::cClassDescriptor *basedesc = getBaseClassDescriptor();
     if (basedesc) {
@@ -374,14 +340,12 @@ const char *PacketDescriptor::getFieldTypeString(int field) const
         field -= basedesc->getFieldCount();
     }
     static const char *fieldTypeStrings[] = {
-        "int",
-        "int",
-        "IntVector",
+        "PacketVector",
     };
-    return (field>=0 && field<3) ? fieldTypeStrings[field] : nullptr;
+    return (field>=0 && field<1) ? fieldTypeStrings[field] : nullptr;
 }
 
-const char **PacketDescriptor::getFieldPropertyNames(int field) const
+const char **FrameDescriptor::getFieldPropertyNames(int field) const
 {
     omnetpp::cClassDescriptor *basedesc = getBaseClassDescriptor();
     if (basedesc) {
@@ -394,7 +358,7 @@ const char **PacketDescriptor::getFieldPropertyNames(int field) const
     }
 }
 
-const char *PacketDescriptor::getFieldProperty(int field, const char *propertyname) const
+const char *FrameDescriptor::getFieldProperty(int field, const char *propertyname) const
 {
     omnetpp::cClassDescriptor *basedesc = getBaseClassDescriptor();
     if (basedesc) {
@@ -407,7 +371,7 @@ const char *PacketDescriptor::getFieldProperty(int field, const char *propertyna
     }
 }
 
-int PacketDescriptor::getFieldArraySize(void *object, int field) const
+int FrameDescriptor::getFieldArraySize(void *object, int field) const
 {
     omnetpp::cClassDescriptor *basedesc = getBaseClassDescriptor();
     if (basedesc) {
@@ -415,13 +379,13 @@ int PacketDescriptor::getFieldArraySize(void *object, int field) const
             return basedesc->getFieldArraySize(object, field);
         field -= basedesc->getFieldCount();
     }
-    Packet *pp = (Packet *)object; (void)pp;
+    Frame *pp = (Frame *)object; (void)pp;
     switch (field) {
         default: return 0;
     }
 }
 
-const char *PacketDescriptor::getFieldDynamicTypeString(void *object, int field, int i) const
+const char *FrameDescriptor::getFieldDynamicTypeString(void *object, int field, int i) const
 {
     omnetpp::cClassDescriptor *basedesc = getBaseClassDescriptor();
     if (basedesc) {
@@ -429,13 +393,13 @@ const char *PacketDescriptor::getFieldDynamicTypeString(void *object, int field,
             return basedesc->getFieldDynamicTypeString(object,field,i);
         field -= basedesc->getFieldCount();
     }
-    Packet *pp = (Packet *)object; (void)pp;
+    Frame *pp = (Frame *)object; (void)pp;
     switch (field) {
         default: return nullptr;
     }
 }
 
-std::string PacketDescriptor::getFieldValueAsString(void *object, int field, int i) const
+std::string FrameDescriptor::getFieldValueAsString(void *object, int field, int i) const
 {
     omnetpp::cClassDescriptor *basedesc = getBaseClassDescriptor();
     if (basedesc) {
@@ -443,16 +407,14 @@ std::string PacketDescriptor::getFieldValueAsString(void *object, int field, int
             return basedesc->getFieldValueAsString(object,field,i);
         field -= basedesc->getFieldCount();
     }
-    Packet *pp = (Packet *)object; (void)pp;
+    Frame *pp = (Frame *)object; (void)pp;
     switch (field) {
-        case 0: return long2string(pp->getSize());
-        case 1: return long2string(pp->getDestination());
-        case 2: {std::stringstream out; out << pp->getRBs(); return out.str();}
+        case 0: {std::stringstream out; out << pp->getPackets(); return out.str();}
         default: return "";
     }
 }
 
-bool PacketDescriptor::setFieldValueAsString(void *object, int field, int i, const char *value) const
+bool FrameDescriptor::setFieldValueAsString(void *object, int field, int i, const char *value) const
 {
     omnetpp::cClassDescriptor *basedesc = getBaseClassDescriptor();
     if (basedesc) {
@@ -460,15 +422,13 @@ bool PacketDescriptor::setFieldValueAsString(void *object, int field, int i, con
             return basedesc->setFieldValueAsString(object,field,i,value);
         field -= basedesc->getFieldCount();
     }
-    Packet *pp = (Packet *)object; (void)pp;
+    Frame *pp = (Frame *)object; (void)pp;
     switch (field) {
-        case 0: pp->setSize(string2long(value)); return true;
-        case 1: pp->setDestination(string2long(value)); return true;
         default: return false;
     }
 }
 
-const char *PacketDescriptor::getFieldStructName(int field) const
+const char *FrameDescriptor::getFieldStructName(int field) const
 {
     omnetpp::cClassDescriptor *basedesc = getBaseClassDescriptor();
     if (basedesc) {
@@ -477,12 +437,12 @@ const char *PacketDescriptor::getFieldStructName(int field) const
         field -= basedesc->getFieldCount();
     }
     switch (field) {
-        case 2: return omnetpp::opp_typename(typeid(IntVector));
+        case 0: return omnetpp::opp_typename(typeid(PacketVector));
         default: return nullptr;
     };
 }
 
-void *PacketDescriptor::getFieldStructValuePointer(void *object, int field, int i) const
+void *FrameDescriptor::getFieldStructValuePointer(void *object, int field, int i) const
 {
     omnetpp::cClassDescriptor *basedesc = getBaseClassDescriptor();
     if (basedesc) {
@@ -490,9 +450,9 @@ void *PacketDescriptor::getFieldStructValuePointer(void *object, int field, int 
             return basedesc->getFieldStructValuePointer(object, field, i);
         field -= basedesc->getFieldCount();
     }
-    Packet *pp = (Packet *)object; (void)pp;
+    Frame *pp = (Frame *)object; (void)pp;
     switch (field) {
-        case 2: return (void *)(&pp->getRBs()); break;
+        case 0: return (void *)(&pp->getPackets()); break;
         default: return nullptr;
     }
 }

@@ -6,18 +6,20 @@ import fair_network.PacketGenerator;
 
 network FairNetwork
 {
+    parameters:
+        int NUM_USER = default(2);
+        
     submodules:
         antenna: Antenna;
-        user1: User;
-        user2: User;
+        user[NUM_USER]: User;
         packetGenerator: PacketGenerator; 
         
     connections:
-        antenna.out++ --> user1.in;
-        antenna.out++ --> user2.in;
         
-        antenna.in++ <-- user1.out;
-        antenna.in++ <-- user2.out;
+        for i=0..NUM_USER-1 {
+            antenna.out++ --> user[i].in;
+            antenna.in++ <-- user[i].out;
+        }
         
         packetGenerator.out --> antenna.packetIn;
 }

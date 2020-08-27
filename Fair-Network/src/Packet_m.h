@@ -18,13 +18,19 @@
 
 
 
+// cplusplus {{
+	#include <vector>
+	typedef std::vector<int> IntVector;
+// }}
+
 /**
- * Class generated from <tt>Packet.msg:1</tt> by nedtool.
+ * Class generated from <tt>Packet.msg:8</tt> by nedtool.
  * <pre>
  * packet Packet
  * {
  *     int size;
  *     int destination;
+ *     IntVector RBs;
  * }
  * </pre>
  */
@@ -33,6 +39,7 @@ class Packet : public ::omnetpp::cPacket
   protected:
     int size;
     int destination;
+    IntVector RBs;
 
   private:
     void copy(const Packet& other);
@@ -55,6 +62,9 @@ class Packet : public ::omnetpp::cPacket
     virtual void setSize(int size);
     virtual int getDestination() const;
     virtual void setDestination(int destination);
+    virtual IntVector& getRBs();
+    virtual const IntVector& getRBs() const {return const_cast<Packet*>(this)->getRBs();}
+    virtual void setRBs(const IntVector& RBs);
 };
 
 inline void doParsimPacking(omnetpp::cCommBuffer *b, const Packet& obj) {obj.parsimPack(b);}
