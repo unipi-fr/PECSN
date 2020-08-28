@@ -8,5 +8,6 @@ cplusplus{{
 class noncobject PacketVector;
 
 packet Frame {
+    int RBused;
     PacketVector packets;
 }

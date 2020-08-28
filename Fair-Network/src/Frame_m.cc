@@ -181,6 +181,7 @@ Register_Class(Frame)
 
 Frame::Frame(const char *name, short kind) : ::omnetpp::cPacket(name,kind)
 {
+    this->RBused = 0;
 }
 
 Frame::Frame(const Frame& other) : ::omnetpp::cPacket(other)
@@ -202,19 +203,32 @@ Frame& Frame::operator=(const Frame& other)
 
 void Frame::copy(const Frame& other)
 {
+    this->RBused = other.RBused;
     this->packets = other.packets;
 }
 
 void Frame::parsimPack(omnetpp::cCommBuffer *b) const
 {
     ::omnetpp::cPacket::parsimPack(b);
+    doParsimPacking(b,this->RBused);
     doParsimPacking(b,this->packets);
 }
 
 void Frame::parsimUnpack(omnetpp::cCommBuffer *b)
 {
     ::omnetpp::cPacket::parsimUnpack(b);
+    doParsimUnpacking(b,this->RBused);
     doParsimUnpacking(b,this->packets);
+}
+
+int Frame::getRBused() const
+{
+    return this->RBused;
+}
+
+void Frame::setRBused(int RBused)
+{
+    this->RBused = RBused;
 }
 
 PacketVector& Frame::getPackets()
@@ -292,7 +306,7 @@ const char *FrameDescriptor::getProperty(const char *propertyname) const
 int FrameDescriptor::getFieldCount() const
 {
     omnetpp::cClassDescriptor *basedesc = getBaseClassDescriptor();
-    return basedesc ? 1+basedesc->getFieldCount() : 1;
+    return basedesc ? 2+basedesc->getFieldCount() : 2;
 }
 
 unsigned int FrameDescriptor::getFieldTypeFlags(int field) const
@@ -304,9 +318,10 @@ unsigned int FrameDescriptor::getFieldTypeFlags(int field) const
         field -= basedesc->getFieldCount();
     }
     static unsigned int fieldTypeFlags[] = {
+        FD_ISEDITABLE,
         FD_ISCOMPOUND,
     };
-    return (field>=0 && field<1) ? fieldTypeFlags[field] : 0;
+    return (field>=0 && field<2) ? fieldTypeFlags[field] : 0;
 }
 
 const char *FrameDescriptor::getFieldName(int field) const
@@ -318,16 +333,18 @@ const char *FrameDescriptor::getFieldName(int field) const
         field -= basedesc->getFieldCount();
     }
     static const char *fieldNames[] = {
+        "RBused",
         "packets",
     };
-    return (field>=0 && field<1) ? fieldNames[field] : nullptr;
+    return (field>=0 && field<2) ? fieldNames[field] : nullptr;
 }
 
 int FrameDescriptor::findField(const char *fieldName) const
 {
     omnetpp::cClassDescriptor *basedesc = getBaseClassDescriptor();
     int base = basedesc ? basedesc->getFieldCount() : 0;
-    if (fieldName[0]=='p' && strcmp(fieldName, "packets")==0) return base+0;
+    if (fieldName[0]=='R' && strcmp(fieldName, "RBused")==0) return base+0;
+    if (fieldName[0]=='p' && strcmp(fieldName, "packets")==0) return base+1;
     return basedesc ? basedesc->findField(fieldName) : -1;
 }
 
@@ -340,9 +357,10 @@ const char *FrameDescriptor::getFieldTypeString(int field) const
         field -= basedesc->getFieldCount();
     }
     static const char *fieldTypeStrings[] = {
+        "int",
         "PacketVector",
     };
-    return (field>=0 && field<1) ? fieldTypeStrings[field] : nullptr;
+    return (field>=0 && field<2) ? fieldTypeStrings[field] : nullptr;
 }
 
 const char **FrameDescriptor::getFieldPropertyNames(int field) const
@@ -409,7 +427,8 @@ std::string FrameDescriptor::getFieldValueAsString(void *object, int field, int 
     }
     Frame *pp = (Frame *)object; (void)pp;
     switch (field) {
-        case 0: {std::stringstream out; out << pp->getPackets(); return out.str();}
+        case 0: return long2string(pp->getRBused());
+        case 1: {std::stringstream out; out << pp->getPackets(); return out.str();}
         default: return "";
     }
 }
@@ -424,6 +443,7 @@ bool FrameDescriptor::setFieldValueAsString(void *object, int field, int i, cons
     }
     Frame *pp = (Frame *)object; (void)pp;
     switch (field) {
+        case 0: pp->setRBused(string2long(value)); return true;
         default: return false;
     }
 }
@@ -437,7 +457,7 @@ const char *FrameDescriptor::getFieldStructName(int field) const
         field -= basedesc->getFieldCount();
     }
     switch (field) {
-        case 0: return omnetpp::opp_typename(typeid(PacketVector));
+        case 1: return omnetpp::opp_typename(typeid(PacketVector));
         default: return nullptr;
     };
 }
@@ -452,7 +472,7 @@ void *FrameDescriptor::getFieldStructValuePointer(void *object, int field, int i
     }
     Frame *pp = (Frame *)object; (void)pp;
     switch (field) {
-        case 0: return (void *)(&pp->getPackets()); break;
+        case 1: return (void *)(&pp->getPackets()); break;
         default: return nullptr;
     }
 }

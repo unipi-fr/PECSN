@@ -30,6 +30,7 @@
  * <pre>
  * packet Frame
  * {
+ *     int RBused;
  *     PacketVector packets;
  * }
  * </pre>
@@ -37,6 +38,7 @@
 class Frame : public ::omnetpp::cPacket
 {
   protected:
+    int RBused;
     PacketVector packets;
 
   private:
@@ -56,6 +58,8 @@ class Frame : public ::omnetpp::cPacket
     virtual void parsimUnpack(omnetpp::cCommBuffer *b) override;
 
     // field getter/setter methods
+    virtual int getRBused() const;
+    virtual void setRBused(int RBused);
     virtual PacketVector& getPackets();
     virtual const PacketVector& getPackets() const {return const_cast<Frame*>(this)->getPackets();}
     virtual void setPackets(const PacketVector& packets);
