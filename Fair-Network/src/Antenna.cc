@@ -40,44 +40,57 @@ bool Antenna::loadPacketIntoFrame(Frame *frame, UserQueue *userQueue)
         RBfree = 25-RBused;
         freeSpace = RBfree*RBsize;
         currentPacket = check_and_cast<Packet*>(userQueue->get(0));
-        //prendere la dimensione del pachetto
         packetSize = currentPacket->getSize();
-        //se non ci stà mi fermo e passerò al prossimo utente
+        //if packet doesn't fit into frame
         if(packetSize > freeSpace + freeBytesFromLastRB){
+            //check if frame is full
             if(RBfree == 0){
+                //update frame packets vector
                 frame->setPackets(packetsVector);
+                //notify that frame is ready
                 return true;
             }
             break;
         }
 
-        //calcolo quanti RB occupa, tenendo conto dell'esubero del precedente
+        //then calculate the RB occupied from packet, remembering the free space from last RB
         float RBoccupiedFromPacket = ((float)(packetSize-freeBytesFromLastRB))/RBsize;
+        //get the RBs of the packet to be updated
         std::vector<int> RBs = currentPacket->getRBs();
-        //completo il pachetto rpecedente
+        //check if were free space from last RB
         if(freeBytesFromLastRB > 0)
+            //assign packet at that RB
             RBs.push_back(RBused);
-        //calcolo i rimanenti
+        //check if are other RBs
         if(RBoccupiedFromPacket > 0){
+            //calculate how many RBs are missing
             int RBoccupied = std::ceil(RBoccupiedFromPacket);
             for(int i = 0; i<RBoccupied; ++i){
+                //i add those RBs to RBs vector of the packet
                 RBs.push_back(++RBused);
             }
-            //aggiorno quello del frame
-            frame->setRBused(RBused);
-            //ricalcolo i bytes liberi nell'ultimo frame
-            freeBytesFromLastRB = (RBsize - ((packetSize - freeBytesFromLastRB) % RBsize)) ;
         }
+        //update the RBs of the current packet
         currentPacket->setRBs(RBs);
-
+        //update RBs used of the frame
+        frame->setRBused(RBused);
+        //calculate free bytes of last RB
+        freeBytesFromLastRB = (RBsize - ((packetSize - freeBytesFromLastRB) % RBsize)) ;
+        //insert current packet into frame
         packetsVector.push_back(currentPacket);
+        //remove current packet from queue
         userQueue->remove(currentPacket);
+        //update byte sent of that queue
         userQueue->byteSent += packetSize;
-
     }
 
+    //update frame packets vector
     frame->setPackets(packetsVector);
-    //at the end of the queue the frame is not completed
+    //check if frame is full
+    if(RBfree == 0)
+        //notify that frame is ready
+        return true;
+    //the frame has free RBs after elaborating this user queue
     return false;
 }
 
