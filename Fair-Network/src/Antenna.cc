@@ -23,6 +23,7 @@ void Antenna::initialize()
     CQITable[14] = 93;
 
     beep = new cMessage("Beep");
+    lastFrame = new Frame("Frame");
 
     int nQueues = getParentModule()->par("NUM_USER");
 
@@ -87,13 +88,16 @@ bool Antenna::loadPacketIntoFrame(Frame *frame, UserQueue *userQueue)
                 //i add those RBs to RBs vector of the packet
                 RBs.push_back(++RBused);
             }
+            //calculate free bytes of last RB
+            freeBytesFromLastRB = (RBsize - ((packetSize - freeBytesFromLastRB) % RBsize)) ;
+        }else{
+            //if was complitelly in the last RB i remove from lastRB the packet size
+            freeBytesFromLastRB -= packetSize;
         }
         //update the RBs of the current packet
         currentPacket->setRBs(RBs);
         //update RBs used of the frame
         frame->setRBused(RBused);
-        //calculate free bytes of last RB
-        freeBytesFromLastRB = (RBsize - ((packetSize - freeBytesFromLastRB) % RBsize)) ;
         //insert current packet into frame
         packetsVector.push_back(currentPacket);
         //remove current packet from queue
@@ -112,10 +116,20 @@ bool Antenna::loadPacketIntoFrame(Frame *frame, UserQueue *userQueue)
     return false;
 }
 
+void Antenna::clearFrame(){
+    lastFrame->setRBused(0);
+    std::vector<Packet*> packets = lastFrame->getPackets();
+    while(packets.size() != 0){
+        Packet* currentPacket = packets.back();
+        packets.pop_back();
+        delete(currentPacket);
+    }
+    lastFrame->setPackets(packets);
+}
+
 Frame* Antenna::prepareFrame()
 {
-    Frame* frame = new Frame("Frame");
-    frame->setRBused(0);
+    clearFrame();
 
     int nQueues = getParentModule()->par("NUM_USER");
 
@@ -131,7 +145,7 @@ Frame* Antenna::prepareFrame()
 
         indexQueue.push_back(uq); // indexQueue contains index of queue to remove and to reinsert
 
-        isReady = loadPacketIntoFrame(frame, uq);
+        isReady = loadPacketIntoFrame(lastFrame, uq);
     }
 
     for(int i = 0; i < indexQueue.size(); i++)
@@ -143,7 +157,7 @@ Frame* Antenna::prepareFrame()
     }
 
     indexQueue.clear();
-    return frame;
+    return lastFrame;
 }
 
 void Antenna::sendFrame(cMessage *msg)
@@ -157,8 +171,6 @@ void Antenna::sendFrame(cMessage *msg)
     }
 
     scheduleAt(simTime() + par("timeSlot").doubleValue(), beep);
-
-    delete(frame);
 }
 
 void Antenna::savePacket(cMessage *msg)

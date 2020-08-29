@@ -4,24 +4,42 @@ Define_Module(User);
 
 void User::initialize()
 {
-    cqi = intuniform(1, 15);
 
-    CqiMsg *cqiMsg = new CqiMsg("CQI");
-    cqiMsg->setValue(cqi);
+    id = getIndex();
 
-    send(cqiMsg, "out");
+    sendCQI();
 }
 
 void User::handleMessage(cMessage *msg)
 {
-    // leggere pacchetti inviati nel frame per vedere se ce n'e' uno per questo utente
+    // getting the frame
+    Frame *frame = check_and_cast<Frame*>(msg);
+
+    std::vector<Packet*> packets = frame->getPackets();
+
+    //search for packets with this user destination
+    while(packets.size() != 0){
+        Packet* currentPacket = packets.back();
+        packets.pop_back();
+
+        if(currentPacket->getDestination() == id){
+            collectStatistics(currentPacket);
+            //delete(currentPacket);
+        }
+    }
 
     delete(msg);
 
-    cqi = intuniform(1, 15);
+    sendCQI();
+}
 
+void User::collectStatistics(Packet* packet){
+
+}
+
+void User::sendCQI() {
+    cqi = intuniform(1, 15);
     CqiMsg *cqiMsg = new CqiMsg("CQI");
     cqiMsg->setValue(cqi);
-
     send(cqiMsg, "out");
 }

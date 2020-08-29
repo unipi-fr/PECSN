@@ -15,6 +15,7 @@ class Antenna : public cSimpleModule
 {
   private:
     cMessage *beep;
+    Frame *lastFrame;
 
     UserQueue** queuesOrderedByUser;
     cQueue *queuesOrderedByBytesSent;
@@ -22,6 +23,7 @@ class Antenna : public cSimpleModule
     int *CQITable;
 
     Frame* prepareFrame();
+    void clearFrame();
     bool loadPacketIntoFrame(Frame *frame, UserQueue *userQueue);
     void sendFrame(cMessage *msg);
     void savePacket(cMessage *msg);
