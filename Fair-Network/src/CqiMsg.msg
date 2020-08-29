@@ -1,0 +1,3 @@
+packet CqiMsg {
+    int value;
+}

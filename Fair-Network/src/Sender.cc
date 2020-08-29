@@ -14,7 +14,7 @@ void Sender::initialize()
 
 Packet* Sender::generatePacket()
 {
-    Packet *packet = new Packet(getName());
+    Packet *packet = new Packet("Packet");
 
     int maxDim = getParentModule()->par("MAXIMUM_PACKET_SIZE").intValue();
 

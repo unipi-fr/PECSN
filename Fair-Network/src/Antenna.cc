@@ -4,6 +4,24 @@ Define_Module(Antenna);
 
 void Antenna::initialize()
 {
+
+    CQITable = new int[15];
+    CQITable[0] = 3;
+    CQITable[1] = 3;
+    CQITable[2] = 6;
+    CQITable[3] = 11;
+    CQITable[4] = 15;
+    CQITable[5] = 20;
+    CQITable[6] = 25;
+    CQITable[7] = 36;
+    CQITable[8] = 39;
+    CQITable[9] = 50;
+    CQITable[10] = 63;
+    CQITable[11] = 72;
+    CQITable[12] = 80;
+    CQITable[13] = 93;
+    CQITable[14] = 93;
+
     beep = new cMessage("Beep");
 
     int nQueues = getParentModule()->par("NUM_USER");
@@ -128,25 +146,59 @@ Frame* Antenna::prepareFrame()
     return frame;
 }
 
+void Antenna::sendFrame(cMessage *msg)
+{
+    Frame *frame = prepareFrame();
+
+    int nUser= getParentModule()->par("NUM_USER").intValue();
+    for(int i=0; i<nUser; ++i){
+        Frame *f = new Frame(*frame);
+        send(f, "out", i);
+    }
+
+    scheduleAt(simTime() + par("timeSlot").doubleValue(), beep);
+
+    delete(frame);
+}
+
+void Antenna::savePacket(cMessage *msg)
+{
+    Packet *packet = check_and_cast<Packet*>(msg);
+
+    EV_INFO<<packet->getName()<<" size: "<<packet->getSize()<<" "<<packet->getDestination();
+
+    queuesOrderedByUser[packet->getDestination()]->insert(msg);
+}
+
+void Antenna::updateCQI(cMessage *msg)
+{
+    int destination = msg->getArrivalGate()->getIndex();
+
+    CqiMsg *cqiMsg = check_and_cast<CqiMsg*>(msg);
+
+    int index = cqiMsg->getValue()-1; // -1 because we saved the cqiTable starting from 0 instead of 1
+    UserQueue *uq = queuesOrderedByUser[destination];
+
+    uq->RBsize = CQITable[index];
+
+    delete(cqiMsg);
+}
+
 void Antenna::handleMessage(cMessage *msg)
 {
     if(msg->isSelfMessage())
     {
-        Frame *frame = prepareFrame();
+        sendFrame(msg);
+    }
 
-        int nUser= getParentModule()->par("NUM_USER").intValue();
-        for(int i=0; i<nUser; ++i){
-            Frame *f = new Frame(*frame);
-            send(f, "out", i);
-        }
+    if(strcmp(msg->getName(),"Packet") == 0)
+    {
+        savePacket(msg);
+    }
 
-        scheduleAt(simTime() + par("timeSlot").doubleValue(), beep);
-    } else {
-        Packet *packet = check_and_cast<Packet*>(msg);
-
-        EV_INFO<<packet->getName()<<" size: "<<packet->getSize()<<" "<<packet->getDestination();
-
-        queuesOrderedByUser[packet->getDestination()]->insert(msg);
+    if(strcmp(msg->getName(),"CQI") == 0)
+    {
+        updateCQI(msg);
     }
 
 }

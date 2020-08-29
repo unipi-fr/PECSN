@@ -36,11 +36,13 @@ OBJS = \
     $O/SendersHub.o \
     $O/User.o \
     $O/UserQueue.o \
+    $O/CqiMsg_m.o \
     $O/Frame_m.o \
     $O/Packet_m.o
 
 # Message files
 MSGFILES = \
+    CqiMsg.msg \
     Frame.msg \
     Packet.msg
 

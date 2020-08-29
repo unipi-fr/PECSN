@@ -6,6 +6,7 @@
 #include "Packet_m.h"
 #include "UserQueue.h"
 #include "Frame_m.h"
+#include "CqiMsg_m.h"
 #include <math.h>
 
 using namespace omnetpp;
@@ -18,8 +19,13 @@ class Antenna : public cSimpleModule
     UserQueue** queuesOrderedByUser;
     cQueue *queuesOrderedByBytesSent;
 
+    int *CQITable;
+
     Frame* prepareFrame();
     bool loadPacketIntoFrame(Frame *frame, UserQueue *userQueue);
+    void sendFrame(cMessage *msg);
+    void savePacket(cMessage *msg);
+    void updateCQI(cMessage *msg);
 
   protected:
     virtual void initialize();
