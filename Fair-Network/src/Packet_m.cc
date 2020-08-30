@@ -183,6 +183,7 @@ Packet::Packet(const char *name, short kind) : ::omnetpp::cPacket(name,kind)
 {
     this->size = 0;
     this->destination = 0;
+    this->arrivalTime = 0;
 }
 
 Packet::Packet(const Packet& other) : ::omnetpp::cPacket(other)
@@ -207,6 +208,7 @@ void Packet::copy(const Packet& other)
     this->size = other.size;
     this->destination = other.destination;
     this->RBs = other.RBs;
+    this->arrivalTime = other.arrivalTime;
 }
 
 void Packet::parsimPack(omnetpp::cCommBuffer *b) const
@@ -215,6 +217,7 @@ void Packet::parsimPack(omnetpp::cCommBuffer *b) const
     doParsimPacking(b,this->size);
     doParsimPacking(b,this->destination);
     doParsimPacking(b,this->RBs);
+    doParsimPacking(b,this->arrivalTime);
 }
 
 void Packet::parsimUnpack(omnetpp::cCommBuffer *b)
@@ -223,6 +226,7 @@ void Packet::parsimUnpack(omnetpp::cCommBuffer *b)
     doParsimUnpacking(b,this->size);
     doParsimUnpacking(b,this->destination);
     doParsimUnpacking(b,this->RBs);
+    doParsimUnpacking(b,this->arrivalTime);
 }
 
 int Packet::getSize() const
@@ -253,6 +257,16 @@ IntVector& Packet::getRBs()
 void Packet::setRBs(const IntVector& RBs)
 {
     this->RBs = RBs;
+}
+
+::omnetpp::simtime_t Packet::getArrivalTime() const
+{
+    return this->arrivalTime;
+}
+
+void Packet::setArrivalTime(::omnetpp::simtime_t arrivalTime)
+{
+    this->arrivalTime = arrivalTime;
 }
 
 class PacketDescriptor : public omnetpp::cClassDescriptor
@@ -320,7 +334,7 @@ const char *PacketDescriptor::getProperty(const char *propertyname) const
 int PacketDescriptor::getFieldCount() const
 {
     omnetpp::cClassDescriptor *basedesc = getBaseClassDescriptor();
-    return basedesc ? 3+basedesc->getFieldCount() : 3;
+    return basedesc ? 4+basedesc->getFieldCount() : 4;
 }
 
 unsigned int PacketDescriptor::getFieldTypeFlags(int field) const
@@ -335,8 +349,9 @@ unsigned int PacketDescriptor::getFieldTypeFlags(int field) const
         FD_ISEDITABLE,
         FD_ISEDITABLE,
         FD_ISCOMPOUND,
+        FD_ISEDITABLE,
     };
-    return (field>=0 && field<3) ? fieldTypeFlags[field] : 0;
+    return (field>=0 && field<4) ? fieldTypeFlags[field] : 0;
 }
 
 const char *PacketDescriptor::getFieldName(int field) const
@@ -351,8 +366,9 @@ const char *PacketDescriptor::getFieldName(int field) const
         "size",
         "destination",
         "RBs",
+        "arrivalTime",
     };
-    return (field>=0 && field<3) ? fieldNames[field] : nullptr;
+    return (field>=0 && field<4) ? fieldNames[field] : nullptr;
 }
 
 int PacketDescriptor::findField(const char *fieldName) const
@@ -362,6 +378,7 @@ int PacketDescriptor::findField(const char *fieldName) const
     if (fieldName[0]=='s' && strcmp(fieldName, "size")==0) return base+0;
     if (fieldName[0]=='d' && strcmp(fieldName, "destination")==0) return base+1;
     if (fieldName[0]=='R' && strcmp(fieldName, "RBs")==0) return base+2;
+    if (fieldName[0]=='a' && strcmp(fieldName, "arrivalTime")==0) return base+3;
     return basedesc ? basedesc->findField(fieldName) : -1;
 }
 
@@ -377,8 +394,9 @@ const char *PacketDescriptor::getFieldTypeString(int field) const
         "int",
         "int",
         "IntVector",
+        "simtime_t",
     };
-    return (field>=0 && field<3) ? fieldTypeStrings[field] : nullptr;
+    return (field>=0 && field<4) ? fieldTypeStrings[field] : nullptr;
 }
 
 const char **PacketDescriptor::getFieldPropertyNames(int field) const
@@ -448,6 +466,7 @@ std::string PacketDescriptor::getFieldValueAsString(void *object, int field, int
         case 0: return long2string(pp->getSize());
         case 1: return long2string(pp->getDestination());
         case 2: {std::stringstream out; out << pp->getRBs(); return out.str();}
+        case 3: return simtime2string(pp->getArrivalTime());
         default: return "";
     }
 }
@@ -464,6 +483,7 @@ bool PacketDescriptor::setFieldValueAsString(void *object, int field, int i, con
     switch (field) {
         case 0: pp->setSize(string2long(value)); return true;
         case 1: pp->setDestination(string2long(value)); return true;
+        case 3: pp->setArrivalTime(string2simtime(value)); return true;
         default: return false;
     }
 }

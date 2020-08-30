@@ -23,7 +23,7 @@ void Antenna::initialize()
     CQITable[14] = 93;
 
     beep = new cMessage("Beep");
-    lastFrame = new Frame("Frame");
+    frame = new Frame("Frame");
 
     int nQueues = getParentModule()->par("NUM_USER");
 
@@ -117,17 +117,17 @@ bool Antenna::loadPacketIntoFrame(Frame *frame, UserQueue *userQueue)
 }
 
 void Antenna::clearFrame(){
-    lastFrame->setRBused(0);
-    std::vector<Packet*> packets = lastFrame->getPackets();
+    frame->setRBused(0);
+    std::vector<Packet*> packets = frame->getPackets();
     while(packets.size() != 0){
         Packet* currentPacket = packets.back();
         packets.pop_back();
         delete(currentPacket);
     }
-    lastFrame->setPackets(packets);
+    frame->setPackets(packets);
 }
 
-Frame* Antenna::prepareFrame()
+void Antenna::prepareFrame()
 {
     clearFrame();
 
@@ -145,7 +145,7 @@ Frame* Antenna::prepareFrame()
 
         indexQueue.push_back(uq); // indexQueue contains index of queue to remove and to reinsert
 
-        isReady = loadPacketIntoFrame(lastFrame, uq);
+        isReady = loadPacketIntoFrame(frame, uq);
     }
 
     for(int i = 0; i < indexQueue.size(); i++)
@@ -157,12 +157,11 @@ Frame* Antenna::prepareFrame()
     }
 
     indexQueue.clear();
-    return lastFrame;
 }
 
 void Antenna::sendFrame(cMessage *msg)
 {
-    Frame *frame = prepareFrame();
+    prepareFrame();
 
     int nUser= getParentModule()->par("NUM_USER").intValue();
     for(int i=0; i<nUser; ++i){
@@ -179,7 +178,9 @@ void Antenna::savePacket(cMessage *msg)
 
     EV_INFO<<packet->getName()<<" size: "<<packet->getSize()<<" "<<packet->getDestination();
 
-    queuesOrderedByUser[packet->getDestination()]->insert(msg);
+    packet->setArrivalTime(simTime());
+
+    queuesOrderedByUser[packet->getDestination()]->insert(packet);
 }
 
 void Antenna::updateCQI(cMessage *msg)

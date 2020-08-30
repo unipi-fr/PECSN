@@ -12,6 +12,7 @@ using namespace omnetpp;
 class User : public cSimpleModule
 {
   private:
+    simsignal_t simDelay;
     int cqi;
     int id;
 

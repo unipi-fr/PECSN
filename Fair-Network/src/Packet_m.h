@@ -31,6 +31,7 @@
  *     int size;
  *     int destination;
  *     IntVector RBs;
+ *     simtime_t arrivalTime;
  * }
  * </pre>
  */
@@ -40,6 +41,7 @@ class Packet : public ::omnetpp::cPacket
     int size;
     int destination;
     IntVector RBs;
+    ::omnetpp::simtime_t arrivalTime;
 
   private:
     void copy(const Packet& other);
@@ -65,6 +67,8 @@ class Packet : public ::omnetpp::cPacket
     virtual IntVector& getRBs();
     virtual const IntVector& getRBs() const {return const_cast<Packet*>(this)->getRBs();}
     virtual void setRBs(const IntVector& RBs);
+    virtual ::omnetpp::simtime_t getArrivalTime() const;
+    virtual void setArrivalTime(::omnetpp::simtime_t arrivalTime);
 };
 
 inline void doParsimPacking(omnetpp::cCommBuffer *b, const Packet& obj) {obj.parsimPack(b);}

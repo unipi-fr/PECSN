@@ -4,8 +4,9 @@ Define_Module(User);
 
 void User::initialize()
 {
-
     id = getIndex();
+
+    simDelay = registerSignal("packetDelay");
 
     sendCQI();
 }
@@ -24,7 +25,6 @@ void User::handleMessage(cMessage *msg)
 
         if(currentPacket->getDestination() == id){
             collectStatistics(currentPacket);
-            //delete(currentPacket);
         }
     }
 
@@ -34,7 +34,9 @@ void User::handleMessage(cMessage *msg)
 }
 
 void User::collectStatistics(Packet* packet){
-
+    simtime_t timeToDeliver = simTime() - packet->getArrivalTime();
+    emit(simDelay,timeToDeliver);
+    EV_TRACE<< packet->info()<<"delivered in "<<timeToDeliver<<endl;
 }
 
 void User::sendCQI() {

@@ -8,7 +8,8 @@ void Sender::initialize()
 
     rate = 1/par("lambda").doubleValue();
 
-    double time = exponential(rate);
+    cRNG* rng = getRNG(0);
+    double time = exponential(rate,getIndex());
     scheduleAt(simTime() + time, beep);
 }
 

@@ -12,7 +12,9 @@ network FairNetwork
     submodules:
         antenna: Antenna;
         user[NUM_USER]: User;
-        packetGenerator: PacketGenerator; 
+        packetGenerator: PacketGenerator{
+        	NUM_SENDERS = NUM_USER;
+        }
         
     connections:
         

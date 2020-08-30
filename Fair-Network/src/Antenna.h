@@ -15,14 +15,14 @@ class Antenna : public cSimpleModule
 {
   private:
     cMessage *beep;
-    Frame *lastFrame;
+    Frame *frame;
 
     UserQueue** queuesOrderedByUser;
     cQueue *queuesOrderedByBytesSent;
 
     int *CQITable;
 
-    Frame* prepareFrame();
+    void prepareFrame();
     void clearFrame();
     bool loadPacketIntoFrame(Frame *frame, UserQueue *userQueue);
     void sendFrame(cMessage *msg);

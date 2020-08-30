@@ -9,4 +9,5 @@ packet Packet {
     int size;
     int destination;
     IntVector RBs;
+    simtime_t arrivalTime;
 }
