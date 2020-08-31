@@ -1,0 +1,11 @@
+Need Python installed then in order to install Pandas is required
+    
+    pip install pandas
+
+for converting file  into excel it's necessary
+
+    pip install openpyxl
+
+for printing graph 
+
+        pip install mathplot
