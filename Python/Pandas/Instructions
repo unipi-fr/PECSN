@@ -8,4 +8,4 @@ for converting file  into excel it's necessary
 
 for printing graph 
 
-        pip install mathplot
+    pip install mathplot
