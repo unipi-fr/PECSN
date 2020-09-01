@@ -1,0 +1,173 @@
+file 396863 1598976141                                          
+version 2
+run General-30-20200901-18:02:11-11980
+attr configname General
+attr datetime 20200901-18:02:11
+attr experiment General
+attr inifile FairNetworkConf.ini
+attr iterationvars "$nUser=30, $0=0.5"
+attr iterationvarsf nUser=30,0.5-
+attr measurement "$nUser=30, $0=0.5"
+attr network FairNetwork
+attr processid 11980
+attr repetition 0
+attr replication #0
+attr resultdir results
+attr runnumber 30
+attr seedset 0
+itervar nUser 30
+param **.NUM_USER 30
+param **.packetGenerator.senders[*].lambda 0.5
+param **.antenna.timeSlot 1s
+
+vector 0 FairNetwork.user[5] packetDelayStat:vector ETV
+attr "" ""
+attr source packetDelay
+attr title "Packet delay stat, vector"
+vector 1 FairNetwork.user[7] packetDelayStat:vector ETV
+attr "" ""
+attr source packetDelay
+attr title "Packet delay stat, vector"
+vector 2 FairNetwork.user[9] packetDelayStat:vector ETV
+attr "" ""
+attr source packetDelay
+attr title "Packet delay stat, vector"
+vector 3 FairNetwork.user[11] packetDelayStat:vector ETV
+attr "" ""
+attr source packetDelay
+attr title "Packet delay stat, vector"
+vector 4 FairNetwork.user[12] packetDelayStat:vector ETV
+attr "" ""
+attr source packetDelay
+attr title "Packet delay stat, vector"
+vector 5 FairNetwork.user[17] packetDelayStat:vector ETV
+attr "" ""
+attr source packetDelay
+attr title "Packet delay stat, vector"
+vector 6 FairNetwork.user[19] packetDelayStat:vector ETV
+attr "" ""
+attr source packetDelay
+attr title "Packet delay stat, vector"
+vector 7 FairNetwork.user[21] packetDelayStat:vector ETV
+attr "" ""
+attr source packetDelay
+attr title "Packet delay stat, vector"
+vector 8 FairNetwork.user[26] packetDelayStat:vector ETV
+attr "" ""
+attr source packetDelay
+attr title "Packet delay stat, vector"
+vector 9 FairNetwork.user[0] packetDelayStat:vector ETV
+attr "" ""
+attr source packetDelay
+attr title "Packet delay stat, vector"
+vector 10 FairNetwork.user[1] packetDelayStat:vector ETV
+attr "" ""
+attr source packetDelay
+attr title "Packet delay stat, vector"
+vector 11 FairNetwork.user[2] packetDelayStat:vector ETV
+attr "" ""
+attr source packetDelay
+attr title "Packet delay stat, vector"
+vector 12 FairNetwork.user[3] packetDelayStat:vector ETV
+attr "" ""
+attr source packetDelay
+attr title "Packet delay stat, vector"
+vector 13 FairNetwork.user[14] packetDelayStat:vector ETV
+attr "" ""
+attr source packetDelay
+attr title "Packet delay stat, vector"
+vector 14 FairNetwork.user[20] packetDelayStat:vector ETV
+attr "" ""
+attr source packetDelay
+attr title "Packet delay stat, vector"
+vector 15 FairNetwork.user[23] packetDelayStat:vector ETV
+attr "" ""
+attr source packetDelay
+attr title "Packet delay stat, vector"
+vector 16 FairNetwork.user[10] packetDelayStat:vector ETV
+attr "" ""
+attr source packetDelay
+attr title "Packet delay stat, vector"
+vector 17 FairNetwork.user[16] packetDelayStat:vector ETV
+attr "" ""
+attr source packetDelay
+attr title "Packet delay stat, vector"
+vector 18 FairNetwork.user[18] packetDelayStat:vector ETV
+attr "" ""
+attr source packetDelay
+attr title "Packet delay stat, vector"
+vector 19 FairNetwork.user[22] packetDelayStat:vector ETV
+attr "" ""
+attr source packetDelay
+attr title "Packet delay stat, vector"
+vector 20 FairNetwork.user[13] packetDelayStat:vector ETV
+attr "" ""
+attr source packetDelay
+attr title "Packet delay stat, vector"
+vector 21 FairNetwork.user[27] packetDelayStat:vector ETV
+attr "" ""
+attr source packetDelay
+attr title "Packet delay stat, vector"
+vector 22 FairNetwork.user[28] packetDelayStat:vector ETV
+attr "" ""
+attr source packetDelay
+attr title "Packet delay stat, vector"
+vector 23 FairNetwork.user[29] packetDelayStat:vector ETV
+attr "" ""
+attr source packetDelay
+attr title "Packet delay stat, vector"
+vector 24 FairNetwork.user[6] packetDelayStat:vector ETV
+attr "" ""
+attr source packetDelay
+attr title "Packet delay stat, vector"
+vector 25 FairNetwork.user[8] packetDelayStat:vector ETV
+attr "" ""
+attr source packetDelay
+attr title "Packet delay stat, vector"
+vector 26 FairNetwork.user[15] packetDelayStat:vector ETV
+attr "" ""
+attr source packetDelay
+attr title "Packet delay stat, vector"
+vector 27 FairNetwork.user[25] packetDelayStat:vector ETV
+attr "" ""
+attr source packetDelay
+attr title "Packet delay stat, vector"
+vector 28 FairNetwork.user[4] packetDelayStat:vector ETV
+attr "" ""
+attr source packetDelay
+attr title "Packet delay stat, vector"
+vector 29 FairNetwork.user[24] packetDelayStat:vector ETV
+attr "" ""
+attr source packetDelay
+attr title "Packet delay stat, vector"
+0	4608 12250 85 98043 1 924 442 0.003211301139 21.302613699042 759.93422107353 6223.9670793939
+1	16858 13252 87 97382 1 918 467 0.016057298886 73.714467865125 10937.587643152 422420.24350177
+2	30110 13163 89 96763 1 912 464 0.023800827947 56.113729169777 9935.5747318589 313284.81185094
+3	43273 13158 91 98367 1 927 474 0.007712500464 19.844503459012 1067.703242926 7641.7333553028
+4	56431 13263 92 98368 1 927 475 0.006005864825 52.981037110567 3676.9335717427 82347.341886301
+5	69694 12699 97 98458 1 928 446 0.148219932632 73.775362418211 14719.332844181 613622.53816943
+6	82393 13402 99 98375 1 927 479 0.001027032868 44.328453442197 4024.917722036 80155.463886147
+7	95795 13025 101 92835 1 875 460 0.000120252144 76.290958223818 10883.3387162 459544.85027902
+8	108820 12615 106 97192 1 916 454 0.007202947713 24.596335917366 1679.8733497114 16667.743056384
+9	121435 12518 186 98441 2 928 452 0.000230963423 12.787389362647 475.46045816684 1775.049947747
+10	133953 13598 187 97467 2 919 473 0.004689615613 23.896260656338 1044.954881119 9000.9739106659
+11	147551 13735 188 97937 2 923 472 0.006061930088 54.999423820971 5547.2283335933 136683.39656585
+12	161286 13651 189 97469 2 919 468 0.000493797587 56.086969186697 7401.8430736072 215778.13191726
+13	174937 13595 200 98149 2 925 465 0.000275346245 52.960029729205 7871.3733620824 239081.49090686
+14	188532 12350 206 98376 2 927 430 0.003109958013 13.892007016677 625.2267707067 2890.6977231757
+15	200882 13322 209 97189 2 916 458 0.007525941799 55.607140792185 5716.8048338189 158420.47821199
+16	214204 13572 293 96228 3 907 459 0.049131110049 155.89763593395 35736.647327428 3694680.5131568
+17	227776 13535 299 96322 3 908 462 0.107864454457 59.436162098347 8912.9046471854 244965.84981912
+18	241311 12787 301 98459 3 928 445 0.012255101222 32.524307878665 1038.2505828645 15035.040224018
+19	254098 12851 305 98378 3 927 447 0.002094426102 20.407989563023 981.50951468194 7551.9348817819
+20	266949 13436 396 98369 4 927 461 0.024040707272 51.283249754168 6149.2332472077 155066.9884119
+21	280385 12169 410 98268 4 926 425 0.005093765743 3.125080239536 245.61327366705 222.09861585797
+22	292554 13025 411 98469 4 928 454 0.00038972799 7.364677390868 288.00106942132 406.19270823707
+23	305579 12127 412 98470 4 928 423 0.001055938113 15.492190530201 814.40893740593 4571.8023099469
+24	317706 13576 501 98447 5 928 471 0.005013166079 27.276150549215 1531.330990885 20823.423991018
+25	331282 13754 503 98143 5 925 473 0.0056867619 36.279368408127 4603.7017196355 89986.44839459
+26	345036 12878 510 95400 5 899 437 0.019361759343 85.6204043489 14140.916718038 653552.00577869
+27	357914 13976 520 94014 5 886 472 0.000429139031 86.913596419878 17816.310892137 874799.73573689
+28	371890 12989 720 98139 7 925 450 0.013682035533 24.486532067353 1939.4268798512 21331.676826946
+29	384879 11982 740 98062 7 924 417 0.000197515237 1.734752445767 222.75870883334 161.384771642
+

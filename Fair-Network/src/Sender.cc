@@ -8,8 +8,11 @@ void Sender::initialize()
 
     rate = 1/par("lambda").doubleValue();
 
-    cRNG* rng = getRNG(0);
-    double time = exponential(rate,getIndex());
+    int numUser = getParentModule()->getParentModule()->par("NUM_USER").intValue();
+    indexRNGExp = getIndex()+0*numUser;
+    indexRNGUnif = getIndex()+1*numUser;
+
+    double time = exponential(rate, indexRNGExp);
     scheduleAt(simTime() + time, beep);
 }
 
@@ -19,7 +22,7 @@ Packet* Sender::generatePacket()
 
     int maxDim = getParentModule()->par("MAXIMUM_PACKET_SIZE").intValue();
 
-    packet->setSize(intuniform(0, maxDim));
+    packet->setSize(intuniform(0, maxDim, indexRNGUnif));
 
     return packet;
 }
@@ -32,7 +35,7 @@ void Sender::handleMessage(cMessage *msg)
 
         send(packet, "out");
 
-        double time = exponential(rate);
+        double time = exponential(rate, indexRNGExp);
         scheduleAt(simTime() + time, beep);
     }
 }

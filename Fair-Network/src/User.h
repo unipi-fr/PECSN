@@ -16,6 +16,8 @@ class User : public cSimpleModule
     int cqi;
     int id;
 
+    int indexRNGCQI;
+
     void collectStatistics(Packet* packet);
     void sendCQI();
 

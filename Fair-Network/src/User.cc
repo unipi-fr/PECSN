@@ -6,6 +6,9 @@ void User::initialize()
 {
     id = getIndex();
 
+    int numUser = getParentModule()->par("NUM_USER").intValue();
+    indexRNGCQI = id+2*numUser;
+
     simDelay = registerSignal("packetDelay");
 
     sendCQI();
@@ -36,11 +39,10 @@ void User::handleMessage(cMessage *msg)
 void User::collectStatistics(Packet* packet){
     simtime_t timeToDeliver = simTime() - packet->getArrivalTime();
     emit(simDelay,timeToDeliver);
-    EV_TRACE<< packet->info()<<"delivered in "<<timeToDeliver<<endl;
 }
 
 void User::sendCQI() {
-    cqi = intuniform(1, 15);
+    cqi = intuniform(1, 15, indexRNGCQI);
     CqiMsg *cqiMsg = new CqiMsg("CQI");
     cqiMsg->setValue(cqi);
     send(cqiMsg, "out");

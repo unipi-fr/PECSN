@@ -12,6 +12,9 @@ class Sender : public cSimpleModule
     double rate;
     cMessage *beep;
 
+    int indexRNGExp;
+    int indexRNGUnif;
+
     Packet* generatePacket();
 
   protected:
