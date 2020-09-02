@@ -13,8 +13,11 @@ class User : public cSimpleModule
 {
   private:
     simsignal_t simDelay;
+    simsignal_t simBytes;
+    simsignal_t simThroughput;
     int cqi;
     int id;
+    double timeSlot;
 
     int indexRNGCQI;
 

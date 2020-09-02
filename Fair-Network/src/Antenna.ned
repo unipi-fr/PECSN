@@ -3,7 +3,7 @@ package fair_network;
 simple Antenna
 {
     parameters:
-        double timeSlot @unit(s) = default(1s);
+        double timeSlot @unit(ms) = default(1000ms);
         
     gates:
         input packetIn;

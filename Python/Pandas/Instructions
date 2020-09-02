@@ -9,3 +9,7 @@ for converting file  into excel it's necessary
 for printing graph 
 
     pip install mathplot
+
+for regression line
+    
+    pip install scikit-learn

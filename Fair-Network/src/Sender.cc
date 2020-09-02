@@ -22,7 +22,7 @@ Packet* Sender::generatePacket()
 
     int maxDim = getParentModule()->par("MAXIMUM_PACKET_SIZE").intValue();
 
-    packet->setSize(intuniform(0, maxDim, indexRNGUnif));
+    packet->setSize(intuniform(1, maxDim, indexRNGUnif));
 
     return packet;
 }

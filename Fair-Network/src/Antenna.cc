@@ -40,7 +40,12 @@ void Antenna::initialize()
         queuesOrderedByBytesSent->insert(queuesOrderedByUser[i]);
     }
 
-    scheduleAt(simTime() + par("timeSlot").doubleValue(), beep);
+    scheduleBeep();
+}
+
+void Antenna::scheduleBeep() {
+    double time = par("timeSlot").doubleValueInUnit("s");
+    scheduleAt(simTime() + time, beep);
 }
 
 bool Antenna::loadPacketIntoFrame(Frame *frame, UserQueue *userQueue)
@@ -169,7 +174,7 @@ void Antenna::sendFrame(cMessage *msg)
         send(f, "out", i);
     }
 
-    scheduleAt(simTime() + par("timeSlot").doubleValue(), beep);
+    scheduleBeep();
 }
 
 void Antenna::savePacket(cMessage *msg)

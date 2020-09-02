@@ -28,6 +28,7 @@ class Antenna : public cSimpleModule
     void sendFrame(cMessage *msg);
     void savePacket(cMessage *msg);
     void updateCQI(cMessage *msg);
+    void scheduleBeep();
 
   protected:
     virtual void initialize();

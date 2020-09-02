@@ -8,9 +8,12 @@ network FairNetwork
 {
     parameters:
         int NUM_USER = default(2);
+        double TIMESLOT @unit(ms) = default(1000ms); 
         
     submodules:
-        antenna: Antenna;
+        antenna: Antenna{
+            timeSlot = TIMESLOT;
+        }
         user[NUM_USER]: User;
         packetGenerator: PacketGenerator{
         	NUM_SENDERS = NUM_USER;
