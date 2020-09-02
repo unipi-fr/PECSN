@@ -20,6 +20,8 @@ class User : public cSimpleModule
     double timeSlot;
 
     int indexRNGCQI;
+    //for binomial
+    int p;
 
     void collectStatistics(Packet* packet);
     void sendCQI();

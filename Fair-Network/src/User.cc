@@ -9,11 +9,14 @@ void User::initialize()
     int numUser = getParentModule()->par("NUM_USER").intValue();
     indexRNGCQI = id+2*numUser;
 
+    int mean = 14/numUser * (id+1); //14 for not reach 15
+    p = mean/15; //n = 15;
+
     simDelay = registerSignal("packetDelay");
     simBytes = registerSignal("packetBytes");
     simThroughput = registerSignal("userThroughput");
 
-    timeSlot = getParentModule()->par("TIMESLOT").doubleValue();
+    timeSlot = getParentModule()->par("TIMESLOT").doubleValueInUnit("s");
 
     sendCQI();
 }
@@ -52,7 +55,11 @@ void User::collectStatistics(Packet* packet){
 }
 
 void User::sendCQI() {
-    cqi = intuniform(1, 15, indexRNGCQI);
+    if(par("useBinomialDistribution").boolValue()){
+        cqi = binomial(15, p, indexRNGCQI);
+    }else{
+        cqi = intuniform(1, 15, indexRNGCQI);
+    }
     CqiMsg *cqiMsg = new CqiMsg("CQI");
     cqiMsg->setValue(cqi);
     send(cqiMsg, "out");

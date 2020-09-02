@@ -1,0 +1,68 @@
+file 51590 1599064026                                           
+version 2
+run General-1-20200902-18:27:01-7292
+attr configname General
+attr datetime 20200902-18:27:01
+attr experiment General
+attr inifile FairNetworkConf.ini
+attr iterationvars "$nUser=3, $0=1"
+attr iterationvarsf nUser=3,1-
+attr measurement "$nUser=3, $0=1"
+attr network FairNetwork
+attr processid 7292
+attr repetition 0
+attr replication #0
+attr resultdir results
+attr runnumber 1
+attr seedset 0
+itervar nUser 3
+param **.NUM_USER 3
+param **.TIMESLOT 1000ms
+param **.packetGenerator.senders[*].lambda 1
+
+vector 0 FairNetwork.user[0] packetDelayStat:vector ETV
+attr "" ""
+attr source packetDelay
+attr title "Packet delay, vector"
+vector 1 FairNetwork.user[0] packetBytesStat:vector ETV
+attr "" ""
+attr source packetBytes
+attr title "Packet bytes, vector"
+vector 2 FairNetwork.user[0] userThroughputStat:vector ETV
+attr "" ""
+attr source userThroughput
+attr title "User throughput, vector"
+vector 3 FairNetwork.user[1] packetDelayStat:vector ETV
+attr "" ""
+attr source packetDelay
+attr title "Packet delay, vector"
+vector 4 FairNetwork.user[1] packetBytesStat:vector ETV
+attr "" ""
+attr source packetBytes
+attr title "Packet bytes, vector"
+vector 5 FairNetwork.user[1] userThroughputStat:vector ETV
+attr "" ""
+attr source userThroughput
+attr title "User throughput, vector"
+vector 6 FairNetwork.user[2] packetDelayStat:vector ETV
+attr "" ""
+attr source packetDelay
+attr title "Packet delay, vector"
+vector 7 FairNetwork.user[2] packetBytesStat:vector ETV
+attr "" ""
+attr source packetBytes
+attr title "Packet bytes, vector"
+vector 8 FairNetwork.user[2] userThroughputStat:vector ETV
+attr "" ""
+attr source userThroughput
+attr title "User throughput, vector"
+0	1715 7830 20 4846 1 300 297 0.000115481709 1.780195642646 153.970765789 112.9037385746
+1	9545 4263 20 4846 1 300 297 1 75 11071 542647
+2	13808 4231 20 4846 1 300 300 0 170 11071 860893
+3	18039 8248 21 4818 1 298 313 0.005034139455 1.980098803298 187.61885910094 161.51784288077
+4	26287 4509 21 4818 1 298 313 1 75 12119 609819
+5	30796 4235 21 4847 1 300 300 0 270 12119 1178945
+6	35031 8007 22 4848 1 300 305 0.003030965048 1.552654765474 160.57973136264 115.22239381683
+7	43038 4327 22 4848 1 300 305 1 75 10579 510207
+8	47365 4223 22 4848 1 300 300 0 214 10579 881667
+
