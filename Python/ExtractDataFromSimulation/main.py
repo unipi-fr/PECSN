@@ -5,7 +5,7 @@ import matplotlib.pyplot as plt
 import json
 
 def main():
-    readFromJson("data/general.json")
+    readFromJson("data/carico.json")
     return 0
 
 def transformDictionary(dictionary):
@@ -59,12 +59,16 @@ def getThroughputDataFrame(data):
 
     numUser = data["numUsers"]
 
+    users = []
     
     for i in range(numUser):
         throughputStats = data["users"][i]["userThroughputStat"]["value"]
-        throughputDF["User" + str(i)] = throughputStats
+        userName = "User" + str(i)
+        users.append(userName)
+        throughputDF[userName] = throughputStats
 
-    throughputDF["Mean"] = throughputDF.mean(axis = 1)
+    throughputDF["Mean"] = throughputDF[users].mean(axis = 1)
+    throughputDF["Sum"] = throughputDF[users].sum(axis = 1)
 
     return throughputDF
 
@@ -75,9 +79,15 @@ def readFromJson(filename):
 
     dataFrame = getThroughputDataFrame(data)
     print (dataFrame)
+    
+    #fig, axes = plt.subplots(nrows = 3, ncols = 2, sharex=True)
 
-    dataFrame.plot.scatter(title='utente[0].plot.scatter(x=timeslots, y=troughput)', x="TimeSlots", y="User0", alpha=0.5)
-    dataFrame.plot.line(title='utente[1].plot.scatter(x=timeslots, y=troughput)', x="TimeSlots", y="User1", alpha=0.5, style='-o')
+    axes = dataFrame.plot.line(title='utente[0].plot.scatter(x=timeslots, y=troughput)', x="TimeSlots", y="User0", alpha=0.5, style='-o')
+    dataFrame.plot.line(title='utente[1].plot.scatter(x=timeslots, y=troughput)', x="TimeSlots", y="User1", alpha=0.5, style='-o', ax = axes)
+    dataFrame.plot.line(title='utente[2].plot.scatter(x=timeslots, y=troughput)', x="TimeSlots", y="User2", alpha=0.5, style='-o', ax = axes)
+    dataFrame.plot.line(title='Mean.plot.scatter(x=timeslots, y=troughput)', x="TimeSlots", y="Mean", alpha=0.5, style='-o')
+    dataFrame.plot.line(title='Sum.plot.scatter(x=timeslots, y=troughput)', x="TimeSlots", y="Sum", alpha=0.5, style='-o')
+    
     plt.show()
     return
 

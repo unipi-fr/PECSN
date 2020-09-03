@@ -1,5 +1,5 @@
 //
-// Generated file, do not edit! Created by nedtool 5.6 from CqiMsg.msg.
+// Generated file, do not edit! Created by nedtool 5.5 from CqiMsg.msg.
 //
 
 // Disable warnings about unused variables, empty switch stmts, etc:

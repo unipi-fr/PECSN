@@ -1,0 +1,68 @@
+file 123853 1599152532                                          
+version 2
+run General-0-20200903-19:02:08-9264
+attr configname General
+attr datetime 20200903-19:02:08
+attr experiment General
+attr inifile FairNetworkConf.ini
+attr iterationvars "$nUser=3, $0=100"
+attr iterationvarsf nUser=3,100-
+attr measurement "$nUser=3, $0=100"
+attr network FairNetwork
+attr processid 9264
+attr repetition 0
+attr replication #0
+attr resultdir results
+attr runnumber 0
+attr seedset 0
+itervar nUser 3
+param **.NUM_USER 3
+param **.TIMESLOT 1000ms
+param **.packetGenerator.senders[*].lambda 100
+
+vector 0 FairNetwork.user[0] packetDelayStat:vector ETV
+attr "" ""
+attr source packetDelay
+attr title "Packet delay, vector"
+vector 1 FairNetwork.user[0] packetBytesStat:vector ETV
+attr "" ""
+attr source packetBytes
+attr title "Packet bytes, vector"
+vector 2 FairNetwork.user[0] userThroughputStat:vector ETV
+attr "" ""
+attr source userThroughput
+attr title "User throughput, vector"
+vector 3 FairNetwork.user[1] userThroughputStat:vector ETV
+attr "" ""
+attr source userThroughput
+attr title "User throughput, vector"
+vector 4 FairNetwork.user[2] userThroughputStat:vector ETV
+attr "" ""
+attr source userThroughput
+attr title "User throughput, vector"
+vector 5 FairNetwork.user[1] packetDelayStat:vector ETV
+attr "" ""
+attr source packetDelay
+attr title "Packet delay, vector"
+vector 6 FairNetwork.user[1] packetBytesStat:vector ETV
+attr "" ""
+attr source packetBytes
+attr title "Packet bytes, vector"
+vector 7 FairNetwork.user[2] packetDelayStat:vector ETV
+attr "" ""
+attr source packetDelay
+attr title "Packet delay, vector"
+vector 8 FairNetwork.user[2] packetBytesStat:vector ETV
+attr "" ""
+attr source packetBytes
+attr title "Packet bytes, vector"
+0	1723 25082 914 87355 1 96 912 0.493594971974 86.872462118539 39413.20516679 2284963.6613274
+1	26805 13324 914 87355 1 96 912 1 75 33723 1641091
+2	40129 1473 914 90986 1 100 100 0 2319 33723 53447005
+3	41602 1475 915 90987 1 100 100 0 2325 34053 52961237
+4	43077 1472 916 90988 1 100 100 0 2308 35884 56700072
+5	44549 25137 1798 90041 2 99 912 1.669913435756 90.236471488281 40574.999940387 2418409.9405796
+6	69686 13389 1798 90041 2 99 912 1 75 34053 1703505
+7	83075 26590 2769 90988 3 100 962 2.994273080104 91.260191447097 43656.783130398 2716404.8613875
+8	109665 14186 2769 90988 3 100 962 1 75 35884 1796650
+
