@@ -1,0 +1,248 @@
+file 89457 1599228883                                           
+version 2
+run General-1-20200904-16:14:37-4684
+attr configname General
+attr datetime 20200904-16:14:37
+attr experiment General
+attr inifile FairNetworkConf.ini
+attr iterationvars "$nUser=15, $0=1"
+attr iterationvarsf nUser=15,1-
+attr measurement "$nUser=15, $0=1"
+attr network FairNetwork
+attr processid 4684
+attr repetition 0
+attr replication #0
+attr resultdir results
+attr runnumber 1
+attr seedset 0
+itervar nUser 15
+param **.NUM_USER 15
+param **.TIMESLOT 1000ms
+param **.packetGenerator.senders[*].lambda 1
+
+vector 0 FairNetwork.user[0] packetDelayStat:vector ETV
+attr "" ""
+attr source packetDelay
+attr title "Packet delay, vector"
+vector 1 FairNetwork.user[0] packetBytesStat:vector ETV
+attr "" ""
+attr source packetBytes
+attr title "Packet bytes, vector"
+vector 2 FairNetwork.user[0] userThroughputStat:vector ETV
+attr "" ""
+attr source userThroughput
+attr title "User throughput, vector"
+vector 3 FairNetwork.user[1] packetDelayStat:vector ETV
+attr "" ""
+attr source packetDelay
+attr title "Packet delay, vector"
+vector 4 FairNetwork.user[1] packetBytesStat:vector ETV
+attr "" ""
+attr source packetBytes
+attr title "Packet bytes, vector"
+vector 5 FairNetwork.user[1] userThroughputStat:vector ETV
+attr "" ""
+attr source userThroughput
+attr title "User throughput, vector"
+vector 6 FairNetwork.user[2] packetDelayStat:vector ETV
+attr "" ""
+attr source packetDelay
+attr title "Packet delay, vector"
+vector 7 FairNetwork.user[2] packetBytesStat:vector ETV
+attr "" ""
+attr source packetBytes
+attr title "Packet bytes, vector"
+vector 8 FairNetwork.user[2] userThroughputStat:vector ETV
+attr "" ""
+attr source userThroughput
+attr title "User throughput, vector"
+vector 9 FairNetwork.user[3] packetDelayStat:vector ETV
+attr "" ""
+attr source packetDelay
+attr title "Packet delay, vector"
+vector 10 FairNetwork.user[3] packetBytesStat:vector ETV
+attr "" ""
+attr source packetBytes
+attr title "Packet bytes, vector"
+vector 11 FairNetwork.user[3] userThroughputStat:vector ETV
+attr "" ""
+attr source userThroughput
+attr title "User throughput, vector"
+vector 12 FairNetwork.user[4] userThroughputStat:vector ETV
+attr "" ""
+attr source userThroughput
+attr title "User throughput, vector"
+vector 13 FairNetwork.user[5] packetDelayStat:vector ETV
+attr "" ""
+attr source packetDelay
+attr title "Packet delay, vector"
+vector 14 FairNetwork.user[5] packetBytesStat:vector ETV
+attr "" ""
+attr source packetBytes
+attr title "Packet bytes, vector"
+vector 15 FairNetwork.user[5] userThroughputStat:vector ETV
+attr "" ""
+attr source userThroughput
+attr title "User throughput, vector"
+vector 16 FairNetwork.user[6] userThroughputStat:vector ETV
+attr "" ""
+attr source userThroughput
+attr title "User throughput, vector"
+vector 17 FairNetwork.user[7] packetDelayStat:vector ETV
+attr "" ""
+attr source packetDelay
+attr title "Packet delay, vector"
+vector 18 FairNetwork.user[7] packetBytesStat:vector ETV
+attr "" ""
+attr source packetBytes
+attr title "Packet bytes, vector"
+vector 19 FairNetwork.user[7] userThroughputStat:vector ETV
+attr "" ""
+attr source userThroughput
+attr title "User throughput, vector"
+vector 20 FairNetwork.user[8] userThroughputStat:vector ETV
+attr "" ""
+attr source userThroughput
+attr title "User throughput, vector"
+vector 21 FairNetwork.user[9] packetDelayStat:vector ETV
+attr "" ""
+attr source packetDelay
+attr title "Packet delay, vector"
+vector 22 FairNetwork.user[9] packetBytesStat:vector ETV
+attr "" ""
+attr source packetBytes
+attr title "Packet bytes, vector"
+vector 23 FairNetwork.user[9] userThroughputStat:vector ETV
+attr "" ""
+attr source userThroughput
+attr title "User throughput, vector"
+vector 24 FairNetwork.user[10] userThroughputStat:vector ETV
+attr "" ""
+attr source userThroughput
+attr title "User throughput, vector"
+vector 25 FairNetwork.user[11] packetDelayStat:vector ETV
+attr "" ""
+attr source packetDelay
+attr title "Packet delay, vector"
+vector 26 FairNetwork.user[11] packetBytesStat:vector ETV
+attr "" ""
+attr source packetBytes
+attr title "Packet bytes, vector"
+vector 27 FairNetwork.user[11] userThroughputStat:vector ETV
+attr "" ""
+attr source userThroughput
+attr title "User throughput, vector"
+vector 28 FairNetwork.user[12] packetDelayStat:vector ETV
+attr "" ""
+attr source packetDelay
+attr title "Packet delay, vector"
+vector 29 FairNetwork.user[12] packetBytesStat:vector ETV
+attr "" ""
+attr source packetBytes
+attr title "Packet bytes, vector"
+vector 30 FairNetwork.user[12] userThroughputStat:vector ETV
+attr "" ""
+attr source userThroughput
+attr title "User throughput, vector"
+vector 31 FairNetwork.user[13] userThroughputStat:vector ETV
+attr "" ""
+attr source userThroughput
+attr title "User throughput, vector"
+vector 32 FairNetwork.user[14] packetDelayStat:vector ETV
+attr "" ""
+attr source packetDelay
+attr title "Packet delay, vector"
+vector 33 FairNetwork.user[14] packetBytesStat:vector ETV
+attr "" ""
+attr source packetBytes
+attr title "Packet bytes, vector"
+vector 34 FairNetwork.user[14] userThroughputStat:vector ETV
+attr "" ""
+attr source userThroughput
+attr title "User throughput, vector"
+vector 35 FairNetwork.user[10] packetDelayStat:vector ETV
+attr "" ""
+attr source packetDelay
+attr title "Packet delay, vector"
+vector 36 FairNetwork.user[10] packetBytesStat:vector ETV
+attr "" ""
+attr source packetBytes
+attr title "Packet bytes, vector"
+vector 37 FairNetwork.user[13] packetDelayStat:vector ETV
+attr "" ""
+attr source packetDelay
+attr title "Packet delay, vector"
+vector 38 FairNetwork.user[13] packetBytesStat:vector ETV
+attr "" ""
+attr source packetBytes
+attr title "Packet bytes, vector"
+vector 39 FairNetwork.user[6] packetDelayStat:vector ETV
+attr "" ""
+attr source packetDelay
+attr title "Packet delay, vector"
+vector 40 FairNetwork.user[6] packetBytesStat:vector ETV
+attr "" ""
+attr source packetBytes
+attr title "Packet bytes, vector"
+vector 41 FairNetwork.user[8] packetDelayStat:vector ETV
+attr "" ""
+attr source packetDelay
+attr title "Packet delay, vector"
+vector 42 FairNetwork.user[8] packetBytesStat:vector ETV
+attr "" ""
+attr source packetBytes
+attr title "Packet bytes, vector"
+vector 43 FairNetwork.user[4] packetDelayStat:vector ETV
+attr "" ""
+attr source packetDelay
+attr title "Packet delay, vector"
+vector 44 FairNetwork.user[4] packetBytesStat:vector ETV
+attr "" ""
+attr source packetBytes
+attr title "Packet bytes, vector"
+0	6522 2547 74 7607 1 100 99 0.000115481709 0.985728214613 45.188790248755 27.458930087556
+1	9069 1359 74 7607 1 100 99 1 74 3902 194418
+2	10428 1349 74 7607 1 100 100 0 190 3902 319848
+3	11777 2445 75 7608 1 100 95 0.005034139455 0.993050841436 45.582720471742 31.150624491151
+4	14222 1314 75 7608 1 100 95 1 75 3674 181686
+5	15536 1342 75 7608 1 100 100 0 220 3674 349604
+6	16878 2795 76 7609 1 100 109 0.005262213771 0.99971191049 50.694231901522 32.586158377608
+7	19673 1486 76 7609 1 100 109 2 75 4157 208001
+8	21159 1352 76 7609 1 100 100 0 193 4157 347575
+9	22511 3077 77 7610 1 100 120 0.00206428798 0.992340556818 60.698575806009 41.596029950928
+10	25588 1760 77 7610 1 100 120 2 74 4497 229005
+11	27348 1458 77 7610 1 100 100 0 376 4497 463979
+12	28806 1449 78 7611 1 100 100 0 176 4291 385259
+13	30255 2452 79 7612 1 100 92 0.00102845321 0.994953466973 45.887736789862 31.063030940657
+14	32707 1349 79 7612 1 100 92 3 75 3074 143270
+15	34056 1441 79 7612 1 100 100 0 162 3074 246096
+16	35497 1440 80 7613 1 100 100 0 172 3366 257338
+17	36937 2803 81 7614 1 100 105 0.021363240732 0.98147474596 52.465020247465 34.976201096573
+18	39740 1542 81 7614 1 100 105 1 72 3961 199781
+19	41282 1450 81 7614 1 100 100 0 192 3961 315655
+20	42732 1451 82 7615 1 100 100 0 155 4193 360043
+21	44183 2428 83 7616 1 100 92 0.011900413974 0.989705311526 50.622994834193 34.794902495057
+22	46611 1319 83 7616 1 100 92 1 75 3373 167347
+23	47930 1439 83 7616 1 100 100 0 213 3373 316449
+24	49369 1455 84 7617 1 100 100 0 199 4063 360239
+25	50824 2601 85 7618 1 100 98 0.024338225227 0.999290424985 49.718606644608 33.226197161454
+26	53425 1430 85 7618 1 100 98 1 75 3903 196401
+27	54855 1447 85 7618 1 100 100 0 262 3903 405335
+28	56302 2424 86 7619 1 100 91 0.005441708933 0.99555069946 43.266732140682 27.946325239007
+29	58726 1327 86 7619 1 100 91 1 74 3359 164277
+30	60053 1437 86 7619 1 100 100 0 168 3359 274565
+31	61490 1442 87 7620 1 100 100 0 196 3368 270274
+32	62932 2398 88 7326 1 96 90 0.003375852505 0.993890958699 43.960323363664 29.260884467538
+33	65330 1316 88 7326 1 96 90 1 74 3268 158774
+34	66646 1439 88 7621 1 100 100 0 160 3268 259576
+35	68085 2986 142 7617 2 100 112 0.001316549389 0.997013935909 54.918634829369 36.523670768539
+36	71071 1637 142 7617 2 100 112 1 75 4063 202903
+37	72708 2754 145 7620 2 100 103 0.012020353635 0.982251267055 51.95615127094 34.367894737595
+38	75462 1509 145 7620 2 100 103 2 75 3368 162564
+39	76971 2347 220 7613 3 100 88 0.008285283312 0.987351092998 47.961996967851 32.529234158884
+40	79318 1289 220 7613 3 100 88 1 75 3366 171756
+41	80607 2964 222 7615 3 100 111 0.00970176794 0.983729544987 52.103529565711 34.220846988872
+42	83571 1635 222 7615 3 100 111 1 75 4193 207777
+43	85206 2736 279 7611 4 100 102 0.011840716541 0.989245219823 46.068252814011 28.285724455212
+44	87942 1513 279 7611 4 100 102 1 75 4291 229855
+

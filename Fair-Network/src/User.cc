@@ -59,6 +59,7 @@ void User::sendCQI() {
         cqi = binomial(15, p, indexRNGCQI);
     }else{
         cqi = intuniform(1, 15, indexRNGCQI);
+        cqi = 15;
     }
     CqiMsg *cqiMsg = new CqiMsg("CQI");
     cqiMsg->setValue(cqi);

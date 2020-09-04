@@ -4,8 +4,15 @@ import pandas as pd
 import matplotlib.pyplot as plt
 import json
 
+import re
+
+def findStringBetween(originalStr,str1,str2):
+    originalStr
+    result = re.search('{str1};(.*){str2}', originalStr)
+    return result.group(1)
+    
 def main():
-    readFromJson("data/carico.json")
+    readFromJson("data/fixedCQI.json")
     return 0
 
 def transformDictionary(dictionary):
@@ -17,7 +24,9 @@ def transformDictionary(dictionary):
     for i in range(len(vectors)):
         actualVect = vectors[i]
         userID = actualVect["module"]
-        intIdUser = int(userID[userID.find("[") + 1])
+        start = userID.find("[")
+        finish = userID.find("]")
+        intIdUser = int(userID[start + 1 : finish])
         aux = actualVect["name"].find(":")
         vectorName = actualVect["name"][0:aux]
         data["users"][intIdUser]["userID"] = intIdUser
@@ -59,16 +68,17 @@ def getThroughputDataFrame(data):
 
     numUser = data["numUsers"]
 
-    users = []
+    usersColumnNames = []
     
     for i in range(numUser):
+        print(i)
         throughputStats = data["users"][i]["userThroughputStat"]["value"]
         userName = "User" + str(i)
-        users.append(userName)
+        usersColumnNames.append(userName)
         throughputDF[userName] = throughputStats
 
-    throughputDF["Mean"] = throughputDF[users].mean(axis = 1)
-    throughputDF["Sum"] = throughputDF[users].sum(axis = 1)
+    throughputDF["Mean"] = throughputDF[usersColumnNames].mean(axis = 1)
+    throughputDF["Sum"] = throughputDF[usersColumnNames].sum(axis = 1)
 
     return throughputDF
 
@@ -82,11 +92,11 @@ def readFromJson(filename):
     
     #fig, axes = plt.subplots(nrows = 3, ncols = 2, sharex=True)
 
-    axes = dataFrame.plot.line(title='utente[0].plot.scatter(x=timeslots, y=troughput)', x="TimeSlots", y="User0", alpha=0.5, style='-o')
-    dataFrame.plot.line(title='utente[1].plot.scatter(x=timeslots, y=troughput)', x="TimeSlots", y="User1", alpha=0.5, style='-o', ax = axes)
-    dataFrame.plot.line(title='utente[2].plot.scatter(x=timeslots, y=troughput)', x="TimeSlots", y="User2", alpha=0.5, style='-o', ax = axes)
-    dataFrame.plot.line(title='Mean.plot.scatter(x=timeslots, y=troughput)', x="TimeSlots", y="Mean", alpha=0.5, style='-o')
-    dataFrame.plot.line(title='Sum.plot.scatter(x=timeslots, y=troughput)', x="TimeSlots", y="Sum", alpha=0.5, style='-o')
+    axes = dataFrame.plot.line(title='Users values', x="TimeSlots", y="User0", alpha=0.5, style='-o')
+    dataFrame.plot.line(title='', x="TimeSlots", y="User1", alpha=0.5, style='-o', ax = axes)
+    dataFrame.plot.line(title='', x="TimeSlots", y="User2", alpha=0.5, style='-o', ax = axes)
+    dataFrame.plot.line(title='Mean of values for timeslot', x="TimeSlots", y="Mean", alpha=0.5, style='-o')
+    dataFrame.plot.line(title='Sum of values for timeslot', x="TimeSlots", y="Sum", alpha=0.5, style='-o')
     
     plt.show()
     return
