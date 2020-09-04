@@ -6,13 +6,20 @@ import json
 
 import re
 
+def saveCsvAsJsonFile(filename):
+    df = pd.read_csv (filename + ".csv")
+    df.to_json(filename + ".json")
+
+
+
 def findStringBetween(originalStr,str1,str2):
     originalStr
     result = re.search('{str1};(.*){str2}', originalStr)
     return result.group(1)
     
 def main():
-    readFromJson("data/fixedCQI.json")
+    #readFromJson("data/fixedCQI.json")
+    saveCsvAsJsonFile("data/prova")
     return 0
 
 def transformDictionary(dictionary):

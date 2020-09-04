@@ -1,4 +1,4 @@
-file 264272 1599228513                                          
+file 264272 1599232769                                          
 version 2
 run General-0-20200904-16:08:25-9696
 attr configname General
@@ -24,45 +24,44 @@ vector 0 FairNetwork.user[0] packetDelayStat:vector ETV
 attr "" ""
 attr source packetDelay
 attr title "Packet delay, vector"
+0	1723 56386 914 90040 1 99 2045 0.326624041392 78.987489465092 83004.310037502 4440789.2565392
 vector 1 FairNetwork.user[0] packetBytesStat:vector ETV
 attr "" ""
 attr source packetBytes
 attr title "Packet bytes, vector"
+1	58109 30014 914 90040 1 99 2045 1 75 76005 3722909
 vector 2 FairNetwork.user[0] userThroughputStat:vector ETV
 attr "" ""
 attr source userThroughput
 attr title "User throughput, vector"
+2	88123 1480 914 90986 1 100 100 0 2324 76005 175059693
 vector 3 FairNetwork.user[1] userThroughputStat:vector ETV
 attr "" ""
 attr source userThroughput
 attr title "User throughput, vector"
+3	89603 1483 915 90987 1 100 100 0 2325 77965 178795989
 vector 4 FairNetwork.user[2] userThroughputStat:vector ETV
 attr "" ""
 attr source userThroughput
 attr title "User throughput, vector"
+4	91086 1480 916 90988 1 100 100 0 2325 75783 174045649
 vector 5 FairNetwork.user[1] packetDelayStat:vector ETV
 attr "" ""
 attr source packetDelay
 attr title "Packet delay, vector"
+5	92566 56765 1798 90987 2 100 2055 1.370156033199 80.494315340967 82747.467848753 4440560.6738944
 vector 6 FairNetwork.user[1] packetBytesStat:vector ETV
 attr "" ""
 attr source packetBytes
 attr title "Packet bytes, vector"
+6	149331 30288 1798 90987 2 100 2055 1 75 77965 3937325
 vector 7 FairNetwork.user[2] packetDelayStat:vector ETV
 attr "" ""
 attr source packetDelay
 attr title "Packet delay, vector"
+7	179619 55256 2769 89183 3 98 2008 2.398321649261 79.233813070523 79395.808969009 4210639.1603414
 vector 8 FairNetwork.user[2] packetBytesStat:vector ETV
 attr "" ""
 attr source packetBytes
 attr title "Packet bytes, vector"
-0	1723 56386 914 90040 1 99 2045 0.326624041392 78.987489465092 83004.310037502 4440789.2565392
-1	58109 30014 914 90040 1 99 2045 1 75 76005 3722909
-2	88123 1480 914 90986 1 100 100 0 2324 76005 175059693
-3	89603 1483 915 90987 1 100 100 0 2325 77965 178795989
-4	91086 1480 916 90988 1 100 100 0 2325 75783 174045649
-5	92566 56765 1798 90987 2 100 2055 1.370156033199 80.494315340967 82747.467848753 4440560.6738944
-6	149331 30288 1798 90987 2 100 2055 1 75 77965 3937325
-7	179619 55256 2769 89183 3 98 2008 2.398321649261 79.233813070523 79395.808969009 4210639.1603414
-8	234875 29395 2769 89183 3 98 2008 1 75 75783 3805549
-
+8	234875 29397 2769 89183 3 98 2008 1 75 75783 3805549
