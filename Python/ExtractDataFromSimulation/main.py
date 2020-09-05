@@ -14,6 +14,35 @@ def main():
     #saveCsvAsJsonFile("data/prova")
     return 0
 
+def transformDictionary(dictionary):
+    iterator = iter(dictionary.keys())
+    lenKeys = len(dictionary.keys())
+    data = {"numIterations": lenKeys, "iterations": [dict() for x in range(lenKeys)]}
+    iterations = data["iterations"]
+    
+    for itCounter,childKey in enumerate(iterator):
+        vectors = dictionary[childKey]["vectors"]
+        numUsers = int(dictionary[childKey]["itervars"]["nUser"])
+        actualIteration = {"numUsers": numUsers, "users": [dict() for x in range(numUsers)]}
+        iterations[itCounter] = actualIteration
+        
+        for vec in vectors:
+            userID = vec["module"]
+            start = userID.find("[")
+            finish = userID.find("]")
+            intIdUser = int(userID[start + 1 : finish])
+            aux = vec["name"].find(":")
+            vectorName = vec["name"][0:aux]
+            actualIteration["users"][intIdUser]["userID"] = intIdUser
+            actualIteration["users"][intIdUser][vectorName] = {"time": vec["time"], "value": vec["value"]}
+
+    return data
+
+
+def saveDictToJson(data, filename):
+    with open(filename, 'w') as fp:
+        json.dump(data, fp)
+
 def getThroughputMeanValue(dictionary):
     numUser = dictionary["numUsers"]
 
@@ -37,18 +66,15 @@ def getThroughputMeanValue(dictionary):
 
     return meanThroughput
 
-def getThroughputDataFrame(data):
     throughputDF = pd.DataFrame()
 
-    throughputDF["TimeSlots"] = data["users"][0]["userThroughputStat"]["time"]
-
-    numUser = data["numUsers"]
+    #print("[DEBUG]", iteration.keys())
+    throughputDF["TimeSlots"] = iteration["users"][0]["userThroughputStat"]["time"]
 
     usersColumnNames = []
     
-    for i in range(numUser):
-        print(i)
-        throughputStats = data["users"][i]["userThroughputStat"]["value"]
+    for i,user in enumerate(iteration["users"]):
+        throughputStats = user["userThroughputStat"]["value"]
         userName = "User" + str(i)
         usersColumnNames.append(userName)
         throughputDF[userName] = throughputStats
@@ -62,18 +88,19 @@ def readFromJson(filename):
     data = ode.convertOmnetJson(filename)
     ode.saveJsonToFile(data,"debug/data.json")
 
-    dataFrame = getThroughputDataFrame(data)
-    print (dataFrame)
+    #dataFrame = getThroughputDataFrames(data)
+    
+    #print (dataFrame)
     
     #fig, axes = plt.subplots(nrows = 3, ncols = 2, sharex=True)
 
-    axes = dataFrame.plot.line(title='Users values', x="TimeSlots", y="User0", alpha=0.5, style='-o')
-    dataFrame.plot.line(title='', x="TimeSlots", y="User1", alpha=0.5, style='-o', ax = axes)
-    dataFrame.plot.line(title='', x="TimeSlots", y="User2", alpha=0.5, style='-o', ax = axes)
-    dataFrame.plot.line(title='Mean of values for timeslot', x="TimeSlots", y="Mean", alpha=0.5, style='-o')
-    dataFrame.plot.line(title='Sum of values for timeslot', x="TimeSlots", y="Sum", alpha=0.5, style='-o')
+    #axes = dataFrame.plot.line(title='Users values', x="TimeSlots", y="User0", alpha=0.5, style='-o')
+    #dataFrame.plot.line(title='', x="TimeSlots", y="User1", alpha=0.5, style='-o', ax = axes)
+    #dataFrame.plot.line(title='', x="TimeSlots", y="User2", alpha=0.5, style='-o', ax = axes)
+    #dataFrame.plot.line(title='Mean of values for timeslot', x="TimeSlots", y="Mean", alpha=0.5, style='-o')
+    #dataFrame.plot.line(title='Sum of values for timeslot', x="TimeSlots", y="Sum", alpha=0.5, style='-o')
     
-    plt.show()
+    #plt.show()
     return
 
 if __name__== "__main__":
