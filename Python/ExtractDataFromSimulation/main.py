@@ -5,12 +5,36 @@ import omnetDataExtractor as ode
 
 import re
 
+def examplePlottingDataFromCsv(filename):
+    data = pd.read_csv(filename, converters = {
+    'attrvalue': ode.parse_if_number,
+    'binedges': ode.parse_ndarray,
+    'binvalues': ode.parse_ndarray,
+    'vectime': ode.parse_ndarray,
+    'vecvalue': ode.parse_ndarray})
+
+    vectors = data[data.type=='vector']
+
+    vectors['run'] = vectors['run'].apply(lambda x: x.split("-")[1])
+    vectors['module'] = vectors['module'].apply(lambda x: x.split(".")[1])
+    vectors = vectors.assign(runmodulename = "run["+vectors.run + "]." + vectors.module)
+
+    #print(vectors.run.unique(),vectors.name.unique(), vectors.module.unique(),vectors.runmodulename.unique())
+
+    somevectors = vectors[vectors.name == 'userThroughputStat:vector'][:]
+    for row in somevectors.itertuples():
+        plt.plot(row.vectime, row.vecvalue)
+    plt.title(somevectors.name.values[0])
+    plt.legend(somevectors.runmodulename)
+    plt.show()
+    return
+
 def saveCsvAsJsonFile(filename):
     df = pd.read_csv (filename + ".csv")
     df.to_json(filename + ".json")
     
 def main():
-    readFromJson("data/fixedCQI.json")
+    readFromJson("data/normal.csv")
     #saveCsvAsJsonFile("data/prova")
     return 0
 
@@ -56,8 +80,8 @@ def getThroughputMeanValue(dictionary):
     return throughputDF
 
 def readFromJson(filename):
-    data = ode.convertOmnetJson(filename)
-    ode.saveJsonToFile(data,"debug/data.json")
+    #data = ode.convertOmnetJson(filename)
+    #ode.saveJsonToFile(data,"debug/data.json")
 
     #dataFrame = getThroughputDataFrames(data)
     

@@ -1,4 +1,13 @@
+import numpy as np
 import json
+
+
+def parse_if_number(s):
+    try: return float(s)
+    except: return True if s=="true" else False if s=="false" else s if s else None
+
+def parse_ndarray(s):
+    return np.fromstring(s, sep=' ') if s else None
 
 def saveJsonToFile(data, filename):
     with open(filename, 'w') as fp:
