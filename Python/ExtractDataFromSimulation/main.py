@@ -1,49 +1,18 @@
 #!/usr/bin/python
-import sys
 import pandas as pd
 import matplotlib.pyplot as plt
-import json
+import omnetDataExtractor as ode
 
 import re
 
 def saveCsvAsJsonFile(filename):
     df = pd.read_csv (filename + ".csv")
     df.to_json(filename + ".json")
-
-
-
-def findStringBetween(originalStr,str1,str2):
-    originalStr
-    result = re.search('{str1};(.*){str2}', originalStr)
-    return result.group(1)
     
 def main():
-    #readFromJson("data/fixedCQI.json")
-    saveCsvAsJsonFile("data/prova")
+    readFromJson("data/fixedCQI.json")
+    #saveCsvAsJsonFile("data/prova")
     return 0
-
-def transformDictionary(dictionary):
-    firstChildKey = next(iter(dictionary))
-    vectors = dictionary[firstChildKey]["vectors"]
-    numUsers = int(dictionary[firstChildKey]["itervars"]["nUser"])
-    data = {"numUsers": numUsers, "users": [dict() for x in range(numUsers)]}
-
-    for i in range(len(vectors)):
-        actualVect = vectors[i]
-        userID = actualVect["module"]
-        start = userID.find("[")
-        finish = userID.find("]")
-        intIdUser = int(userID[start + 1 : finish])
-        aux = actualVect["name"].find(":")
-        vectorName = actualVect["name"][0:aux]
-        data["users"][intIdUser]["userID"] = intIdUser
-        data["users"][intIdUser][vectorName] = {"time": actualVect["time"], "value": actualVect["value"]}
-    return data
-
-
-def saveDictToJson(data, filename):
-    with open(filename, 'w') as fp:
-        json.dump(data, fp)
 
 def getThroughputMeanValue(dictionary):
     numUser = dictionary["numUsers"]
@@ -90,9 +59,8 @@ def getThroughputDataFrame(data):
     return throughputDF
 
 def readFromJson(filename):
-    dataset = pd.read_json(filename)
-    data = transformDictionary(dataset)
-    saveDictToJson(data,"data.json")
+    data = ode.convertOmnetJson(filename)
+    ode.saveJsonToFile(data,"debug/data.json")
 
     dataFrame = getThroughputDataFrame(data)
     print (dataFrame)
