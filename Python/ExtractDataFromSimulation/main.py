@@ -2,8 +2,20 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 import omnetDataExtractor as ode
+import omnetDataConverter as odc
 
 import re
+
+def main():
+    data = ode.createJsonFromCSV("data/results.csv")
+    #ode.saveJsonToFile(data,"debug/data.json")
+    dataframes = odc.getArrayDataFrameFromJson(data)
+    for dfk in dataframes.keys():
+        print("================ "+dfk+" ====================")
+        print(dataframes[dfk])
+    #dataFrame = odc.createDataFrameFromJson(data)
+    #print(dataframe)
+    return 0
 
 def examplePlottingDataFromCsv(filename):
     data = pd.read_csv(filename, converters = {
@@ -32,55 +44,9 @@ def examplePlottingDataFromCsv(filename):
 def saveCsvAsJsonFile(filename):
     df = pd.read_csv (filename + ".csv")
     df.to_json(filename + ".json")
-    
-def main():
-    readFromJson("data/normal.csv")
-    #saveCsvAsJsonFile("data/prova")
-    return 0
-
-def getThroughputMeanValue(dictionary):
-    numUser = dictionary["numUsers"]
-
-    meanThroughput = []
-
-    first = True
-    for i in range(numUser):
-        stats = dictionary["users"][i]
-        throughput = stats["userThroughputStat"]
-
-        if first == True:
-            meanThroughput = [elem for elem in throughput]
-        else:
-            meanThroughput = [meanThroughput[i] + throughput[i] for i in range(len(throughput))]
-
-        first = False
-        #user[0]
-
-    for i in range(len(meanThroughput)):
-        meanThroughput[i] = meanThroughput[i]/numUser
-
-    return meanThroughput
-
-    throughputDF = pd.DataFrame()
-
-    #print("[DEBUG]", iteration.keys())
-    throughputDF["TimeSlots"] = iteration["users"][0]["userThroughputStat"]["time"]
-
-    usersColumnNames = []
-    
-    for i,user in enumerate(iteration["users"]):
-        throughputStats = user["userThroughputStat"]["value"]
-        userName = "User" + str(i)
-        usersColumnNames.append(userName)
-        throughputDF[userName] = throughputStats
-
-    throughputDF["Mean"] = throughputDF[usersColumnNames].mean(axis = 1)
-    throughputDF["Sum"] = throughputDF[usersColumnNames].sum(axis = 1)
-
-    return throughputDF
 
 def readFromJson(filename):
-    #data = ode.convertOmnetJson(filename)
+    
     #ode.saveJsonToFile(data,"debug/data.json")
 
     #dataFrame = getThroughputDataFrames(data)
