@@ -1,4 +1,5 @@
 import numpy as np
+import pandas as pd
 import json
 import csv
 
@@ -50,9 +51,14 @@ def convertOmnettDictionary(dictionary):
     return data
 
 
-def checkOrCreateKey(dictionary,key):
+def checkOrCreateKeyAsDictionary(dictionary,key):
     if key not in dictionary:
         dictionary[key] = dict()
+    return dictionary[key]
+
+def checkOrCreateKeyAsDataFrame(dictionary,key):
+    if key not in dictionary:
+        dictionary[key] = pd.DataFrame()
     return dictionary[key]
 
 
@@ -74,10 +80,33 @@ def createJsonFromCSV(filename):
                 valueValues = [float(x) for x in row[14].split(" ")]
                 #valueValues = np.array(row[14].split(' ')).astype(float)
                 
-                actualRun = checkOrCreateKey(data,runID) # creo o aggiungo record a dictionary dell'esecuzione i-esima 
-                actualUser = checkOrCreateKey(actualRun,user) # anche utente e i vector sono dict
-                actualVector = checkOrCreateKey(actualUser,vectorName)
+                actualRun = checkOrCreateKeyAsDictionary(data,runID) # creo o aggiungo record a dictionary dell'esecuzione i-esima 
+                actualUser = checkOrCreateKeyAsDictionary(actualRun,user) # anche utente e i vector sono dict
+                actualVector = checkOrCreateKeyAsDictionary(actualUser,vectorName)
 
                 actualVector["time"] = timeValues # e poi li popolo
                 actualVector["value"] = valueValues         
+    return data
+
+def createDataFrameArrayVectorFromCSV(filename):
+    with open(filename, encoding="utf-8") as csvfile:
+        reader = csv.reader(csvfile, delimiter=',')
+        
+        data = dict()
+
+        for row in reader:
+            if 'vector' in row:
+                runID = row[0][0:row[0].find("-2020")]
+                user = row[2].split(".")[1]
+                vectorName = row[3].split(":")[0]
+                timeValues = [float(x) for x in row[13].split(" ")] 
+                valueValues = [float(x) for x in row[14].split(" ")]
+
+                run = checkOrCreateKeyAsDictionary(data,runID)
+                
+                vectorID = '{run}.{user}.{vector}'.format(run=runID, user=user, vector=vectorName)
+                vector = checkOrCreateKeyAsDataFrame(run,vectorID)
+
+                vector['time'] = timeValues
+                vector['value'] = valueValues         
     return data
