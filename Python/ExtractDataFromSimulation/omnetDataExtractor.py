@@ -76,9 +76,8 @@ def createJsonFromCSV(filename):
                 user = row[2].split(".")[1] # tolgo "FairNetwork."
                 vectorName = row[3].split(":")[0] # prendo solo il tipo di vector
                 timeValues = [float(x) for x in row[13].split(" ")] # converto una stringa di valori divisa da " " in array di float
-                #timeValues = np.array(row[13].split(' ')).astype(float)
+                
                 valueValues = [float(x) for x in row[14].split(" ")]
-                #valueValues = np.array(row[14].split(' ')).astype(float)
                 
                 actualRun = checkOrCreateKeyAsDictionary(data,runID) # creo o aggiungo record a dictionary dell'esecuzione i-esima 
                 actualUser = checkOrCreateKeyAsDictionary(actualRun,user) # anche utente e i vector sono dict
@@ -87,6 +86,7 @@ def createJsonFromCSV(filename):
                 actualVector["time"] = timeValues # e poi li popolo
                 actualVector["value"] = valueValues         
     return data
+
 
 def createDataFrameArrayVectorFromCSV(filename):
     with open(filename, encoding="utf-8") as csvfile:

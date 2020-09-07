@@ -31,8 +31,8 @@ def examplePlottingDataFromCsv(filename):
 
     vectors = data[data.type=='vector']
 
-    vectors['run'] = vectors['run'].apply(lambda x: x.split("-")[1])
-    vectors['module'] = vectors['module'].apply(lambda x: x.split(".")[1])
+    vectors.loc[:,('run')] = vectors['run'].apply(lambda x: x.split("-")[1])
+    vectors.loc[:,('module')] = vectors['module'].apply(lambda x: x.split(".")[1])
     vectors = vectors.assign(runmodulename = "run["+vectors.run + "]." + vectors.module)
 
     #print(vectors.run.unique(),vectors.name.unique(), vectors.module.unique(),vectors.runmodulename.unique())

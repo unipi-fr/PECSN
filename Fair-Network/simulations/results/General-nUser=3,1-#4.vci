@@ -1,0 +1,68 @@
+file 18100 1599491943                                           
+version 2
+run General-4-20200907-17:19:01-13040
+attr configname General
+attr datetime 20200907-17:19:01
+attr experiment General
+attr inifile FairNetworkConf.ini
+attr iterationvars "$nUser=3, $0=1"
+attr iterationvarsf nUser=3,1-
+attr measurement "$nUser=3, $0=1"
+attr network FairNetwork
+attr processid 13040
+attr repetition 4
+attr replication #4
+attr resultdir results
+attr runnumber 4
+attr seedset 4
+itervar nUser 3
+param **.NUM_USER 3
+param **.TIMESLOT 1000ms
+param **.packetGenerator.senders[*].lambda 1
+
+vector 0 FairNetwork.user[0] packetDelayStat:vector ETV
+attr "" ""
+attr source packetDelay
+attr title "Packet delay, vector"
+vector 1 FairNetwork.user[0] packetBytesStat:vector ETV
+attr "" ""
+attr source packetBytes
+attr title "Packet bytes, vector"
+vector 2 FairNetwork.user[0] userThroughputStat:vector ETV
+attr "" ""
+attr source userThroughput
+attr title "User throughput, vector"
+vector 3 FairNetwork.user[1] packetDelayStat:vector ETV
+attr "" ""
+attr source packetDelay
+attr title "Packet delay, vector"
+vector 4 FairNetwork.user[1] packetBytesStat:vector ETV
+attr "" ""
+attr source packetBytes
+attr title "Packet bytes, vector"
+vector 5 FairNetwork.user[1] userThroughputStat:vector ETV
+attr "" ""
+attr source userThroughput
+attr title "User throughput, vector"
+vector 6 FairNetwork.user[2] packetDelayStat:vector ETV
+attr "" ""
+attr source packetDelay
+attr title "Packet delay, vector"
+vector 7 FairNetwork.user[2] packetBytesStat:vector ETV
+attr "" ""
+attr source packetBytes
+attr title "Packet bytes, vector"
+vector 8 FairNetwork.user[2] userThroughputStat:vector ETV
+attr "" ""
+attr source userThroughput
+attr title "User throughput, vector"
+0	1717 2891 17 1651 1 99 115 0.008090362762 0.997800060516 55.357171458575 37.54696972125
+1	4608 1508 17 1651 1 99 115 1 75 4166 201024
+2	6116 1299 17 1673 1 100 100 0 183 4166 377054
+3	7415 2479 18 1674 1 100 98 0.009505365025 0.994957018256 45.59072012277 29.1407069321
+4	9894 1301 18 1674 1 100 98 1 75 3734 183938
+5	11195 1298 18 1674 1 100 100 0 170 3734 305534
+6	12493 2827 19 1675 1 100 112 0.010774630153 0.999299937816 59.998452866268 42.807631548623
+7	15320 1483 19 1675 1 100 112 1 75 4164 203362
+8	16803 1295 19 1675 1 100 100 0 184 4164 408820
+

@@ -1,0 +1,121 @@
+version 2
+run General-2-20200907-17:18:48-13040
+attr configname General
+attr datetime 20200907-17:18:48
+attr experiment General
+attr inifile FairNetworkConf.ini
+attr iterationvars "$nUser=3, $0=1"
+attr iterationvarsf nUser=3,1-
+attr measurement "$nUser=3, $0=1"
+attr network FairNetwork
+attr processid 13040
+attr repetition 2
+attr replication #2
+attr resultdir results
+attr runnumber 2
+attr seedset 2
+itervar nUser 3
+param **.NUM_USER 3
+param **.TIMESLOT 1000ms
+param **.packetGenerator.senders[*].lambda 1
+
+statistic FairNetwork.user[0] userThroughputStat:stats
+field count 100
+field mean 43.48
+field stddev 40.686651820513
+field min 0
+field max 147
+field sum 4348
+field sqrsum 352936
+attr "" ""
+attr source userThroughput
+attr title "User throughput, stats"
+statistic FairNetwork.user[0] packetBytesStat:stats
+field count 111
+field mean 39.171171171171
+field stddev 22.718784328022
+field min 1
+field max 74
+field sum 4348
+field sqrsum 227092
+attr "" ""
+attr source packetBytes
+attr title "Packet bytes, stats"
+statistic FairNetwork.user[0] packetDelayStat:stats
+field count 111
+field mean 0.4943070984839
+field stddev 0.27845425523496
+field min 0.016113077093
+field max 0.990787773127
+field sum 54.868087931713
+field sqrsum 35.650730293315
+attr "" ""
+attr source packetDelay
+attr title "Packet delay, stats"
+statistic FairNetwork.user[1] userThroughputStat:stats
+field count 100
+field mean 38.99
+field stddev 41.274272320122
+field min 0
+field max 149
+field sum 3899
+field sqrsum 320675
+attr "" ""
+attr source userThroughput
+attr title "User throughput, stats"
+statistic FairNetwork.user[1] packetBytesStat:stats
+field count 108
+field mean 36.101851851852
+field stddev 23.41217025747
+field min 1
+field max 75
+field sum 3899
+field sqrsum 199411
+attr "" ""
+attr source packetBytes
+attr title "Packet bytes, stats"
+statistic FairNetwork.user[1] packetDelayStat:stats
+field count 108
+field mean 0.51230721509103
+field stddev 0.27611947279283
+field min 0.024446008249
+field max 0.999155723907
+field sum 55.329179229831
+field sqrsum 36.503427792834
+attr "" ""
+attr source packetDelay
+attr title "Packet delay, stats"
+statistic FairNetwork.user[2] userThroughputStat:stats
+field count 100
+field mean 30.07
+field stddev 34.831268606344
+field min 0
+field max 137
+field sum 3007
+field sqrsum 210529
+attr "" ""
+attr source userThroughput
+attr title "User throughput, stats"
+statistic FairNetwork.user[2] packetBytesStat:stats
+field count 90
+field mean 33.411111111111
+field stddev 22.608487242201
+field min 1
+field max 75
+field sum 3007
+field sqrsum 145959
+attr "" ""
+attr source packetBytes
+attr title "Packet bytes, stats"
+statistic FairNetwork.user[2] packetDelayStat:stats
+field count 90
+field mean 0.50506750797488
+field stddev 0.28568400546906
+field min 0.007713253034
+field max 0.990203722817
+field sum 45.456075717739
+field sqrsum 30.222153122371
+attr "" ""
+attr source packetDelay
+attr title "Packet delay, stats"
+
