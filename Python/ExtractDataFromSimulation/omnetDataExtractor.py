@@ -50,13 +50,18 @@ def convertOmnettDictionary(dictionary):
             actualIteration["users"][intIdUser][vectorName] = {"time": vec["time"], "value": vec["value"]}
     return data
 
-
 def checkOrCreateKeyAsDictionary(dictionary,key):
+    '''
+    Returns the object for given @key in the @dictionary, if doesn't exist it creates it as Dictionary
+    '''
     if key not in dictionary:
         dictionary[key] = dict()
     return dictionary[key]
 
 def checkOrCreateKeyAsDataFrame(dictionary,key):
+    '''
+    Returns the object for given @key in the @dictionary, if doesn't exist it creates it as DataFrame
+    '''
     if key not in dictionary:
         dictionary[key] = pd.DataFrame()
     return dictionary[key]

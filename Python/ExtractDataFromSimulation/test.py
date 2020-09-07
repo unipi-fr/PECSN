@@ -37,10 +37,11 @@ def examplePlottingDataFromCsv(filename):
 
     #print(vectors.run.unique(),vectors.name.unique(), vectors.module.unique(),vectors.runmodulename.unique())
 
-    somevectors = vectors[vectors.name == 'userThroughputStat:vector'][:]
+    somevectors = vectors.loc[vectors.name == 'userThroughputStat:vector'][:]
     for row in somevectors.itertuples():
         plt.plot(row.vectime, row.vecvalue)
     plt.title(somevectors.name.values[0])
     plt.legend(somevectors.runmodulename)
     plt.show()
+    
     return
