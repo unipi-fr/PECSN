@@ -13,8 +13,8 @@ def createDataFrameFromJson(data):
     df = pd.DataFrame()
 
     numberOfFrames = data['numberOfFrames']
-    timeSlot = data['timeslot']
-    indexList = np.arange(timeSlot,numberOfFrames + timeSlot,timeSlot).tolist()
+    timeslot = data['timeslot']
+    indexList = np.arange(timeslot,numberOfFrames*timeslot + timeslot,timeslot).tolist()
 
     userKeys = filter(lambda x: x.startswith('user['), data.keys())
 

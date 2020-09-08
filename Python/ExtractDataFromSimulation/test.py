@@ -5,10 +5,15 @@ import omnetDataConverter as odc
 
 def ExportingDataFromCSVtoDitionaryOfDataFrame(filename):
     runs = ode.createDataFrameArrayVectorFromCSV(filename)
-    run = runs["General-0"]
-    for vecID in run.keys():
-        print("================ "+vecID+" ====================")
-        print(run[vecID])
+    for runID in runs.keys():
+        run = runs[runID]
+        vectorName = "packetDelayStat"
+        vectorKeys = list(filter(lambda x: x.endswith(vectorName), run.keys()))
+        fig, axes = plt.subplots(sharex=True)
+        for vecID in vectorKeys:
+            df = run[vecID]
+            df.plot.line(title=runID, x="time", y=vecID, alpha=0.5, style='-o', ax = axes)   
+    plt.show()
     return
 
 def ExportingCSVToJsonAndThenArrayDataframe(filename, printFileDebug = False):
@@ -17,19 +22,16 @@ def ExportingCSVToJsonAndThenArrayDataframe(filename, printFileDebug = False):
         ode.saveJsonToFile(data,"debug/data.json")
     dfs = odc.getArrayDataFrameFromJson(data)
     vectorName = "packetDelayStat"
-    
-    #fig, axes = plt.subplots(nrows = len(dfs.keys()), ncols = 1, sharex=True)
+
+    fig, axes = plt.subplots(sharex=True)
 
     for i,dfK in enumerate(dfs.keys()):
         df = dfs[dfK]
-        userKeys = list(filter(lambda x: x.endswith(vectorName), df.keys()))
-        fig, axes = plt.subplots(nrows = 1, ncols = 1, sharex=True)
-        for userK in userKeys:
-            df.plot.line(title=dfK, x="time", y=userK, alpha=0.5, style='-o', ax = axes)
+        vectorKeys = list(filter(lambda x: x.endswith(vectorName), df.keys()))
+        df[vectorName+"Mean"] = df[vectorKeys].mean(axis = 1).interpolate(method='linear', limit_direction='forward', axis=0)
+        df.plot.line(title=dfK, x="time", y=(vectorName+"Mean"), alpha=0.5, style='-', ax = axes)
+        print(df)
     plt.show()
-    #for dfID in dfs.keys():
-    #    print("================ "+dfID+" ====================")
-    #    print(dfs[dfID])
     return
 
 def examplePlottingDataFromCsv(filename):

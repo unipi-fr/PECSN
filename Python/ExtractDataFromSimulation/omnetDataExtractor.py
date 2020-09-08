@@ -139,5 +139,5 @@ def createDataFrameArrayVectorFromCSV(filename):
                 vector = checkOrCreateKeyAsDataFrame(run,vectorID)
 
                 vector['time'] = timeValues
-                vector['value'] = valueValues         
+                vector[vectorID] = valueValues         
     return data
