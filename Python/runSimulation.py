@@ -1,7 +1,12 @@
 #!/usr/bin/python
 import os
-RESULTS_PATH = "../../Fair-Network/simulations/results"
-OMNET_PATH_ANDREA = "C:/Users/andre/Desktop/omnetpp-5.6.2"
-CMD_SCRIPT = "mingwenv.cmd"
+ANDREA_RESULTS = "C:/Users/andre/Desktop/git/PECSN/Fair-Network/simulations/results"
+RESULTS_PATH = ANDREA_RESULTS
+ANDREA_OMNET_PATH = "C:/Users/andre/Desktop/omnetpp-5.6.2"
+OMNET_PATH = ANDREA_OMNET_PATH
 
-os.system('{path}/{command}'.format(path=OMNET_PATH_ANDREA,command=CMD_SCRIPT))
+command = 'dir {path}'.format(path=RESULTS_PATH)
+print(command)
+os.chdir(ANDREA_RESULTS)
+os.system("dir")
+os.system('{path}/bin/scavetool.exe x *.sca *.vec -o results.csv'.format(path=OMNET_PATH))
