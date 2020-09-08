@@ -11,14 +11,25 @@ def ExportingDataFromCSVtoDitionaryOfDataFrame(filename):
         print(run[vecID])
     return
 
-def ExportingDataFromCSVtoJson(filename,printFileDebug = False):
+def ExportingCSVToJsonAndThenArrayDataframe(filename, printFileDebug = False):
     data = ode.createJsonFromCSV(filename)
     if printFileDebug:
         ode.saveJsonToFile(data,"debug/data.json")
     dfs = odc.getArrayDataFrameFromJson(data)
-    for dfID in dfs.keys():
-        print("================ "+dfID+" ====================")
-        print(dfs[dfID])
+    vectorName = "packetDelayStat"
+    
+    #fig, axes = plt.subplots(nrows = len(dfs.keys()), ncols = 1, sharex=True)
+
+    for i,dfK in enumerate(dfs.keys()):
+        df = dfs[dfK]
+        userKeys = list(filter(lambda x: x.endswith(vectorName), df.keys()))
+        fig, axes = plt.subplots(nrows = 1, ncols = 1, sharex=True)
+        for userK in userKeys:
+            df.plot.line(title=dfK, x="time", y=userK, alpha=0.5, style='-o', ax = axes)
+    plt.show()
+    #for dfID in dfs.keys():
+    #    print("================ "+dfID+" ====================")
+    #    print(dfs[dfID])
     return
 
 def examplePlottingDataFromCsv(filename):

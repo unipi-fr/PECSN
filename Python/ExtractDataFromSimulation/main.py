@@ -10,7 +10,7 @@ import re
 def main():
     #test.ExportingDataFromCSVtoDitionaryOfDataFrame("data/results.csv")
     #test.examplePlottingDataFromCsv("data/results.csv")
-    test.ExportingCSVToJsonAndThenArrayDataframe(filename="data/results.csv",printFileDebug=True)
+    test.ExportingCSVToJsonAndThenArrayDataframe(filename="data/results.csv", printFileDebug=True)
     return 0
 
 def saveCsvAsJsonFile(filename):

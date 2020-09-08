@@ -1,4 +1,5 @@
 import pandas as pd
+import numpy as np
 
 def getArrayDataFrameFromJson(data):
     dfs = dict()
@@ -10,26 +11,30 @@ def getArrayDataFrameFromJson(data):
 
 def createDataFrameFromJson(data):
     df = pd.DataFrame()
-    userKeys = data.keys()
-    
-    
+
+    numberOfFrames = data['numberOfFrames']
+    timeSlot = data['timeslot']
+    indexList = np.arange(timeSlot,numberOfFrames + timeSlot,timeSlot).tolist()
+
+    userKeys = filter(lambda x: x.startswith('user['), data.keys())
+
+    df['time'] = indexList
+    df = df.set_index(['time'])
+    df['time'] = indexList
 
     for userK in userKeys:
         user = data[userK]
         vetorKeys = user.keys()
         for vectorK in vetorKeys:
             vector = user[vectorK]
-            columnTimeName = '{user}.{vectorName}.time'.format(user = userK, vectorName = vectorK)
-            columnValueName = '{user}.{vectorName}.value'.format(user = userK, vectorName = vectorK)
+            columnValueName = '{user}.{vectorName}'.format(user = userK, vectorName = vectorK)
             tmpDF = pd.DataFrame()
             tmpDF["time"] = vector["time"]
             tmpDF["value"] = vector["value"]
-            tmpDF.groupby("time").mean()
-            tmpDF.set_index("time")
-            tmpDF.reindex()
-            df[columnTimeName] = vector["time"]
-            df[columnValueName] = vector["value"]
-            
+            tmpDF = tmpDF.groupby(["time"]).mean()
+            tmpDF = tmpDF.reindex(indexList)
+
+            df[columnValueName] = tmpDF["value"]
     return df
 
 def getThroughputDataFrames(data):

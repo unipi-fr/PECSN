@@ -50,6 +50,14 @@ def convertOmnettDictionary(dictionary):
             actualIteration["users"][intIdUser][vectorName] = {"time": vec["time"], "value": vec["value"]}
     return data
 
+def checkOrCreateKeyAsValue(dictionary, key, value):
+    '''
+    Returns the object for given @key in the @dictionary, if doesn't exist it creates it as @value
+    '''
+    if key not in dictionary:
+        dictionary[key] = value
+    return dictionary[key]
+
 def checkOrCreateKeyAsDictionary(dictionary,key):
     '''
     Returns the object for given @key in the @dictionary, if doesn't exist it creates it as Dictionary
@@ -66,6 +74,8 @@ def checkOrCreateKeyAsDataFrame(dictionary,key):
         dictionary[key] = pd.DataFrame()
     return dictionary[key]
 
+def fromMillisecondsToSeconds(value):
+    return (float(value[:-2])/1000)
 
 def createJsonFromCSV(filename):
     #apro e leggo il file 
@@ -75,21 +85,37 @@ def createJsonFromCSV(filename):
         data = dict()   # preparo il dizionario con i dati dei vectors
 
         for row in reader: # i serve solo a controllare che ci siano effettivamente solo i vector che ci aspettiamo
-            if 'vector' in row: # mi interessano solo i vectors
+            if 'run' == row[0]:
+                continue
 
-                runID = row[0][0:row[0].find("-2020")] # id run ripulito
+            runID = row[0][0:row[0].find("-2020")] # id run ripulito
+            actualRun = checkOrCreateKeyAsDictionary(data,runID)
+            checkOrCreateKeyAsValue(actualRun,"simulationTime",0)
+            checkOrCreateKeyAsValue(actualRun,"numberOfFrames",0)
+            checkOrCreateKeyAsValue(actualRun,"timeslot",0)
+            
+            if 'scalar' in row and 'simulationTime' in row:
+                actualRun = checkOrCreateKeyAsDictionary(data,runID)
+                actualRun['simulationTime'] = float(row[6])
+            if '**.TIMESLOT' in row:
+                actualRun['timeslot'] = fromMillisecondsToSeconds(row[5])
+            if 'vector' in row: # mi interessano solo i vectors
                 user = row[2].split(".")[1] # tolgo "FairNetwork."
                 vectorName = row[3].split(":")[0] # prendo solo il tipo di vector
+
                 timeValues = [float(x) for x in row[13].split(" ")] # converto una stringa di valori divisa da " " in array di float
-                
                 valueValues = [float(x) for x in row[14].split(" ")]
                 
                 actualRun = checkOrCreateKeyAsDictionary(data,runID) # creo o aggiungo record a dictionary dell'esecuzione i-esima 
                 actualUser = checkOrCreateKeyAsDictionary(actualRun,user) # anche utente e i vector sono dict
                 actualVector = checkOrCreateKeyAsDictionary(actualUser,vectorName)
 
+                if vectorName == 'userThroughputStat':
+                    actualRun['numberOfFrames']  = len(timeValues)
+                
                 actualVector["time"] = timeValues # e poi li popolo
-                actualVector["value"] = valueValues         
+                actualVector["value"] = valueValues
+
     return data
 
 
