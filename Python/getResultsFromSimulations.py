@@ -1,11 +1,11 @@
 #!/usr/bin/python
+import configurator as cfg
 import os
 import json
 
 def main():
     conf = dict()
-    print("Loading configuration.json")
-    conf = loadJsonFromFile("configuration.json")
+    conf = cfg.getConfiguration()
     resultsDir = "{projectDir}/simulations/results".format(projectDir = conf["PROJECT_FOLDER"])
     print("Moving into results directory")
     os.chdir(resultsDir)

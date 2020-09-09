@@ -1,12 +1,11 @@
 #!/usr/bin/python
-import omnetDataExtractor as ode
+import configurator as cfg
 import os
 import json
 
 def main():
     conf = dict()
-    print('Loading "configuration.json"')
-    conf = ode.loadJsonFromFile("configuration.json")
+    conf = cfg.getConfiguration()
     print('Moving in simulation directory')
     simulationDir = "{projectFolder}/simulations".format(projectFolder = conf["PROJECT_FOLDER"])
     os.chdir(simulationDir)
