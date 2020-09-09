@@ -1,17 +1,23 @@
 {
+    "PROJECT_FOLDER": "/home/fraronk/repositories/PECSN/Fair-Network",
     "RESULTS_PATH": "/home/fraronk/repositories/PECSN/Fair-Network/simulations/results",
     "OMNET_PATH": "/home/fraronk/omnetpp",
+    "OUTPUT_PATH": "/home/fraronk/repositories/PECSN/Python/data",
     
     "ANDREA_PATHS":{
+        "PROJECT_FOLDER": "C:/Users/andre/Desktop/git/PECSN/Fair-Network/",
         "RESULTS_PATH": "C:/Users/andre/Desktop/git/PECSN/Fair-Network/simulations/results",
-        "OMNET_PATH": "C:/Users/andre/Desktop/omnetpp-5.6.2"
+        "OMNET_PATH": "C:/Users/andre/Desktop/omnetpp-5.6.2",
+        "OUTPUT_PATH": "C:/Users/andre/Desktop/git/PECSN/Python/data"
     },
     "FRANCESCO_PATHS":{
         "RESULTS_PATH": "C:/PECSN/PECSNrepo/Fair-Network/simulations/results",
-        "OMNET_PATH": "C:/omnetpp5"
+        "OMNET_PATH": "C:/omnetpp5",
+        "OUTPUT_PATH": "C:/PECSN/PECSNrepo/Python/data"
     },
     "FRANCESCO_UBUNTU_PATHS":{
         "RESULTS_PATH": "/home/fraronk/repositories/PECSN/Fair-Network/simulations/results",
-        "OMNET_PATH": "/home/fraronk/omnetpp"
+        "OMNET_PATH": "/home/fraronk/omnetpp",
+        "OUTPUT_PATH": "/home/fraronk/repositories/PECSN/Python/data"
     }
 }
