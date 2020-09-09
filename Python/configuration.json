@@ -1,0 +1,13 @@
+{
+    "RESULTS_PATH": "C:/Users/andre/Desktop/git/PECSN/Fair-Network/simulations/results",
+    "OMNET_PATH": "C:/Users/andre/Desktop/omnetpp-5.6.2",
+    
+    "ANDREA_PATHS":{
+        "RESULTS_PATH": "C:/Users/andre/Desktop/git/PECSN/Fair-Network/simulations/results",
+        "OMNET_PATH": "C:/Users/andre/Desktop/omnetpp-5.6.2"
+    },
+    "FRANCESCO_PATHS":{
+        "RESULTS_PATH": "C:/PECSN/PECSNrepo/Fair-Network/simulations/results",
+        "OMNET_PATH": "C:/omnetpp5"
+    }
+}
