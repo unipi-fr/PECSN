@@ -10,9 +10,9 @@ def main():
     print("moving into results directory")
     os.chdir(conf["RESULTS_PATH"])
     print("printing directory")
-    os.system("dir")
+    os.getcwd()
     print("Extracting results")
-    os.system('{path}/bin/scavetool.exe x *.sca *.vec -o results.csv'.format(path=conf["OMNET_PATH"]))
+    os.system('{path}/bin/scavetool x *.sca *.vec -o results.csv'.format(path=conf["OMNET_PATH"]))
     return
 
 def loadJsonFromFile(filename):
