@@ -1,14 +1,14 @@
 version 2
-run General-0-20200909-17:57:55-25790
+run General-0-20200910-16:50:26-19492
 attr configname General
-attr datetime 20200909-17:57:55
+attr datetime 20200910-16:50:26
 attr experiment General
 attr inifile FairNetworkConf.ini
 attr iterationvars "$simulationTime=2000s, $nUser=30, $0=1"
 attr iterationvarsf simulationTime=2000s,nUser=30,1-
 attr measurement "$simulationTime=2000s, $nUser=30, $0=1"
 attr network FairNetwork
-attr processid 25790
+attr processid 19492
 attr repetition 0
 attr replication #0
 attr resultdir results
@@ -85584,7 +85584,7 @@ attr title "Packet bytes, vector"
 52	3125	25.2	1.226664461545
 52	3125	25.2	1.268709421164
 52	3336	27	0.111393277903
-52	3556	28.8	7.1003563e-05
+52	3556	28.8	7.1003563e-005
 52	3556	28.8	1.695907557803
 52	3791	30.6	1.482182062973
 52	4041	32.4	0.48857395632

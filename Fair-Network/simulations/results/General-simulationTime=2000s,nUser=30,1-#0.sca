@@ -1,14 +1,14 @@
 version 2
-run General-0-20200909-17:57:55-25790
+run General-0-20200910-16:50:26-19492
 attr configname General
-attr datetime 20200909-17:57:55
+attr datetime 20200910-16:50:26
 attr experiment General
 attr inifile FairNetworkConf.ini
 attr iterationvars "$simulationTime=2000s, $nUser=30, $0=1"
 attr iterationvarsf simulationTime=2000s,nUser=30,1-
 attr measurement "$simulationTime=2000s, $nUser=30, $0=1"
 attr network FairNetwork
-attr processid 25790
+attr processid 19492
 attr repetition 0
 attr replication #0
 attr resultdir results
@@ -706,7 +706,7 @@ statistic FairNetwork.user[20] packetDelayStat:stats
 field count 1922
 field mean 1.9383383651542
 field stddev 3.0130747481606
-field min 7.1003563e-05
+field min 7.1003563e-005
 field max 26.270702942205
 field sum 3725.4863378263
 field sqrsum 24661.28103787
