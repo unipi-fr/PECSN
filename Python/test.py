@@ -6,12 +6,12 @@ import omnetDataConverter as odc
 def ExportingDataFromCSVtoDitionaryOfDataFrame(filename):
     runs = ode.createDataFrameArrayVectorFromCSV(filename)
     for runID in runs.keys():
-        run = runs[runID]
+        vectors = runs[runID]["vectors"]
         vectorName = "packetDelayStat"
-        vectorKeys = list(filter(lambda x: x.endswith(vectorName), run.keys()))
+        vectorKeys = list(filter(lambda x: x.endswith(vectorName), vectors.keys()))
         fig, axes = plt.subplots(sharex=True)
         for vecID in vectorKeys:
-            df = run[vecID]
+            df = vectors[vecID]
             df.plot.line(title=runID, x="time", y=vecID, alpha=0.5, style='-o', ax = axes)   
     plt.show()
     return
@@ -66,4 +66,13 @@ def slidingWindowPlots():
     print(df2)
     df = pd.concat([df,df2], sort = False, axis=1)
     print(df)
+    return
+
+def dataFrameForEachRunFromCSV(filename):
+    data = ode.forEachRunCreateDataFrameFromCSV(filename)
+    df = data["General-0"]["DataFrame"]
+    vectorName = "userThroughputStat"
+    #vectorName = "packetDelayStat"
+    vectorKeys = list(filter(lambda x: x.endswith(vectorName), df.keys()))
+    print(df[vectorKeys])
     return

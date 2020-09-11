@@ -20,36 +20,6 @@ def loadJsonFromFile(filename):
         data = json.load(json_file)
         return data
 
-
-def convertOmnetJson(filename):
-    dictionary = loadJsonFromFile(filename)
-    data = convertOmnettDictionary(dictionary)
-    return data
-
-
-def convertOmnettDictionary(dictionary):
-    iterator = iter(dictionary.keys())
-    lenKeys = len(dictionary.keys())
-    data = {"numIterations": lenKeys, "iterations": [dict() for x in range(lenKeys)]}
-    iterations = data["iterations"]
-    
-    for itCounter,childKey in enumerate(iterator):
-        vectors = dictionary[childKey]["vectors"]
-        numUsers = int(dictionary[childKey]["itervars"]["nUser"])
-        actualIteration = {"numUsers": numUsers, "users": [dict() for x in range(numUsers)]}
-        iterations[itCounter] = actualIteration
-        
-        for vec in vectors:
-            userID = vec["module"]
-            start = userID.find("[")
-            finish = userID.find("]")
-            intIdUser = int(userID[start + 1 : finish])
-            aux = vec["name"].find(":")
-            vectorName = vec["name"][0:aux]
-            actualIteration["users"][intIdUser]["userID"] = intIdUser
-            actualIteration["users"][intIdUser][vectorName] = {"time": vec["time"], "value": vec["value"]}
-    return data
-
 def checkOrCreateKeyAsValue(dictionary, key, value):
     '''
     Returns the object for given @key in the @dictionary, if doesn't exist it creates it as @value
@@ -78,6 +48,24 @@ def fromMillisecondsToSeconds(value):
     return (float(value[:-2])/1000)
 
 def createJsonFromCSV(filename):
+    '''
+    Converts a OMNET CSV in a more readable json 
+    @filename is the path of OMNET CSV file
+
+    an example:
+    {
+        "runID":{
+            "numberOfFrame": int,
+            "timeslot": double,
+            "user[i]":{
+                "vectorName": {
+                    "time": [],
+                    "value": []
+                }
+            }
+        }
+    }
+    '''
     #apro e leggo il file 
     with open(filename, encoding="utf-8") as csvfile:
         reader = csv.reader(csvfile, delimiter=',')
@@ -90,13 +78,9 @@ def createJsonFromCSV(filename):
 
             runID = row[0][0:row[0].find("-2020")] # id run ripulito
             actualRun = checkOrCreateKeyAsDictionary(data,runID)
-            checkOrCreateKeyAsValue(actualRun,"simulationTime",0)
             checkOrCreateKeyAsValue(actualRun,"numberOfFrames",0)
             checkOrCreateKeyAsValue(actualRun,"timeslot",0)
             
-            if 'scalar' in row and 'simulationTime' in row:
-                actualRun = checkOrCreateKeyAsDictionary(data,runID)
-                actualRun['simulationTime'] = float(row[6])
             if '**.TIMESLOT' in row:
                 actualRun['timeslot'] = fromMillisecondsToSeconds(row[5])
             if 'vector' in row: # mi interessano solo i vectors
@@ -105,8 +89,7 @@ def createJsonFromCSV(filename):
 
                 timeValues = [float(x) for x in row[13].split(" ")] # converto una stringa di valori divisa da " " in array di float
                 valueValues = [float(x) for x in row[14].split(" ")]
-                
-                actualRun = checkOrCreateKeyAsDictionary(data,runID) # creo o aggiungo record a dictionary dell'esecuzione i-esima 
+
                 actualUser = checkOrCreateKeyAsDictionary(actualRun,user) # anche utente e i vector sono dict
                 actualVector = checkOrCreateKeyAsDictionary(actualUser,vectorName)
 
@@ -118,26 +101,122 @@ def createJsonFromCSV(filename):
 
     return data
 
-
 def createDataFrameArrayVectorFromCSV(filename):
+    '''
+    Create an hibrid data structure form an OMNET CSV file
+    @filename is the path of OMNET CSV file
+
+    an example:
+    {
+        "runID":{
+            "numberOfFrame": int,
+            "timeslot": double,
+            "vectors":{
+                ...
+                "rundID.user[i].vectorName": <DataFrame>{
+                    "time": [],
+                    "rundID.user[i].vectorName": []
+                }
+                ...
+            }
+            
+            
+        }
+    }
+    '''
+    data = baseElaborateVectorsOfCSV(filename,dataFrameArrayVector)             
+    return data
+
+def forEachRunCreateDataFrameFromCSV(filename):
+    '''
+    Create an hibrid data structure form an OMNET CSV file
+    @filename is the path of OMNET CSV file
+
+    an example:
+    {
+        "runID":{
+            "numberOfFrame": int,
+            "timeslot": double,
+            "dataFrame": <DataFrame>{
+                # All vector have the same time
+                "time": []
+                "rundID.user[0].vectorName": [],
+                ...
+                "rundID.user[i].vectorName": []
+            }
+        }
+    }
+    '''
+    data = baseElaborateVectorsOfCSV(filename,createDataFrameFromVector)
+    return data
+
+def dataFrameArrayVector(actualRun,vectorID, timeValues, valueValues):
+    vectors = checkOrCreateKeyAsDictionary(actualRun,"vectors")
+    vector = checkOrCreateKeyAsDataFrame(vectors,vectorID)
+
+    vector['time'] = timeValues
+    vector[vectorID] = valueValues    
+    return actualRun
+
+def createDataFrameFromVector(actualRun,vectorID,timeValues, valueValues):
+
+    df = pd.DataFrame()
+
+    timeslot = actualRun['timeslot']
+    numberOfFrames = actualRun['numberOfFrames']
+
+    indexList = np.arange(timeslot, numberOfFrames*timeslot + timeslot,timeslot).tolist()
+    df['time'] = indexList
+    df = df.set_index(['time'])
+    df['time'] = indexList
+
+    df = checkOrCreateKeyAsValue(actualRun,"DataFrame", df)
+
+    tmpDF = pd.DataFrame()
+    tmpDF["time"] = timeValues
+    tmpDF[vectorID] = valueValues
+    tmpDF = tmpDF.groupby(["time"]).mean()
+    tmpDF = tmpDF.reindex(indexList)
+    df[vectorID] = tmpDF[vectorID]
+
+    return actualRun
+
+def baseElaborateVectorsOfCSV(filename,function):
+    '''
+an example:
+    {
+        "runID":{
+            "numberOfFrame": int,
+            "timeslot": double,
+            "elementCreateByFunction": Object
+        }
+    }
+    '''
     with open(filename, encoding="utf-8") as csvfile:
         reader = csv.reader(csvfile, delimiter=',')
         
         data = dict()
 
         for row in reader:
+            if 'run' == row[0]:
+                continue
+
+            runID = row[0][0:row[0].find("-2020")] # id run ripulito
+            actualRun = checkOrCreateKeyAsDictionary(data,runID)
+            checkOrCreateKeyAsValue(actualRun,"numberOfFrames",0)
+            checkOrCreateKeyAsValue(actualRun,"timeslot",0)
+            
+            if '**.TIMESLOT' in row:
+                actualRun['timeslot'] = fromMillisecondsToSeconds(row[5])
             if 'vector' in row:
-                runID = row[0][0:row[0].find("-2020")]
                 user = row[2].split(".")[1]
                 vectorName = row[3].split(":")[0]
                 timeValues = [float(x) for x in row[13].split(" ")] 
                 valueValues = [float(x) for x in row[14].split(" ")]
+                vectorID = '{run}.{user}.{vector}'.format(run=runID, user=user, vector=vectorName)   
 
-                run = checkOrCreateKeyAsDictionary(data,runID)
+                if vectorName == 'userThroughputStat':
+                    actualRun['numberOfFrames']  = len(timeValues)
                 
-                vectorID = '{run}.{user}.{vector}'.format(run=runID, user=user, vector=vectorName)
-                vector = checkOrCreateKeyAsDataFrame(run,vectorID)
-
-                vector['time'] = timeValues
-                vector[vectorID] = valueValues         
+                function(actualRun,vectorID,timeValues,valueValues)
     return data
