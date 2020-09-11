@@ -62,7 +62,7 @@ def examplePlottingDataFromCsv(filename):
 def slidingWindowPlots():
     df = pd.DataFrame({"col1": range(1,11), "col2": range(21,31)})
     print(df)
-    df2 = df.rolling(window = 3, min_periods = 1).mean().rename(mapper = lambda colName : '{x}.slidingMean'.format(x = colName), axis = 1)
+    df2 = df.rolling(window = 3, min_periods = 1, center = False).mean().rename(mapper = lambda colName : '{x}.slidingMean'.format(x = colName), axis = 1)
     print(df2)
     df = pd.concat([df,df2], sort = False, axis=1)
     print(df)
