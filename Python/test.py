@@ -16,6 +16,11 @@ def ExportingDataFromCSVtoDitionaryOfDataFrame(filename):
     plt.show()
     return
 
+def ExportingJsonFromCSV(filename):
+    json = ode.createJsonFromCSV(filename = filename, skipVectors = True, skipStatistics = False)
+    ode.saveJsonToFile(json,"debug/testJson.json")
+    return
+
 def ExportingCSVToJsonAndThenArrayDataframe(filename, printFileDebug = False):
     data = ode.createJsonFromCSV(filename)
     if printFileDebug:

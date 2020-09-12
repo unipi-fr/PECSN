@@ -1,14 +1,14 @@
 version 2
-run General-0-20200912-10:37:25-6424
+run General-0-20200912-17:42:25-10538
 attr configname General
-attr datetime 20200912-10:37:25
+attr datetime 20200912-17:42:25
 attr experiment General
 attr inifile FairNetworkConf.ini
-attr iterationvars "$simulationTime=100s, $nUser=3, $0=1"
-attr iterationvarsf simulationTime=100s,nUser=3,1-
-attr measurement "$simulationTime=100s, $nUser=3, $0=1"
+attr iterationvars "$simulationTime=100s, $warmUp=0s, $nUser=3, $timeSlot=1000ms, $userLambda=1"
+attr iterationvarsf simulationTime=100s,warmUp=0s,nUser=3,timeSlot=1000ms,userLambda=1-
+attr measurement "$simulationTime=100s, $warmUp=0s, $nUser=3, $timeSlot=1000ms, $userLambda=1"
 attr network FairNetwork
-attr processid 6424
+attr processid 10538
 attr repetition 0
 attr replication #0
 attr resultdir results
@@ -16,6 +16,9 @@ attr runnumber 0
 attr seedset 0
 itervar nUser 3
 itervar simulationTime 100s
+itervar timeSlot 1000ms
+itervar userLambda 1
+itervar warmUp 0s
 param **.NUM_USER 3
 param **.TIMESLOT 1000ms
 param **.packetGenerator.senders[*].lambda 1

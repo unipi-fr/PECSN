@@ -1,15 +1,15 @@
-file 16330 1599899845                                           
+file 16510 1599925348                                           
 version 2
-run General-1-20200912-10:37:25-6424
+run General-1-20200912-17:42:28-10544
 attr configname General
-attr datetime 20200912-10:37:25
+attr datetime 20200912-17:42:28
 attr experiment General
 attr inifile FairNetworkConf.ini
-attr iterationvars "$simulationTime=100s, $nUser=3, $0=1"
-attr iterationvarsf simulationTime=100s,nUser=3,1-
-attr measurement "$simulationTime=100s, $nUser=3, $0=1"
+attr iterationvars "$simulationTime=100s, $warmUp=0s, $nUser=3, $timeSlot=1000ms, $userLambda=1"
+attr iterationvarsf simulationTime=100s,warmUp=0s,nUser=3,timeSlot=1000ms,userLambda=1-
+attr measurement "$simulationTime=100s, $warmUp=0s, $nUser=3, $timeSlot=1000ms, $userLambda=1"
 attr network FairNetwork
-attr processid 6424
+attr processid 10544
 attr repetition 1
 attr replication #1
 attr resultdir results
@@ -17,6 +17,9 @@ attr runnumber 1
 attr seedset 1
 itervar nUser 3
 itervar simulationTime 100s
+itervar timeSlot 1000ms
+itervar userLambda 1
+itervar warmUp 0s
 param **.NUM_USER 3
 param **.TIMESLOT 1000ms
 param **.packetGenerator.senders[*].lambda 1
@@ -57,13 +60,13 @@ vector 8 FairNetwork.user[2] packetBytesStat:vector ETV
 attr "" ""
 attr source packetBytes
 attr title "Packet bytes, vector"
-0	1750 2218 11 1607 1 100 92 0.000827626882 0.996975251011 41.15887616744 25.528489300722
-1	3968 1113 11 1607 1 100 92 3 75 3304 153154
-2	5081 1183 11 1607 1 100 100 0 124 3304 227680
-3	6264 2611 12 1608 1 100 108 0.010719451578 0.967922753785 53.247307733272 34.051672765907
-4	8875 1312 12 1608 1 100 108 1 73 3791 184547
-5	10187 1195 12 1608 1 100 100 0 205 3791 335647
-6	11382 1187 13 1609 1 100 100 0 177 3529 296007
-7	12569 2502 39 1587 3 99 103 0.007954585826 0.999311231756 53.790296417012 36.200311739497
-8	15071 1258 39 1587 3 99 103 2 73 3529 163219
+0	1930 2218 11 1607 1 100 92 0.000827626882 0.996975251011 41.15887616744 25.528489300722
+1	4148 1113 11 1607 1 100 92 3 75 3304 153154
+2	5261 1183 11 1607 1 100 100 0 124 3304 227680
+3	6444 2611 12 1608 1 100 108 0.010719451578 0.967922753785 53.247307733272 34.051672765907
+4	9055 1312 12 1608 1 100 108 1 73 3791 184547
+5	10367 1195 12 1608 1 100 100 0 205 3791 335647
+6	11562 1187 13 1609 1 100 100 0 177 3529 296007
+7	12749 2502 39 1587 3 99 103 0.007954585826 0.999311231756 53.790296417012 36.200311739497
+8	15251 1258 39 1587 3 99 103 2 73 3529 163219
 

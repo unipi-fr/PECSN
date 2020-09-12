@@ -3,7 +3,6 @@ import pandas as pd
 import json
 import csv
 
-
 def parse_if_number(s):
     try: return float(s)
     except: return True if s=="true" else False if s=="false" else s if s else None
@@ -47,7 +46,7 @@ def checkOrCreateKeyAsDataFrame(dictionary,key):
 def fromMillisecondsToSeconds(value):
     return (float(value[:-2])/1000)
 
-def createJsonFromCSV(filename):
+def createJsonFromCSV(filename, skipVectors = False, skipStatistics = False):
     '''
     Converts a OMNET CSV in a more readable json 
     @filename is the path of OMNET CSV file
@@ -60,6 +59,13 @@ def createJsonFromCSV(filename):
             "simulationTime": double,
             "user[i]":{
                 "vectorName": {
+                    "statistics": {
+                        "count": int,
+                        "mean": float,
+                        "variance": float,
+                        "min": float,
+                        "max": float
+                        },
                     "time": [],
                     "value": []
                 }
@@ -67,17 +73,8 @@ def createJsonFromCSV(filename):
         }
     }
     '''
-    data = baseElaborateVectorsOfCSV(filename,handleVecctorAsJson)             
+    data = baseElaborateVectorsOfCSV(filename,None if skipVectors else handleVectorAsJson,None if skipStatistics else handleStatisticsAsJson)             
     return data
-
-def handleVecctorAsJson(actualRun,runID,userName,vectorName,timeValues, valueValues):
-    actualUser = checkOrCreateKeyAsDictionary(actualRun,userName)
-    actualVector = checkOrCreateKeyAsDictionary(actualUser,vectorName)
-
-    actualVector["time"] = timeValues
-    actualVector["value"] = valueValues
-
-    return actualRun
 
 def createDataFrameArrayVectorFromCSV(filename):
     '''
@@ -130,6 +127,23 @@ def forEachRunCreateDataFrameFromCSV(filename):
     data = baseElaborateVectorsOfCSV(filename,handleVectorsAsDataFrame)
     return data
 
+def handleVectorAsJson(actualRun,runID,userName,vectorName,timeValues,valueValues):
+    actualUser = checkOrCreateKeyAsDictionary(actualRun,userName)
+    actualVector = checkOrCreateKeyAsDictionary(actualUser,vectorName)
+
+    actualVector["time"] = timeValues
+    actualVector["value"] = valueValues
+
+    return actualRun
+
+def handleStatisticsAsJson(actualRun,runID,userName,vectorName,statistics):
+    actualUser = checkOrCreateKeyAsDictionary(actualRun,userName)
+    actualVector = checkOrCreateKeyAsDictionary(actualUser,vectorName)
+    
+    actualVector["statistics"] = statistics
+
+    return actualRun
+
 def handleVectorAsArraysOfDataFrame(actualRun,runID,userName,vectorName,timeValues, valueValues):
     vectorID = '{run}.{user}.{vector}'.format(run=runID, user=userName, vector=vectorName) 
     vectors = checkOrCreateKeyAsDictionary(actualRun,"vectors")
@@ -162,9 +176,9 @@ def handleVectorsAsDataFrame(actualRun,runID,userName,vectorName,timeValues, val
 
     return actualRun
 
-def baseElaborateVectorsOfCSV(filename,handlingFunction):
+def baseElaborateVectorsOfCSV(filename,handlingVectorsFunction = None ,handlingStatisticFunction = None):
     '''
-an example:
+    an example:
     {
         "runID":{
             "numberOfFrame": int,
@@ -194,7 +208,7 @@ an example:
                 actualRun['simulationTime'] = float(row[5][:row[5].find("s")])
             if '**.TIMESLOT' in row:
                 actualRun['timeslot'] = fromMillisecondsToSeconds(row[5])
-            if 'vector' in row:
+            if handlingVectorsFunction is not None and'vector' in row:
                 user = row[2].split(".")[1]
                 vectorName = row[3].split(":")[0]
                 timeValues = [float(x) for x in row[13].split(" ")] 
@@ -203,5 +217,17 @@ an example:
                 if vectorName == 'userThroughputStat':
                     actualRun['numberOfFrames']  = len(timeValues)
                 
-                handlingFunction(actualRun,runID,user,vectorName,timeValues,valueValues)
+                handlingVectorsFunction(actualRun,runID,user,vectorName,timeValues,valueValues)
+            if handlingStatisticFunction is not None and 'statistic' in row:
+                user = row[2].split(".")[1]
+                vectorName = row[3].split(":")[0]
+                statistics = {
+                    "count": int(row[7]),
+                    "mean": float(row[9]),
+                    "variance": float(row[10]),
+                    "min": float(row[11]),
+                    "max": float(row[12])
+                }
+
+                handlingStatisticFunction(actualRun, runID, user, vectorName, statistics)
     return data
