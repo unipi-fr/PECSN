@@ -1,14 +1,14 @@
 version 2
-run General-0-20200911-18:01:49-10609
+run General-0-20200912-10:37:25-6424
 attr configname General
-attr datetime 20200911-18:01:49
+attr datetime 20200912-10:37:25
 attr experiment General
 attr inifile FairNetworkConf.ini
 attr iterationvars "$simulationTime=100s, $nUser=3, $0=1"
 attr iterationvarsf simulationTime=100s,nUser=3,1-
 attr measurement "$simulationTime=100s, $nUser=3, $0=1"
 attr network FairNetwork
-attr processid 10609
+attr processid 6424
 attr repetition 0
 attr replication #0
 attr resultdir results

@@ -1,6 +1,6 @@
-file 16341 1599899845                                           
+file 16330 1599899845                                           
 version 2
-run General-0-20200912-10:37:25-6424
+run General-1-20200912-10:37:25-6424
 attr configname General
 attr datetime 20200912-10:37:25
 attr experiment General
@@ -10,11 +10,11 @@ attr iterationvarsf simulationTime=100s,nUser=3,1-
 attr measurement "$simulationTime=100s, $nUser=3, $0=1"
 attr network FairNetwork
 attr processid 6424
-attr repetition 0
-attr replication #0
+attr repetition 1
+attr replication #1
 attr resultdir results
-attr runnumber 0
-attr seedset 0
+attr runnumber 1
+attr seedset 1
 itervar nUser 3
 itervar simulationTime 100s
 param **.NUM_USER 3
@@ -45,25 +45,25 @@ vector 5 FairNetwork.user[1] userThroughputStat:vector ETV
 attr "" ""
 attr source userThroughput
 attr title "User throughput, vector"
-vector 6 FairNetwork.user[2] packetDelayStat:vector ETV
-attr "" ""
-attr source packetDelay
-attr title "Packet delay, vector"
-vector 7 FairNetwork.user[2] packetBytesStat:vector ETV
-attr "" ""
-attr source packetBytes
-attr title "Packet bytes, vector"
-vector 8 FairNetwork.user[2] userThroughputStat:vector ETV
+vector 6 FairNetwork.user[2] userThroughputStat:vector ETV
 attr "" ""
 attr source userThroughput
 attr title "User throughput, vector"
-0	1750 2401 20 1607 1 100 99 0.000115481709 0.985728214613 45.188790248755 27.458930087556
-1	4151 1213 20 1607 1 100 99 1 75 3706 181284
-2	5364 1195 20 1607 1 100 100 0 148 3706 290962
-3	6559 2304 21 1608 1 100 95 0.005034139455 0.993050841436 45.582720471742 31.150624491151
-4	8863 1169 21 1608 1 100 95 1 74 3983 211625
-5	10032 1190 21 1608 1 100 100 0 151 3983 360791
-6	11222 2622 22 1609 1 100 109 0.005262213771 0.99971191049 50.694231901522 32.586158377608
-7	13844 1308 22 1609 1 100 109 1 74 3590 167776
-8	15152 1188 22 1609 1 100 100 0 214 3590 295282
+vector 7 FairNetwork.user[2] packetDelayStat:vector ETV
+attr "" ""
+attr source packetDelay
+attr title "Packet delay, vector"
+vector 8 FairNetwork.user[2] packetBytesStat:vector ETV
+attr "" ""
+attr source packetBytes
+attr title "Packet bytes, vector"
+0	1750 2218 11 1607 1 100 92 0.000827626882 0.996975251011 41.15887616744 25.528489300722
+1	3968 1113 11 1607 1 100 92 3 75 3304 153154
+2	5081 1183 11 1607 1 100 100 0 124 3304 227680
+3	6264 2611 12 1608 1 100 108 0.010719451578 0.967922753785 53.247307733272 34.051672765907
+4	8875 1312 12 1608 1 100 108 1 73 3791 184547
+5	10187 1195 12 1608 1 100 100 0 205 3791 335647
+6	11382 1187 13 1609 1 100 100 0 177 3529 296007
+7	12569 2502 39 1587 3 99 103 0.007954585826 0.999311231756 53.790296417012 36.200311739497
+8	15071 1258 39 1587 3 99 103 2 73 3529 163219
 

@@ -59,20 +59,29 @@ def examplePlottingDataFromCsv(filename):
     
     return
 
-def slidingWindowPlots():
-    df = pd.DataFrame({"col1": range(1,11), "col2": range(21,31)})
-    print(df)
-    df2 = df.rolling(window = 3, min_periods = 1, center = False).mean().rename(mapper = lambda colName : '{x}.slidingMean'.format(x = colName), axis = 1)
-    print(df2)
-    df = pd.concat([df,df2], sort = False, axis=1)
-    print(df)
+def slidingWindowPlots(filename, windowSize, minPeriods, center):
+    data = ode.forEachRunCreateDataFrameFromCSV(filename)
+    runKeys = data.keys()
+    dfSlidingMeans = pd.DataFrame()
+    for runK in runKeys:
+        actualDF = data[runK]["DataFrame"]
+        vectorName = "packetDelayStat"
+        vectorKeys = list(filter(lambda x: x.endswith(vectorName), actualDF.keys()))
+        tmpDF = actualDF[vectorKeys].rolling(window = windowSize, min_periods = minPeriods, center = center).mean()
+        #tmpDF.rename(mapper = lambda colName : '{x}.slidingMean'.format(x = colName), axis = 1)
+        dfSlidingMeans = pd.concat([dfSlidingMeans,tmpDF], sort = False, axis=1)
+    print(dfSlidingMeans)
+    dfSlidingMeans.plot.line(title = "Sliding window mean")
+    plt.show()
     return
 
 def dataFrameForEachRunFromCSV(filename):
     data = ode.forEachRunCreateDataFrameFromCSV(filename)
-    df = data["General-0"]["DataFrame"]
-    vectorName = "userThroughputStat"
-    #vectorName = "packetDelayStat"
-    vectorKeys = list(filter(lambda x: x.endswith(vectorName), df.keys()))
-    print(df[vectorKeys])
+    runKeys = data.keys()
+    for runK in runKeys:
+        df = data[runK]["DataFrame"]
+        #vectorName = "userThroughputStat"
+        vectorName = "packetDelayStat"
+        vectorKeys = list(filter(lambda x: x.endswith(vectorName), df.keys()))
+        print(df[vectorKeys])
     return

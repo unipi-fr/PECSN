@@ -11,8 +11,8 @@ def main():
     #test.ExportingDataFromCSVtoDitionaryOfDataFrame("data/results.csv")
     #test.examplePlottingDataFromCsv("data/results.csv")
     #test.ExportingCSVToJsonAndThenArrayDataframe(filename="data/results.csv", printFileDebug=True)
-    #test.slidingWindowPlots()
-    test.dataFrameForEachRunFromCSV("data/results.csv")
+    test.slidingWindowPlots(filename = "data/results.csv", windowSize = 20, minPeriods = 1, center = False)
+    #test.dataFrameForEachRunFromCSV("data/results.csv")
     return 0
 
 if __name__== "__main__":

@@ -57,6 +57,7 @@ def createJsonFromCSV(filename):
         "runID":{
             "numberOfFrame": int,
             "timeslot": double,
+            "simulationTime": double,
             "user[i]":{
                 "vectorName": {
                     "time": [],
@@ -66,40 +67,17 @@ def createJsonFromCSV(filename):
         }
     }
     '''
-    #apro e leggo il file 
-    with open(filename, encoding="utf-8") as csvfile:
-        reader = csv.reader(csvfile, delimiter=',')
-        
-        data = dict()   # preparo il dizionario con i dati dei vectors
-
-        for row in reader: # i serve solo a controllare che ci siano effettivamente solo i vector che ci aspettiamo
-            if 'run' == row[0]:
-                continue
-
-            runID = row[0][0:row[0].find("-2020")] # id run ripulito
-            actualRun = checkOrCreateKeyAsDictionary(data,runID)
-            checkOrCreateKeyAsValue(actualRun,"numberOfFrames",0)
-            checkOrCreateKeyAsValue(actualRun,"timeslot",0)
-            
-            if '**.TIMESLOT' in row:
-                actualRun['timeslot'] = fromMillisecondsToSeconds(row[5])
-            if 'vector' in row: # mi interessano solo i vectors
-                user = row[2].split(".")[1] # tolgo "FairNetwork."
-                vectorName = row[3].split(":")[0] # prendo solo il tipo di vector
-
-                timeValues = [float(x) for x in row[13].split(" ")] # converto una stringa di valori divisa da " " in array di float
-                valueValues = [float(x) for x in row[14].split(" ")]
-
-                actualUser = checkOrCreateKeyAsDictionary(actualRun,user) # anche utente e i vector sono dict
-                actualVector = checkOrCreateKeyAsDictionary(actualUser,vectorName)
-
-                if vectorName == 'userThroughputStat':
-                    actualRun['numberOfFrames']  = len(timeValues)
-                
-                actualVector["time"] = timeValues # e poi li popolo
-                actualVector["value"] = valueValues
-
+    data = baseElaborateVectorsOfCSV(filename,handleVecctorAsJson)             
     return data
+
+def handleVecctorAsJson(actualRun,runID,userName,vectorName,timeValues, valueValues):
+    actualUser = checkOrCreateKeyAsDictionary(actualRun,userName)
+    actualVector = checkOrCreateKeyAsDictionary(actualUser,vectorName)
+
+    actualVector["time"] = timeValues
+    actualVector["value"] = valueValues
+
+    return actualRun
 
 def createDataFrameArrayVectorFromCSV(filename):
     '''
@@ -111,6 +89,7 @@ def createDataFrameArrayVectorFromCSV(filename):
         "runID":{
             "numberOfFrame": int,
             "timeslot": double,
+            "simulationTime": double,
             "vectors":{
                 ...
                 "rundID.user[i].vectorName": <DataFrame>{
@@ -124,7 +103,7 @@ def createDataFrameArrayVectorFromCSV(filename):
         }
     }
     '''
-    data = baseElaborateVectorsOfCSV(filename,dataFrameArrayVector)             
+    data = baseElaborateVectorsOfCSV(filename,handleVectorAsArraysOfDataFrame)             
     return data
 
 def forEachRunCreateDataFrameFromCSV(filename):
@@ -137,6 +116,7 @@ def forEachRunCreateDataFrameFromCSV(filename):
         "runID":{
             "numberOfFrame": int,
             "timeslot": double,
+            "simulationTime": double,
             "dataFrame": <DataFrame>{
                 # All vector have the same time
                 "time": []
@@ -147,10 +127,11 @@ def forEachRunCreateDataFrameFromCSV(filename):
         }
     }
     '''
-    data = baseElaborateVectorsOfCSV(filename,createDataFrameFromVector)
+    data = baseElaborateVectorsOfCSV(filename,handleVectorsAsDataFrame)
     return data
 
-def dataFrameArrayVector(actualRun,vectorID, timeValues, valueValues):
+def handleVectorAsArraysOfDataFrame(actualRun,runID,userName,vectorName,timeValues, valueValues):
+    vectorID = '{run}.{user}.{vector}'.format(run=runID, user=userName, vector=vectorName) 
     vectors = checkOrCreateKeyAsDictionary(actualRun,"vectors")
     vector = checkOrCreateKeyAsDataFrame(vectors,vectorID)
 
@@ -158,14 +139,14 @@ def dataFrameArrayVector(actualRun,vectorID, timeValues, valueValues):
     vector[vectorID] = valueValues    
     return actualRun
 
-def createDataFrameFromVector(actualRun,vectorID,timeValues, valueValues):
-
+def handleVectorsAsDataFrame(actualRun,runID,userName,vectorName,timeValues, valueValues):
+    vectorID = '{run}.{user}.{vector}'.format(run=runID, user=userName, vector=vectorName) 
     df = pd.DataFrame()
 
     timeslot = actualRun['timeslot']
-    numberOfFrames = actualRun['numberOfFrames']
+    simulationTime = actualRun['simulationTime']
 
-    indexList = np.arange(timeslot, numberOfFrames*timeslot + timeslot,timeslot).tolist()
+    indexList = np.arange(timeslot, (simulationTime/timeslot) + timeslot ,timeslot).tolist()
     df['time'] = indexList
     df = df.set_index(['time'])
     df['time'] = indexList
@@ -181,13 +162,14 @@ def createDataFrameFromVector(actualRun,vectorID,timeValues, valueValues):
 
     return actualRun
 
-def baseElaborateVectorsOfCSV(filename,function):
+def baseElaborateVectorsOfCSV(filename,handlingFunction):
     '''
 an example:
     {
         "runID":{
             "numberOfFrame": int,
             "timeslot": double,
+            "simulationTime": double,
             "elementCreateByFunction": Object
         }
     }
@@ -205,18 +187,21 @@ an example:
             actualRun = checkOrCreateKeyAsDictionary(data,runID)
             checkOrCreateKeyAsValue(actualRun,"numberOfFrames",0)
             checkOrCreateKeyAsValue(actualRun,"timeslot",0)
-            
+            checkOrCreateKeyAsValue(actualRun,"simulationTime",0)
+
+
+            if 'itervar' in row and 'simulationTime' in row:
+                actualRun['simulationTime'] = float(row[5][:row[5].find("s")])
             if '**.TIMESLOT' in row:
                 actualRun['timeslot'] = fromMillisecondsToSeconds(row[5])
             if 'vector' in row:
                 user = row[2].split(".")[1]
                 vectorName = row[3].split(":")[0]
                 timeValues = [float(x) for x in row[13].split(" ")] 
-                valueValues = [float(x) for x in row[14].split(" ")]
-                vectorID = '{run}.{user}.{vector}'.format(run=runID, user=user, vector=vectorName)   
+                valueValues = [float(x) for x in row[14].split(" ")]  
 
                 if vectorName == 'userThroughputStat':
                     actualRun['numberOfFrames']  = len(timeValues)
                 
-                function(actualRun,vectorID,timeValues,valueValues)
+                handlingFunction(actualRun,runID,user,vectorName,timeValues,valueValues)
     return data
