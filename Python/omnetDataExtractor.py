@@ -2,6 +2,7 @@ import numpy as np
 import pandas as pd
 import json
 import csv
+import sys
 
 def parse_if_number(s):
     try: return float(s)
@@ -176,6 +177,7 @@ def handleVectorsAsDataFrame(actualRun,runID,userName,vectorName,timeValues, val
 
     return actualRun
 
+
 def baseElaborateVectorsOfCSV(filename,handlingVectorsFunction = None ,handlingStatisticFunction = None):
     '''
     an example:
@@ -188,6 +190,17 @@ def baseElaborateVectorsOfCSV(filename,handlingVectorsFunction = None ,handlingS
         }
     }
     '''
+    maxInt = sys.maxsize
+    while True:
+        # decrease the maxInt value by factor 10 
+        # as long as the OverflowError occurs.
+
+        try:
+            csv.field_size_limit(maxInt)
+            break
+        except OverflowError:
+            maxInt = int(maxInt/10)
+            
     with open(filename, encoding="utf-8") as csvfile:
         reader = csv.reader(csvfile, delimiter=',')
         
