@@ -79,7 +79,7 @@ def slidingWindowPlots(filename, windowSize, minPeriods, center):
         dfSlidingMeans = pd.concat([dfSlidingMeans,tmpDF], sort = False, axis=1)
     
     #print(dfSlidingMeans)
-    dfSlidingMeans.plot.line(title = "Sliding window mean")
+    dfSlidingMeans.plot.line(title = "Sliding window mean", style = "-o")
     plt.show()
     
     return

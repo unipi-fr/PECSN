@@ -156,26 +156,25 @@ def handleVectorAsArraysOfDataFrame(actualRun,runID,userName,vectorName,timeValu
 
 def handleVectorsAsDataFrame(actualRun, runID, userName, vectorName, timeValues, valueValues, indexList):
     vectorID = '{run}.{user}.{vector}'.format(run=runID, user=userName, vector=vectorName)
-    df = pd.DataFrame()
-
-    timeslot = actualRun['timeslot']
-    simulationTime = actualRun['simulationTime']
-
-    #indexList = np.arange(timeslot, (simulationTime/timeslot) + timeslot ,timeslot).tolist()
+    print("Reading '{vector}'".format(vector=vectorID))
+    df = checkOrCreateKeyAsValue(actualRun,"DataFrame", pd.DataFrame())
     
-    df['time'] = indexList
-    df = df.set_index(['time'])
-    df['time'] = indexList
+    if "time" not in df.keys():
+        df['time'] = indexList
+        df = df.set_index(['time'])
+        df['time'] = indexList
 
-    df = checkOrCreateKeyAsValue(actualRun,"DataFrame", df)
-
+    #print("[DEBUG] df keys: {keys}".format(keys=df.keys()))
     tmpDF = pd.DataFrame()
     tmpDF["time"] = timeValues
     tmpDF[vectorID] = valueValues
     tmpDF = tmpDF.groupby(["time"]).mean()
     tmpDF = tmpDF.reindex(indexList)
     df[vectorID] = tmpDF[vectorID]
+    #print("[DEBUG] df keys: {keys}".format(keys=df.keys()))
 
+    actualRun["DataFrame"] = df
+    print("vector readed")
     return actualRun
 
 def baseElaborateVectorsOfCSV(filename, handlingVectorsFunction = None, handlingStatisticFunction = None):
@@ -226,24 +225,21 @@ def baseElaborateVectorsOfCSV(filename, handlingVectorsFunction = None, handling
                 timeslot = actualRun["timeslot"]
                 simulationTime = actualRun["simulationTime"]
                 numberOfFrames = (simulationTime/timeslot)
-                endVector = numberOfFrames + timeslot
 
                 if len(indexList) != numberOfFrames:    
                     indexList = [0.0] * int(numberOfFrames)
                     timeSum = timeslot
+                    
+                    strTimeslot = str(timeslot)
+                    timeslotFloatDigits = len(strTimeslot.split(".")[1]) if len(strTimeslot.split(".")) > 1 else 0
+                    
+                    i = 0
+                    while i < numberOfFrames:
+                        indexList[i] = timeSum
+                        timeSum = round(timeSum + timeslot, timeslotFloatDigits)
+                        i+= 1
 
                     print(sys.getsizeof(indexList))
-
-                    for time in indexList:
-                        time = timeSum
-                        timeSum += timeslot
-
-                    print(sys.getsizeof(indexList))
-                #    loops = timeslot
-                #    while loops < endVector:
-                #        print(loops)
-                #        indexList.append(loops)
-                #        loops += timeslot
 
                 user = row[2].split(".")[1]
                 vectorName = row[3].split(":")[0]
@@ -253,9 +249,7 @@ def baseElaborateVectorsOfCSV(filename, handlingVectorsFunction = None, handling
                 if vectorName == 'userThroughputStat':
                     actualRun['numberOfFrames']  = len(timeValues)
                 
-                print("reading vector", vectorName)
                 handlingVectorsFunction(actualRun, runID, user, vectorName, timeValues, valueValues, indexList)
-                print(vectorName, "Vector readed")
             if handlingStatisticFunction is not None and 'statistic' in row:
                 user = row[2].split(".")[1]
                 vectorName = row[3].split(":")[0]
