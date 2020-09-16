@@ -3,7 +3,7 @@
     "OMNET_PATH": "",
     "OUTPUT_PATH": "",
 
-    "USE_PREMADE_CONFIGURATION": "FRANCESCO_UBUNTU_PATHS",
+    "USE_PREMADE_CONFIGURATION": "ALESSANDRO_PATHS",
     
     "ANDREA_PATHS":{
         "PROJECT_FOLDER": "C:/Users/andre/Desktop/git/PECSN/Fair-Network/",
@@ -19,5 +19,10 @@
         "PROJECT_FOLDER": "/home/fraronk/repositories/PECSN/Fair-Network",
         "OMNET_PATH": "/home/fraronk/omnetpp",
         "OUTPUT_PATH": "/home/fraronk/repositories/PECSN/Python/data"
+    },
+    "ALESSANDRO_PATHS":{
+        "PROJECT_FOLDER": "C:/Users/nella/Documents/GitHub/PECSN/Fair-Network",
+        "OMNET_PATH": "C:/Users/nella/Desktop/omnetpp-5.6.2",
+        "OUTPUT_PATH": "C:/Users/nella/Documents/GitHub/PECSN/Python/data"
     }
 }

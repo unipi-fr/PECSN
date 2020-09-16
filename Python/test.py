@@ -17,7 +17,7 @@ def ExportingDataFromCSVtoDitionaryOfDataFrame(filename):
     return
 
 def ExportingJsonFromCSV(filename):
-    json = ode.createJsonFromCSV(filename = filename, skipVectors = True, skipStatistics = False)
+    json = ode.createJsonFromCSV(filename = filename, skipVectors = False, skipStatistics = False)
     ode.saveJsonToFile(json,"debug/testJson.json")
     return
 
@@ -66,8 +66,10 @@ def examplePlottingDataFromCsv(filename):
 
 def slidingWindowPlots(filename, windowSize, minPeriods, center):
     data = ode.forEachRunCreateDataFrameFromCSV(filename)
+    print("File readed")
     runKeys = data.keys()
     dfSlidingMeans = pd.DataFrame()
+
     for runK in runKeys:
         actualDF = data[runK]["DataFrame"]
         vectorName = "packetDelayStat"
@@ -75,9 +77,11 @@ def slidingWindowPlots(filename, windowSize, minPeriods, center):
         tmpDF = actualDF[vectorKeys].rolling(window = windowSize, min_periods = minPeriods, center = center).mean()
         #tmpDF.rename(mapper = lambda colName : '{x}.slidingMean'.format(x = colName), axis = 1)
         dfSlidingMeans = pd.concat([dfSlidingMeans,tmpDF], sort = False, axis=1)
-    print(dfSlidingMeans)
+    
+    #print(dfSlidingMeans)
     dfSlidingMeans.plot.line(title = "Sliding window mean")
     plt.show()
+    
     return
 
 def dataFrameForEachRunFromCSV(filename):

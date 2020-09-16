@@ -128,7 +128,7 @@ def forEachRunCreateDataFrameFromCSV(filename):
     data = baseElaborateVectorsOfCSV(filename,handleVectorsAsDataFrame)
     return data
 
-def handleVectorAsJson(actualRun,runID,userName,vectorName,timeValues,valueValues):
+def handleVectorAsJson(actualRun,runID,userName,vectorName,timeValues,valueValues, indexList):
     actualUser = checkOrCreateKeyAsDictionary(actualRun,userName)
     actualVector = checkOrCreateKeyAsDictionary(actualUser,vectorName)
 
@@ -137,7 +137,7 @@ def handleVectorAsJson(actualRun,runID,userName,vectorName,timeValues,valueValue
 
     return actualRun
 
-def handleStatisticsAsJson(actualRun,runID,userName,vectorName,statistics):
+def handleStatisticsAsJson(actualRun,runID,userName,vectorName,statistics, indexList):
     actualUser = checkOrCreateKeyAsDictionary(actualRun,userName)
     actualVector = checkOrCreateKeyAsDictionary(actualUser,vectorName)
     
@@ -145,7 +145,7 @@ def handleStatisticsAsJson(actualRun,runID,userName,vectorName,statistics):
 
     return actualRun
 
-def handleVectorAsArraysOfDataFrame(actualRun,runID,userName,vectorName,timeValues, valueValues):
+def handleVectorAsArraysOfDataFrame(actualRun,runID,userName,vectorName,timeValues, valueValues, indexList):
     vectorID = '{run}.{user}.{vector}'.format(run=runID, user=userName, vector=vectorName) 
     vectors = checkOrCreateKeyAsDictionary(actualRun,"vectors")
     vector = checkOrCreateKeyAsDataFrame(vectors,vectorID)
@@ -154,14 +154,15 @@ def handleVectorAsArraysOfDataFrame(actualRun,runID,userName,vectorName,timeValu
     vector[vectorID] = valueValues    
     return actualRun
 
-def handleVectorsAsDataFrame(actualRun,runID,userName,vectorName,timeValues, valueValues):
-    vectorID = '{run}.{user}.{vector}'.format(run=runID, user=userName, vector=vectorName) 
+def handleVectorsAsDataFrame(actualRun, runID, userName, vectorName, timeValues, valueValues, indexList):
+    vectorID = '{run}.{user}.{vector}'.format(run=runID, user=userName, vector=vectorName)
     df = pd.DataFrame()
 
     timeslot = actualRun['timeslot']
     simulationTime = actualRun['simulationTime']
 
-    indexList = np.arange(timeslot, (simulationTime/timeslot) + timeslot ,timeslot).tolist()
+    #indexList = np.arange(timeslot, (simulationTime/timeslot) + timeslot ,timeslot).tolist()
+    
     df['time'] = indexList
     df = df.set_index(['time'])
     df['time'] = indexList
@@ -177,8 +178,7 @@ def handleVectorsAsDataFrame(actualRun,runID,userName,vectorName,timeValues, val
 
     return actualRun
 
-
-def baseElaborateVectorsOfCSV(filename,handlingVectorsFunction = None ,handlingStatisticFunction = None):
+def baseElaborateVectorsOfCSV(filename, handlingVectorsFunction = None, handlingStatisticFunction = None):
     '''
     an example:
     {
@@ -206,6 +206,8 @@ def baseElaborateVectorsOfCSV(filename,handlingVectorsFunction = None ,handlingS
         
         data = dict()
 
+        indexList = list()
+
         for row in reader:
             if 'run' == row[0]:
                 continue
@@ -216,12 +218,33 @@ def baseElaborateVectorsOfCSV(filename,handlingVectorsFunction = None ,handlingS
             checkOrCreateKeyAsValue(actualRun,"timeslot",0)
             checkOrCreateKeyAsValue(actualRun,"simulationTime",0)
 
-
             if 'itervar' in row and 'simulationTime' in row:
                 actualRun['simulationTime'] = float(row[5][:row[5].find("s")])
             if '**.TIMESLOT' in row:
                 actualRun['timeslot'] = fromMillisecondsToSeconds(row[5])
-            if handlingVectorsFunction is not None and'vector' in row:
+            if handlingVectorsFunction is not None and 'vector' in row:
+                timeslot = actualRun["timeslot"]
+                simulationTime = actualRun["simulationTime"]
+                numberOfFrames = (simulationTime/timeslot)
+                endVector = numberOfFrames + timeslot
+
+                if len(indexList) != numberOfFrames:    
+                    indexList = [0.0] * int(numberOfFrames)
+                    timeSum = timeslot
+
+                    print(sys.getsizeof(indexList))
+
+                    for time in indexList:
+                        time = timeSum
+                        timeSum += timeslot
+
+                    print(sys.getsizeof(indexList))
+                #    loops = timeslot
+                #    while loops < endVector:
+                #        print(loops)
+                #        indexList.append(loops)
+                #        loops += timeslot
+
                 user = row[2].split(".")[1]
                 vectorName = row[3].split(":")[0]
                 timeValues = [float(x) for x in row[13].split(" ")] 
@@ -230,7 +253,9 @@ def baseElaborateVectorsOfCSV(filename,handlingVectorsFunction = None ,handlingS
                 if vectorName == 'userThroughputStat':
                     actualRun['numberOfFrames']  = len(timeValues)
                 
-                handlingVectorsFunction(actualRun,runID,user,vectorName,timeValues,valueValues)
+                print("reading vector", vectorName)
+                handlingVectorsFunction(actualRun, runID, user, vectorName, timeValues, valueValues, indexList)
+                print(vectorName, "Vector readed")
             if handlingStatisticFunction is not None and 'statistic' in row:
                 user = row[2].split(".")[1]
                 vectorName = row[3].split(":")[0]
