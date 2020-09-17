@@ -16,8 +16,8 @@ def ExportingDataFromCSVtoDitionaryOfDataFrame(filename):
     plt.show()
     return
 
-def ExportingJsonFromCSV(filename):
-    json = ode.createJsonFromCSV(filename = filename, skipVectors = False, skipStatistics = False)
+def ExportingJsonFromCSV(filename, skipVectors, skipStatistics):
+    json = ode.createJsonFromCSV(filename = filename, skipVectors = skipVectors, skipStatistics = skipStatistics)
     ode.saveJsonToFile(json,"debug/testJson.json")
     return
 
@@ -79,7 +79,7 @@ def slidingWindowPlots(filename, windowSize, minPeriods, center):
         dfSlidingMeans = pd.concat([dfSlidingMeans,tmpDF], sort = False, axis=1)
     
     #print(dfSlidingMeans)
-    dfSlidingMeans.plot.line(title = "Sliding window mean", style = "-o")
+    dfSlidingMeans.plot.line(title = "Sliding window mean", legend = False)
     plt.show()
     
     return

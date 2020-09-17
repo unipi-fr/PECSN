@@ -74,7 +74,7 @@ def createJsonFromCSV(filename, skipVectors = False, skipStatistics = False):
         }
     }
     '''
-    data = baseElaborateVectorsOfCSV(filename,None if skipVectors else handleVectorAsJson,None if skipStatistics else handleStatisticsAsJson)             
+    data = baseElaborateVectorsOfCSV(filename, handlingVectorsFunction = None if skipVectors else handleVectorAsJson, handlingStatisticFunction = None if skipStatistics else handleStatisticsAsJson)             
     return data
 
 def createDataFrameArrayVectorFromCSV(filename):
@@ -137,7 +137,7 @@ def handleVectorAsJson(actualRun,runID,userName,vectorName,timeValues,valueValue
 
     return actualRun
 
-def handleStatisticsAsJson(actualRun,runID,userName,vectorName,statistics, indexList):
+def handleStatisticsAsJson(actualRun,runID,userName,vectorName,statistics):
     actualUser = checkOrCreateKeyAsDictionary(actualRun,userName)
     actualVector = checkOrCreateKeyAsDictionary(actualUser,vectorName)
     
@@ -224,15 +224,15 @@ def baseElaborateVectorsOfCSV(filename, handlingVectorsFunction = None, handling
             if handlingVectorsFunction is not None and 'vector' in row:
                 timeslot = actualRun["timeslot"]
                 simulationTime = actualRun["simulationTime"]
-                numberOfFrames = (simulationTime/timeslot)
+                numberOfFrames = int(simulationTime/timeslot)
 
                 if len(indexList) != numberOfFrames:    
-                    indexList = [0.0] * int(numberOfFrames)
+                    indexList = [0.0] * numberOfFrames
                     timeSum = timeslot
                     
                     strTimeslot = str(timeslot)
                     timeslotFloatDigits = len(strTimeslot.split(".")[1]) if len(strTimeslot.split(".")) > 1 else 0
-                    
+
                     i = 0
                     while i < numberOfFrames:
                         indexList[i] = timeSum
