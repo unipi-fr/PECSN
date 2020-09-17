@@ -13,8 +13,12 @@ class User : public cSimpleModule
 {
   private:
     simsignal_t simDelay;
-    simsignal_t simBytes;
+
+    simsignal_t simThroughputTotal;
+    long byteReceived;
+
     simsignal_t simThroughput;
+
     int cqi;
     int id;
     double timeSlot;
@@ -29,6 +33,7 @@ class User : public cSimpleModule
   protected:
     virtual void initialize();
     virtual void handleMessage(cMessage *msg);
+    virtual void finish();
   private:
   
 

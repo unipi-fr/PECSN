@@ -4,6 +4,7 @@ Define_Module(Antenna);
 
 void Antenna::initialize()
 {
+    simQueue = registerSignal("packetQueue");
 
     CQITable = new int[15];
     CQITable[0] = 3;
@@ -202,11 +203,23 @@ void Antenna::updateCQI(cMessage *msg)
     delete(cqiMsg);
 }
 
+void Antenna::collectStatistics()
+{
+    int nQueues = getParentModule()->par("NUM_USER");
+
+    int numPacketInQueue = 0;
+    for(int i = 0; i < nQueues; i++)
+        numPacketInQueue += queuesOrderedByUser[i]->getLength();
+
+    emit(simQueue, numPacketInQueue);
+}
+
 void Antenna::handleMessage(cMessage *msg)
 {
     if(msg->isSelfMessage())
     {
         sendFrame(msg);
+        collectStatistics();
     }
 
     if(strcmp(msg->getName(),"Packet") == 0)

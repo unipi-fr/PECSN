@@ -239,7 +239,7 @@ def baseElaborateVectorsOfCSV(filename, handlingVectorsFunction = None, handling
                         timeSum = round(timeSum + timeslot, timeslotFloatDigits)
                         i+= 1
 
-                    print(sys.getsizeof(indexList))
+                    #print(sys.getsizeof(indexList))
 
                 user = row[2].split(".")[1]
                 vectorName = row[3].split(":")[0]

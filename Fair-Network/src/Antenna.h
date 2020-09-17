@@ -14,6 +14,8 @@ using namespace omnetpp;
 class Antenna : public cSimpleModule
 {
   private:
+    simsignal_t simQueue;
+
     cMessage *beep;
     Frame *frame;
 
@@ -29,6 +31,7 @@ class Antenna : public cSimpleModule
     void savePacket(cMessage *msg);
     void updateCQI(cMessage *msg);
     void scheduleBeep();
+    void collectStatistics();
 
   protected:
     virtual void initialize();

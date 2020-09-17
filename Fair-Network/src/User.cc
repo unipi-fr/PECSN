@@ -13,8 +13,10 @@ void User::initialize()
     p = mean/15; //n = 15;
 
     simDelay = registerSignal("packetDelay");
-    simBytes = registerSignal("packetBytes");
     simThroughput = registerSignal("userThroughput");
+    simThroughputTotal = registerSignal("userThroughputTotal");
+
+    byteReceived = 0;
 
     timeSlot = getParentModule()->par("TIMESLOT").doubleValueInUnit("s");
 
@@ -29,18 +31,20 @@ void User::handleMessage(cMessage *msg)
     std::vector<Packet*> packets = frame->getPackets();
 
     //search for packets with this user destination
-    long bytesReceived = 0;
+    long bytesReceivedFrame = 0;
     while(packets.size() != 0){
         Packet* currentPacket = packets.back();
         packets.pop_back();
 
         if(currentPacket->getDestination() == id){
             collectStatistics(currentPacket);
-            bytesReceived += currentPacket->getSize();
+            bytesReceivedFrame += currentPacket->getSize();
         }
     }
 
-    emit(simThroughput,bytesReceived/timeSlot);
+    emit(simThroughput,bytesReceivedFrame/timeSlot);
+
+    byteReceived += bytesReceivedFrame;
 
     delete(msg);
 
@@ -51,7 +55,6 @@ void User::collectStatistics(Packet* packet){
     long size = packet->getSize();
     simtime_t timeToDeliver = simTime() - packet->getArrivalTime();
     emit(simDelay,timeToDeliver);
-    emit(simBytes,size);
 }
 
 void User::sendCQI() {
@@ -65,3 +68,9 @@ void User::sendCQI() {
     cqiMsg->setValue(cqi);
     send(cqiMsg, "out");
 }
+
+void User::finish()
+{
+    emit(simThroughputTotal, byteReceived/simTime());
+}
+

@@ -72,7 +72,7 @@ def slidingWindowPlots(filename, windowSize, minPeriods, center):
 
     for runK in runKeys:
         actualDF = data[runK]["DataFrame"]
-        vectorName = "packetDelayStat"
+        vectorName = "packetQueueStat"
         vectorKeys = list(filter(lambda x: x.endswith(vectorName), actualDF.keys()))
         tmpDF = actualDF[vectorKeys].rolling(window = windowSize, min_periods = minPeriods, center = center).mean()
         #tmpDF.rename(mapper = lambda colName : '{x}.slidingMean'.format(x = colName), axis = 1)
