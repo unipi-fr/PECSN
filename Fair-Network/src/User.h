@@ -22,6 +22,7 @@ class User : public cSimpleModule
     int cqi;
     int id;
     double timeSlot;
+    double warmUp;
 
     int indexRNGCQI;
     //for binomial

@@ -9,6 +9,7 @@ network FairNetwork
     parameters:
         int NUM_USER = default(2);
         double TIMESLOT @unit(ms) = default(1000ms); 
+        double WARMUP @unit(s) = default(0s);
         
     submodules:
         antenna: Antenna{

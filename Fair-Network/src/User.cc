@@ -19,6 +19,7 @@ void User::initialize()
     byteReceived = 0;
 
     timeSlot = getParentModule()->par("TIMESLOT").doubleValueInUnit("s");
+    warmUp = getParentModule()->par("WARMUP").doubleValueInUnit("s");
 
     sendCQI();
 }
@@ -44,7 +45,8 @@ void User::handleMessage(cMessage *msg)
 
     emit(simThroughput,bytesReceivedFrame/timeSlot);
 
-    byteReceived += bytesReceivedFrame;
+    if(simTime() > warmUp)
+        byteReceived += bytesReceivedFrame;
 
     delete(msg);
 
@@ -71,6 +73,6 @@ void User::sendCQI() {
 
 void User::finish()
 {
-    emit(simThroughputTotal, byteReceived/simTime());
+    emit(simThroughputTotal, byteReceived/(simTime()-warmUp));
 }
 
