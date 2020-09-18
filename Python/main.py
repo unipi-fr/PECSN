@@ -1,8 +1,7 @@
 #!/usr/bin/python
 import pandas as pd
 import matplotlib.pyplot as plt
-import omnetDataExtractor as ode 
-import omnetDataConverter as odc
+import omnetDataExtractor as ode
 import test 
 
 import re
@@ -12,8 +11,8 @@ def main():
     #test.examplePlottingDataFromCsv("data/results.csv")
     #test.ExportingCSVToJsonAndThenArrayDataframe(filename="data/results.csv", printFileDebug=True)
     #test.dataFrameForEachRunFromCSV("data/results.csv")
-    test.ExportingJsonFromCSV("data/results.csv", skipVectors = True, skipStatistics = False)
-    test.slidingWindowPlots(filename = "data/results.csv", windowSize = 1500, minPeriods = 1, center = False)
+    #test.ExportingJsonFromCSV("data/results.csv", skipVectors = True, skipStatistics = False)
+    test.slidingWindowPlots(filename = "data/results.csv", windowSize = 1, minPeriods = 1, center = False)
     return 0
 
 if __name__== "__main__":

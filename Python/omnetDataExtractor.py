@@ -1,5 +1,6 @@
 import numpy as np
 import pandas as pd
+import math
 import json
 import csv
 import sys
@@ -45,7 +46,7 @@ def checkOrCreateKeyAsDataFrame(dictionary,key):
     return dictionary[key]
 
 def fromMillisecondsToSeconds(value):
-    return (float(value[:-2])/1000)
+    return (float(value[:value.find("ms")])/1000)
 
 def createJsonFromCSV(filename, skipVectors = False, skipStatistics = False):
     '''
@@ -216,40 +217,51 @@ def baseElaborateVectorsOfCSV(filename, handlingVectorsFunction = None, handling
             checkOrCreateKeyAsValue(actualRun,"numberOfFrames",0)
             checkOrCreateKeyAsValue(actualRun,"timeslot",0)
             checkOrCreateKeyAsValue(actualRun,"simulationTime",0)
+            checkOrCreateKeyAsValue(actualRun,"warmUp",0)
 
             if 'itervar' in row and 'simulationTime' in row:
                 actualRun['simulationTime'] = float(row[5][:row[5].find("s")])
-            if '**.TIMESLOT' in row:
+            if 'itervar' in row and 'nUser' in row:
+                actualRun['nUser'] = float(row[5])
+            if 'itervar' in row and 'userLambda' in row:
+                actualRun['userLambda'] = float(row[5])
+            if 'itervar' in row and 'timeSlot' in row:
                 actualRun['timeslot'] = fromMillisecondsToSeconds(row[5])
-            if handlingVectorsFunction is not None and 'vector' in row:
+            if 'itervar' in row and 'warmUp' in row:
+                actualRun['warmUp'] = fromMillisecondsToSeconds(row[5])
+            if 'vector' in row:
+                warmUp = actualRun['warmUp']
                 timeslot = actualRun["timeslot"]
                 simulationTime = actualRun["simulationTime"]
-                numberOfFrames = int(simulationTime/timeslot)
+                numberOfFrames = int((simulationTime-warmUp)/timeslot)
+                actualRun['numberOfFrames'] = numberOfFrames
 
-                if len(indexList) != numberOfFrames:    
-                    indexList = [0.0] * numberOfFrames
-                    timeSum = timeslot
+                if handlingVectorsFunction is not None:
+
+                    if len(indexList) != numberOfFrames:
+                        indexList = [0.0] * numberOfFrames
+                        timeSum = math.floor(warmUp/timeslot) * timeslot + timeslot
+                        
+                        strTimeslot = str(timeslot)
+                        timeslotFloatDigits = len(strTimeslot.split(".")[1]) if len(strTimeslot.split(".")) > 1 else 0
+
+                        i = 0
+                        while i < numberOfFrames:
+                            indexList[i] = timeSum
+                            timeSum = round(timeSum + timeslot, timeslotFloatDigits)
+                            i+= 1
+
+                        #print(sys.getsizeof(indexList))
+
+                    user = row[2].split(".")[1]
+                    vectorName = row[3].split(":")[0]
+                    timeValues = [float(x) for x in row[13].split(" ")] 
+                    valueValues = [float(x) for x in row[14].split(" ")]  
+
+                    if vectorName == 'userThroughputStat':
+                        actualRun['numberOfFrames']  = len(timeValues)
                     
-                    strTimeslot = str(timeslot)
-                    timeslotFloatDigits = len(strTimeslot.split(".")[1]) if len(strTimeslot.split(".")) > 1 else 0
-
-                    i = 0
-                    while i < numberOfFrames:
-                        indexList[i] = timeSum
-                        timeSum = round(timeSum + timeslot, timeslotFloatDigits)
-                        i+= 1
-
-                    #print(sys.getsizeof(indexList))
-
-                user = row[2].split(".")[1]
-                vectorName = row[3].split(":")[0]
-                timeValues = [float(x) for x in row[13].split(" ")] 
-                valueValues = [float(x) for x in row[14].split(" ")]  
-
-                if vectorName == 'userThroughputStat':
-                    actualRun['numberOfFrames']  = len(timeValues)
-                
-                handlingVectorsFunction(actualRun, runID, user, vectorName, timeValues, valueValues, indexList)
+                    handlingVectorsFunction(actualRun, runID, user, vectorName, timeValues, valueValues, indexList)
             if handlingStatisticFunction is not None and 'statistic' in row:
                 user = row[2].split(".")[1]
                 vectorName = row[3].split(":")[0]

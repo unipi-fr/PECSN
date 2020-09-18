@@ -45,7 +45,7 @@ void User::handleMessage(cMessage *msg)
 
     emit(simThroughput,bytesReceivedFrame/timeSlot);
 
-    if(simTime() > warmUp)
+    if(simTime() >= warmUp)
         byteReceived += bytesReceivedFrame;
 
     delete(msg);

@@ -1,7 +1,6 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 import omnetDataExtractor as ode
-import omnetDataConverter as odc
 
 def ExportingDataFromCSVtoDitionaryOfDataFrame(filename):
     runs = ode.createDataFrameArrayVectorFromCSV(filename)
@@ -19,24 +18,6 @@ def ExportingDataFromCSVtoDitionaryOfDataFrame(filename):
 def ExportingJsonFromCSV(filename, skipVectors, skipStatistics):
     json = ode.createJsonFromCSV(filename = filename, skipVectors = skipVectors, skipStatistics = skipStatistics)
     ode.saveJsonToFile(json,"debug/testJson.json")
-    return
-
-def ExportingCSVToJsonAndThenArrayDataframe(filename, printFileDebug = False):
-    data = ode.createJsonFromCSV(filename)
-    if printFileDebug:
-        ode.saveJsonToFile(data,"debug/data.json")
-    dfs = odc.getArrayDataFrameFromJson(data)
-    vectorName = "packetDelayStat"
-
-    fig, axes = plt.subplots(sharex=True)
-
-    for i,dfK in enumerate(dfs.keys()):
-        df = dfs[dfK]
-        vectorKeys = list(filter(lambda x: x.endswith(vectorName), df.keys()))
-        df[vectorName+"Mean"] = df[vectorKeys].mean(axis = 1).interpolate(method='linear', limit_direction='forward', axis=0)
-        df.plot.line(title=dfK, x="time", y=(vectorName+"Mean"), alpha=0.5, style='-', ax = axes)
-        print(df)
-    plt.show()
     return
 
 def examplePlottingDataFromCsv(filename):
@@ -72,7 +53,7 @@ def slidingWindowPlots(filename, windowSize, minPeriods, center):
 
     for runK in runKeys:
         actualDF = data[runK]["DataFrame"]
-        vectorName = "packetQueueStat"
+        vectorName = "packetDelayStat"
         vectorKeys = list(filter(lambda x: x.endswith(vectorName), actualDF.keys()))
         tmpDF = actualDF[vectorKeys].rolling(window = windowSize, min_periods = minPeriods, center = center).mean()
         #tmpDF.rename(mapper = lambda colName : '{x}.slidingMean'.format(x = colName), axis = 1)
