@@ -83,8 +83,9 @@ def confTest():
     projectPath = conf["PROJECT_FOLDER"]
     iniFile = f"{projectPath}/simulations/FairNetworkConf.ini"
 
-    iniConf = OmnetConfIni()
-    iniConf.read(iniFile)
+    iniConf = OmnetConfIni(iniFile)
 
-    print(iniConf["General"])
+    params = iniConf.getOmnetRunAttr()
+
+    print(params)
     return
