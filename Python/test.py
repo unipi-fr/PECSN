@@ -1,6 +1,8 @@
 import pandas as pd
 import matplotlib.pyplot as plt
 import omnetDataExtractor as ode
+import configurator as cfg
+from omnetConfIni import OmnetConfIni
 
 def ExportingDataFromCSVtoDitionaryOfDataFrame(filename):
     runs = ode.createDataFrameArrayVectorFromCSV(filename)
@@ -74,4 +76,15 @@ def dataFrameForEachRunFromCSV(filename):
         vectorName = "packetDelayStat"
         vectorKeys = list(filter(lambda x: x.endswith(vectorName), df.keys()))
         print(df[vectorKeys])
+    return
+
+def confTest():
+    conf = cfg.getConfiguration()
+    projectPath = conf["PROJECT_FOLDER"]
+    iniFile = f"{projectPath}/simulations/FairNetworkConf.ini"
+
+    iniConf = OmnetConfIni()
+    iniConf.read(iniFile)
+
+    print(iniConf["General"])
     return
