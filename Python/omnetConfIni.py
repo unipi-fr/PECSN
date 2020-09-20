@@ -30,7 +30,12 @@ class OmnetRunAttr:
             (digit, unit) = self.slpitValueAndUnit(valueStr)
             self.value.append(digit)
             self.unit = unit
+        self.min = min(self.value)
+        self.max = max(self.value)
         return
+
+    def getMinAndMax(self):
+        return (self.min, self.min)
 
     def __parseValuesString(self, valueStr):
         listValues = valueStr.split(",")
@@ -86,5 +91,9 @@ class OmnetConfIni(cp.ConfigParser):
         print(f"Ini file loaded from: {filename}")
         return 
 
-    def getOmnetRunAttr(self):
-        return self.__omnetRunAttributes
+    def getOmnetRunAttr(self, paramNamesFilter = None):
+        if paramNamesFilter is not None:
+            return list(filter((lambda x: x.name in paramNamesFilter), self.__omnetRunAttributes))
+            #return [x for x in self.__omnetRunAttributes if x.name in paramNamesFilter]
+        else:
+            return self.__omnetRunAttributes

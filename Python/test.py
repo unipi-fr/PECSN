@@ -83,9 +83,14 @@ def confTest():
     projectPath = conf["PROJECT_FOLDER"]
     iniFile = f"{projectPath}/simulations/FairNetworkConf.ini"
 
-    iniConf = OmnetConfIni(iniFile)
+    iniConf = OmnetConfIni()
+    iniConf.read(iniFile)
 
-    params = iniConf.getOmnetRunAttr()
-
-    print(params)
+    params = iniConf.getOmnetRunAttr(["nUser","userLambda","timeSlot"])
+    
+    print("\nFILTERED PARAMS:")
+    for p in params:
+        #print(f"\t{p}")
+        (minV, maxV) = p.getMinAndMax()
+        print(f"name: '{p.name}' min value: <{minV}> max value: <{maxV}>")
     return

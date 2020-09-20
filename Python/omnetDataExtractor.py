@@ -57,6 +57,8 @@ def createJsonFromCSV(filename, skipVectors = False, skipStatistics = False):
     {
         "runID":{
             "numberOfFrame": int,
+            "userLambda": double,
+            "nUser": int,
             "timeslot": double,
             "simulationTime": double,
             "user[i]":{
