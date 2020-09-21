@@ -3,11 +3,13 @@ import itertools as it
 import numpy as np
 import configurator as cfg
 import omnetDataExtractor as ode
+import omnetDataConverter as odc
+
 from omnetConfIni import OmnetConfIni
 
 def main():
 
-    factors = getFactors(["nUser","userLambda","timeSlot"])
+    factors = getFactors(["nUser","userLambda","timeslot"])
 
     numFactors = len(factors)
     vectors = [[-1, 1]]*numFactors
@@ -51,4 +53,13 @@ def factorialAnalysis():
     
     return
 
-main()
+def testNewJson():
+    dataJson = ode.createJsonFromCSV(filename = "data/results.csv", skipVectors = True, skipStatistics = False)
+    ode.saveJsonToFile(dataJson, "debug/test.json")
+    factors = getFactors(["nUser","userLambda","timeslot"])
+    data = odc.convertJsonOmnetDataForFactorialAnalisys(dataJson, factors)   
+    ode.saveJsonToFile(data, "debug/testNew.json")
+    return
+
+testNewJson()
+#main()

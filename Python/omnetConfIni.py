@@ -36,7 +36,13 @@ class OmnetRunAttr:
         return
 
     def getMinAndMax(self):
-        return (self.min, self.min)
+        return (self.min, self.max)
+
+    def getMin(self):
+        return self.min
+
+    def getMax(self):
+        return self.max
 
     def __parseValuesString(self, valueStr):
         listValues = valueStr.split(",")

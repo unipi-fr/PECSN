@@ -47,6 +47,9 @@ def checkOrCreateKeyAsDataFrame(dictionary,key):
 
 def fromMillisecondsToSeconds(value):
     return (float(value[:value.find("ms")])/1000)
+    
+def floatByUnit(value,unit):
+    return float(value[:value.find(unit)])
 
 def createJsonFromCSV(filename, skipVectors = False, skipStatistics = False):
     '''
@@ -224,10 +227,10 @@ def baseElaborateVectorsOfCSV(filename, handlingVectorsFunction = None, handling
             if 'itervar' in row and 'simulationTime' in row:
                 actualRun['simulationTime'] = float(row[5][:row[5].find("s")])
             if 'itervar' in row and 'nUser' in row:
-                actualRun['nUser'] = float(row[5])
+                actualRun['nUser'] = int(row[5])
             if 'itervar' in row and 'userLambda' in row:
                 actualRun['userLambda'] = float(row[5])
-            if 'itervar' in row and 'timeSlot' in row:
+            if 'itervar' in row and 'timeslot' in row:
                 actualRun['timeslot'] = fromMillisecondsToSeconds(row[5])
             if 'itervar' in row and 'warmUp' in row:
                 actualRun['warmUp'] = fromMillisecondsToSeconds(row[5])
