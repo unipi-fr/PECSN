@@ -1,4 +1,5 @@
 import configparser as cp
+import os.path
 import re
 import ast
 
@@ -86,6 +87,9 @@ class OmnetConfIni(cp.ConfigParser):
         return
 
     def read(self,filename):
+        if not os.path.isfile(filename):
+            print(f"[WARNING] the path provided '{filename}' id doesn't exists or it's not a file.\nThe configuration will be empty")
+            return
         super().read(filename)
         self.__loadOmnetRunAttr()
         print(f"Ini file loaded from: {filename}")
