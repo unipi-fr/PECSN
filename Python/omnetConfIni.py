@@ -12,8 +12,9 @@ class OmnetRunAttr:
         self.name = name
         self.__parseValuesString(valueString)
         return
+
     @staticmethod
-    def slpitValueAndUnit(singleValueStr):
+    def splitValueAndUnit(singleValueStr):
         numberRegularExpression = re.compile("[+-]?([0-9]*[.])?[0-9]+")
         textRegularExpression = re.compile("[a-zA-Z]+")
 
@@ -28,7 +29,7 @@ class OmnetRunAttr:
     def __parseListValue(self, listValuesStr):
         self.value = list()
         for valueStr in listValuesStr:
-            (digit, unit) = self.slpitValueAndUnit(valueStr)
+            (digit, unit) = self.splitValueAndUnit(valueStr)
             self.value.append(digit)
             self.unit = unit
         self.min = min(self.value)
@@ -43,6 +44,18 @@ class OmnetRunAttr:
 
     def getMax(self):
         return self.max
+
+    def getMinOrMaxByIndex(self, index):
+        '''
+        @index = -1 it will returns MIN
+        @index = 1 it will returns MAX
+        None otherwise
+        '''
+        if index == 1:
+            return self.max
+        if index == -1:
+            return self.min
+        return None
 
     def __parseValuesString(self, valueStr):
         listValues = valueStr.split(",")

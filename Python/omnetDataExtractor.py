@@ -4,6 +4,7 @@ import math
 import json
 import csv
 import sys
+import ast
 
 def parse_if_number(s):
     try: return float(s)
@@ -46,10 +47,7 @@ def checkOrCreateKeyAsDataFrame(dictionary,key):
     return dictionary[key]
 
 def fromMillisecondsToSeconds(value):
-    return (float(value[:value.find("ms")])/1000)
-    
-def floatByUnit(value,unit):
-    return float(value[:value.find(unit)])
+    return (ast.literal_eval(value[:value.find("ms")])/1000)
 
 def createJsonFromCSV(filename, skipVectors = False, skipStatistics = False):
     '''
@@ -225,11 +223,11 @@ def baseElaborateVectorsOfCSV(filename, handlingVectorsFunction = None, handling
             checkOrCreateKeyAsValue(actualRun,"warmUp",0)
 
             if 'itervar' in row and 'simulationTime' in row:
-                actualRun['simulationTime'] = float(row[5][:row[5].find("s")])
+                actualRun['simulationTime'] = ast.literal_eval(row[5][:row[5].find("s")])
             if 'itervar' in row and 'nUser' in row:
-                actualRun['nUser'] = int(row[5])
+                actualRun['nUser'] = ast.literal_eval(row[5])
             if 'itervar' in row and 'userLambda' in row:
-                actualRun['userLambda'] = float(row[5])
+                actualRun['userLambda'] = ast.literal_eval(row[5])
             if 'itervar' in row and 'timeslot' in row:
                 actualRun['timeslot'] = fromMillisecondsToSeconds(row[5])
             if 'itervar' in row and 'warmUp' in row:
@@ -260,8 +258,8 @@ def baseElaborateVectorsOfCSV(filename, handlingVectorsFunction = None, handling
 
                     user = row[2].split(".")[1]
                     vectorName = row[3].split(":")[0]
-                    timeValues = [float(x) for x in row[13].split(" ")] 
-                    valueValues = [float(x) for x in row[14].split(" ")]  
+                    timeValues = [ast.literal_eval(x) for x in row[13].split(" ")] 
+                    valueValues = [ast.literal_eval(x) for x in row[14].split(" ")]  
 
                     if vectorName == 'userThroughputStat':
                         actualRun['numberOfFrames']  = len(timeValues)
@@ -271,11 +269,11 @@ def baseElaborateVectorsOfCSV(filename, handlingVectorsFunction = None, handling
                 user = row[2].split(".")[1]
                 vectorName = row[3].split(":")[0]
                 statistics = {
-                    "count": int(row[7]),
-                    "mean": float(row[9]),
+                    "count": ast.literal_eval(row[7]),
+                    "mean": ast.literal_eval(row[9]),
                     "variance": float(row[10]),
-                    "min": float(row[11]),
-                    "max": float(row[12])
+                    "min": ast.literal_eval(row[11]),
+                    "max": ast.literal_eval(row[12])
                 }
 
                 handlingStatisticFunction(actualRun, runID, user, vectorName, statistics)

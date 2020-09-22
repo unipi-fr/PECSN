@@ -4,6 +4,26 @@ from omnetConfIni import OmnetConfIni
 def convertJsonOmnetDataForFactorialAnalisys(dataJson, factors):
     '''
     trasform a dictionary of Json for omnet data into an new Dictionary with runs aggregated by params
+
+    Note: all values are refeared to mean values
+    example:
+{
+    "factor1(value1)factor2(value2)...":{
+        "vector1": {
+            "sumValues": float
+            "Values": [float]
+            "repetitions": int
+            "mean": float
+        },
+        "vector2": {
+            "sumValues": float
+            "Values": [float]
+            "repetitions": int
+            "mean": float
+        }
+        ...
+    },
+}
     '''
     dataConverted = dict()
     skipped = 0
@@ -19,7 +39,7 @@ def convertJsonOmnetDataForFactorialAnalisys(dataJson, factors):
             skipped += 1
         total += 1
         
-    print(f"[INFO] skipped {skipped}/{total}")
+    print(f"[INFO] skipped {skipped}/{total} runs")
 
     return dataConverted
 
@@ -47,7 +67,7 @@ def convertRun(dataConverted, run, dictionaryKey, extractThroughtput = True, ext
         vectorSummary = ode.checkOrCreateKeyAsDictionary(runSummary, vectorK)
         values = ode.checkOrCreateKeyAsValue(vectorSummary, "values", list())
         sumValues = ode.checkOrCreateKeyAsValue(vectorSummary, "sumValues", 0)
-        repetition = ode.checkOrCreateKeyAsValue(vectorSummary, "repetition", 0)
+        repetition = ode.checkOrCreateKeyAsValue(vectorSummary, "repetitions", 0)
 
         currentMean = tmpStatDict[vectorK] / nUser
         values.append(currentMean)
@@ -56,7 +76,7 @@ def convertRun(dataConverted, run, dictionaryKey, extractThroughtput = True, ext
 
         vectorSummary["values"] = values
         vectorSummary["sumValues"] = sumValues
-        vectorSummary["repetition"] = repetition
+        vectorSummary["repetitions"] = repetition
         vectorSummary["mean"] = sumValues / repetition
 
 
@@ -80,20 +100,3 @@ def checkIfRunHasGivenParams(run, factors):
         dictionaryKey = dictionaryKey + f"{factorName}({factorValue})"
 
     return True, dictionaryKey
-
-'''
-{
-    "nUser(50)lam...":{
-        "throughput": {
-            "sumValues": 
-            "Values": [1200,1500,1300,1400]
-            "repetitions": 4
-        },
-        "delay": {
-            "sumValues": 
-            "Values": [1200,1500,1300,1400]
-            "repetitions": 4
-        }
-    },
-}
-'''
