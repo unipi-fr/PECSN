@@ -19,7 +19,7 @@ def factorialAnalysis():
     print(f"[INFO] The number of experiments should be {numberOfExperiments}")
 
     dataFrame = generateDataFrameWithFactors(factors)
-    #print(dataFrame)
+    print(dataFrame)
         
     jsonData = ode.createJsonFromCSV(filename = "data/results.csv", skipVectors = True, skipStatistics = False)
     ode.saveJsonToFile(jsonData, "debug/test.json")
@@ -39,10 +39,11 @@ def factorialAnalysis():
 
     print(dataFrame)
 
-    summ = 0
-    #for i in range(numberOfExperiments):
-    print(sum(dataFrame["nUser"] * dataFrame[vectorName]))
-    #summ += sumValue
+    dataFrame.to_csv("exported.csv", sep = ";")
+    #summ = 0
+    ##for i in range(numberOfExperiments):
+    #print(sum(dataFrame["nUser"] * dataFrame[vectorName]))
+    ##summ += sumValue
    
     return
 
@@ -125,7 +126,6 @@ def generateDataFrameWithFactors(factors):
             faDataFrame[columnName] = faDataFrame[columnName] * faDataFrame[otherColumn]
 
     faDataFrame.insert(0, "identity", 1)
-
 
     return faDataFrame
 

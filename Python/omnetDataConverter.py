@@ -7,23 +7,23 @@ def convertJsonOmnetDataForFactorialAnalisys(dataJson, factors):
 
     Note: all values are refeared to mean values
     example:
-{
-    "factor1(value1)factor2(value2)...":{
-        "vector1": {
-            "sumValues": float
-            "Values": [float]
-            "repetitions": int
-            "mean": float
+    {
+        "factor1(value1)factor2(value2)...":{
+            "vector1": {
+                "sumValues": float
+                "Values": [float]
+                "repetitions": int
+                "mean": float
+            },
+            "vector2": {
+                "sumValues": float
+                "Values": [float]
+                "repetitions": int
+                "mean": float
+            }
+            ...
         },
-        "vector2": {
-            "sumValues": float
-            "Values": [float]
-            "repetitions": int
-            "mean": float
-        }
-        ...
-    },
-}
+    }
     '''
     dataConverted = dict()
     skipped = 0

@@ -1,0 +1,9 @@
+;identity;nUser;timeslot;userLambda;nUser-timeslot;nUser-userLambda;timeslot-userLambda;nUser-timeslot-userLambda;userThroughputTotalStat;userThroughputTotalStat[0];userThroughputTotalStat[1];userThroughputTotalStatError[0];userThroughputTotalStatError[1]
+0;1;-1;-1;-1;1;1;1;-1;;;;;
+1;1;-1;-1;1;1;-1;-1;1;;;;;
+2;1;-1;1;-1;-1;1;-1;1;3815.5094736842148;3836.94;3794.0789473684295;21.4305263157853;-21.4305263157853
+3;1;-1;1;1;-1;-1;1;-1;;;;;
+4;1;1;-1;-1;-1;-1;1;1;;;;;
+5;1;1;-1;1;-1;1;-1;-1;;;;;
+6;1;1;1;-1;1;-1;-1;-1;;;;;
+7;1;1;1;1;1;1;1;1;;;;;
