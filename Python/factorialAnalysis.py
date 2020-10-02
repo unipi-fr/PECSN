@@ -9,32 +9,33 @@ import math
 from omnetConfIni import OmnetConfIni
 
 def main():
-    factorialAnalysis()
+    factorialAnalysis(csvFile = "data/results.csv", vectorName = "userThroughputTotalStat", outputFileName = "factorialAnalysis.csv")
     return
 
-def factorialAnalysis():
+def factorialAnalysis(csvFile, vectorName, outputFileName):
     factors = getFactors(["nUser","userLambda","timeslot"])
     numberOfFactors = len(factors)
     numberOfExperiments = 2**numberOfFactors
 
-    print(f"[INFO] The number of experiments should be {numberOfExperiments}")
-
     factorDF = generateDataFrameWithFactors(factors)
     #print(factorDF)
-        
-    jsonData = ode.createJsonFromCSV(filename = "data/results.csv", skipVectors = True, skipStatistics = False)
+    print("[INFO] creating JSON from csvFile")
+    jsonData = ode.createJsonFromCSV(filename = csvFile, skipVectors = True, skipStatistics = False)
     ode.saveJsonToFile(jsonData, "debug/test.json")
+    print("[DEBUG] saved JSON in 'debug/test.json'")
 
+    print("[INFO] converting JSON in a new format for factorial analysys")
     jsonConverted = odc.convertJsonOmnetDataForFactorialAnalisys(jsonData, factors)   
-    ode.saveJsonToFile(jsonConverted, "debug/testNew.json")  
+    ode.saveJsonToFile(jsonConverted, "debug/testNew.json")
+    print("[DEBUG] saved JSON in 'debug/testNew.json'")
+
+    print(f"[INFO] The number of experiments should be {numberOfExperiments}")
 
     numOfDifferentRuns = len(jsonConverted.keys())    
     if numOfDifferentRuns != numberOfExperiments:
         print(f"[WARNING] The number of different experiments should be {numberOfExperiments} but found {numOfDifferentRuns}")
     else:
         print(f"[INFO] experiments extracted: ({numOfDifferentRuns})")
-
-    vectorName = "userThroughputTotalStat"
 
     vectorDF, repetitions = appendResultsToDataFrame(factorDF,jsonConverted,factors,vectorName)
 
@@ -48,7 +49,7 @@ def factorialAnalysis():
 
     print(joinedDF)
 
-    joinedDF.to_csv("exported.csv", sep = ";")
+    joinedDF.to_csv(outputFileName, sep = ";")
    
     return
 
@@ -105,7 +106,7 @@ def appendResultsToDataFrame(dataFrame, jsonConverted, factors, vectorName):
         vectorDF.loc[i,colunNameList] = rowList
     return vectorDF, repetitions
 
-def getFactors(factors):
+def getFactors(factorsNameList):
     '''
      @factors is the list of names of the factors which we want to extract form the file in ../PROJECT_FOLDER/simulations/FairNetworkConf.ini
     '''
@@ -113,9 +114,13 @@ def getFactors(factors):
     projectPath = conf["PROJECT_FOLDER"]
     iniFile = f"{projectPath}/simulations/FairNetworkConf.ini"
 
+    print(f"[INFO] getting factors from '{iniFile}'")
+
     iniConf = OmnetConfIni(iniFile)
 
-    return iniConf.getOmnetRunAttr(factors)
+    factors = iniConf.getOmnetRunAttr(factorsNameList)
+
+    return factors
 
 def generateDataFrameWithFactors(factors):
     numFactors = len(factors)
