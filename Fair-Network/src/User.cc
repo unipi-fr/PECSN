@@ -54,7 +54,6 @@ void User::handleMessage(cMessage *msg)
 }
 
 void User::collectStatistics(Packet* packet){
-    long size = packet->getSize();
     simtime_t timeToDeliver = simTime() - packet->getArrivalTime();
     emit(simDelay,timeToDeliver);
 }
