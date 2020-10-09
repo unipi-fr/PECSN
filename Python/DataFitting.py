@@ -6,15 +6,17 @@ def main():
 
     getQQDataFrame([1, 2, 3, 4, 5])
 
-def getNormalq(i):
-    normalq = 4.91*((i**(0.14)) - ((1-i)**(0.14)))
-    return normalq
+def getNormalQuantile(i, mean = None, variance = None):
+    normalQuantile = 4.91*((i**(0.14)) - ((1-i)**(0.14)))
+    if(mean != None and variance == None):
+        return (normalQuantile * variance) + mean
+    return normalQuantile
 
 def getNormalqs(numValues):
     normalqs = list()
 
     for i in range(1, numValues):
-        normalqs.appen(getNormalq(i - 0.5))
+        normalqs.append(getNormalQuantile(i = i - 0.5))
 
     return normalqs
 
