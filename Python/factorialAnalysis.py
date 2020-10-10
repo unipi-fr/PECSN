@@ -5,30 +5,38 @@ import configurator as cfg
 import omnetDataExtractor as ode
 import omnetDataConverter as odc
 import math
-
+import configurator as cfg
 from omnetConfIni import OmnetConfIni
+
+DEFAULT_FACTORS = ["nUser","userLambda","timeslot"]
 
 def main():
     factorialAnalysis(csvFile = "data/results.csv", vectorName = "userThroughputTotalStat", outputFileName = "factorialAnalysis.csv")
     return
 
-def factorialAnalysis(csvFile, vectorName, outputFileName):
-    factors = getFactors(["nUser","userLambda","timeslot"])
-    numberOfFactors = len(factors)
-    numberOfExperiments = 2**numberOfFactors
-
-    factorDF = generateDataFrameWithFactors(factors)
+def prepareData(csvFile, factors):
     #print(factorDF)
     print("[INFO] creating JSON from csvFile")
     jsonData = ode.createJsonFromCSV(filename = csvFile, skipVectors = True, skipStatistics = False)
     ode.saveJsonToFile(jsonData, "debug/test.json")
     print("[DEBUG] saved JSON in 'debug/test.json'")
 
-    print("[INFO] converting JSON in a new format for factorial analysys")
+    print("[INFO] converting JSON in a new format for factorial analysis")
     jsonConverted = odc.convertJsonOmnetDataForFactorialAnalisys(jsonData, factors)   
     ode.saveJsonToFile(jsonConverted, "debug/testNew.json")
     print("[DEBUG] saved JSON in 'debug/testNew.json'")
+    return jsonConverted
 
+
+def factorialAnalysis(csvFile, vectorName, outputFileName):
+    factors = getFactors()
+    numberOfFactors = len(factors)
+    numberOfExperiments = 2**numberOfFactors
+
+    factorDF = generateDataFrameWithFactors(factors)
+
+    jsonConverted = prepareData(csvFile, factors)
+    
     print(f"[INFO] The number of experiments should be {numberOfExperiments}")
 
     numOfDifferentRuns = len(jsonConverted.keys())    
@@ -106,22 +114,6 @@ def appendResultsToDataFrame(dataFrame, jsonConverted, factors, vectorName):
         vectorDF.loc[i,colunNameList] = rowList
     return vectorDF, repetitions
 
-def getFactors(factorsNameList):
-    '''
-     @factors is the list of names of the factors which we want to extract form the file in ../PROJECT_FOLDER/simulations/FairNetworkConf.ini
-    '''
-    conf = cfg.getConfiguration()
-    projectPath = conf["PROJECT_FOLDER"]
-    iniFile = f"{projectPath}/simulations/FairNetworkConf.ini"
-
-    print(f"[INFO] getting factors from '{iniFile}'")
-
-    iniConf = OmnetConfIni(iniFile)
-
-    factors = iniConf.getOmnetRunAttr(factorsNameList)
-
-    return factors
-
 def generateDataFrameWithFactors(factors):
     numFactors = len(factors)
     vectors = [[-1, 1]]*numFactors
@@ -189,4 +181,21 @@ def joinDataFrames(factorDF, vectorDF, aggregateDF):
 
     return joinDF
 
-main()
+def getFactors(factorsNameList = DEFAULT_FACTORS):
+    '''
+     @factors is the list of names of the factors which we want to extract form the file in ../PROJECT_FOLDER/simulations/FairNetworkConf.ini
+    '''
+    conf = cfg.getConfiguration()
+    projectPath = conf["PROJECT_FOLDER"]
+    iniFile = f"{projectPath}/simulations/FairNetworkConf.ini"
+
+    print(f"[INFO] getting factors from '{iniFile}'")
+
+    iniConf = OmnetConfIni(iniFile)
+
+    factors = iniConf.getOmnetRunAttr(factorsNameList)
+
+    return factors
+
+if __name__ == '__main__':
+    main()

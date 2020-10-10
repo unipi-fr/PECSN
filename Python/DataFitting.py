@@ -1,10 +1,28 @@
 import pandas as pd
 import matplotlib.pyplot as plt
+import factorialAnalysis as fa 
+import seaborn as sns
+
+
 
 def main():
-    ordStat = list()
+    factors = fa.getFactors()
 
-    getQQDataFrame([1, 2, 3, 4, 5])
+    jsonConverted = fa.prepareData(csvFile = "data/results.csv", factors=factors)
+
+    jsonKeys = list(jsonConverted.keys())
+    firstKey = jsonKeys[4]
+
+    values = jsonConverted[firstKey]["userThroughputTotalStat"]["values"]
+
+    orderedValues = sorted(values)
+    
+    print(orderedValues)
+    qqDf = getQQDataFrame(range(200))
+
+    sns.lmplot(x='normalq', y='ordinatestat', data=qqDf, fit_reg=True)
+    #qqDf.plot()
+    plt.show()
 
 def getNormalQuantile(i, mean = None, variance = None):
     normalQuantile = 4.91*((i**(0.14)) - ((1-i)**(0.14)))
@@ -15,17 +33,20 @@ def getNormalQuantile(i, mean = None, variance = None):
 def getNormalqs(numValues):
     normalqs = list()
 
-    for i in range(1, numValues):
-        normalqs.append(getNormalQuantile(i = i - 0.5))
+    for i in range(1, numValues+1):
+        j = (i - 0.5)/numValues
+        print(j)
+        normalqs.append(getNormalQuantile(i = j))
 
     return normalqs
 
 def getQQDataFrame(ordStat):
     qqDf = pd.DataFrame()
     
-    qqDF["normalq"] = getNormalqs(len(ordStat))
+    qqDf["normalq"] = getNormalqs(len(ordStat))
     qqDf["ordinatestat"] = ordStat
 
     return qqDf
 
-main()
+if __name__ == '__main__':
+    main()

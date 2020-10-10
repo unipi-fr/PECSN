@@ -12,7 +12,8 @@ def main():
     print("Moved into => {dir}".format(dir=os.getcwd()))
     print("Extracting results")
     outputPath = conf["OUTPUT_PATH"]
-    command = '{path}/bin/scavetool x *.sca *.vec -o {outputPath}/results.csv'.format(path = conf["OMNET_PATH"],outputPath = outputPath)
+    #command = '{path}/bin/scavetool x *.sca *.vec -o {outputPath}/results_all.csv -v'.format(path = conf["OMNET_PATH"],outputPath = outputPath)
+    command = '{path}/bin/scavetool x *.sca -o {outputPath}/results.csv -v'.format(path = conf["OMNET_PATH"],outputPath = outputPath)
     print(f"[DEBUG] trying to execute:\n{command}")
     os.system(command)
     print("Results extracted ind => {outputPath}/results.csv".format(outputPath = outputPath))
