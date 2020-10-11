@@ -7,7 +7,6 @@ def main():
     factors = fa.getFactors()
 
     jsonConverted = fa.prepareData(csvFile = "data/results.csv", factors=factors)
-
     confidenceIntervalsJSON = constructConfidenceIntervals(jsonConverted)
 
     ode.saveJsonToFile(confidenceIntervalsJSON, "debug/confidenceIntervals.json")
