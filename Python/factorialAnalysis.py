@@ -6,12 +6,15 @@ import omnetDataExtractor as ode
 import omnetDataConverter as odc
 import math
 import configurator as cfg
+from pathlib import Path
 from omnetConfIni import OmnetConfIni
 
 DEFAULT_FACTORS = ["nUser","userLambda","timeslot"]
 
 def main():
-    factorialAnalysis(csvFile = "data/results.csv", vectorName = "userThroughputTotalStat", outputFileName = "factorialAnalysis.csv")
+    vectorName = "userThroughputTotalStat"
+    vectorName = "packetDelayStat"
+    factorialAnalysis(csvFile = "data/results.csv", vectorName = vectorName, outputFileName = f"factorialAnalysis{vectorName.capitalize()}.csv")
     return
 
 def prepareData(csvFile, factors):
@@ -191,10 +194,12 @@ def getFactors(factorsNameList = DEFAULT_FACTORS):
 
     print(f"[INFO] getting factors from '{iniFile}'")
 
+    my_file = Path(iniFile)
+    if not my_file.is_file():
+        raise ValueError('File ini is missing in the specified folder')
+    # file exists
     iniConf = OmnetConfIni(iniFile)
-
     factors = iniConf.getOmnetRunAttr(factorsNameList)
-
     return factors
 
 if __name__ == '__main__':
