@@ -9,9 +9,9 @@ void User::initialize()
     int numUser = getParentModule()->par("NUM_USER").intValue();
     indexRNGCQI = id+2*numUser;
 
-    int mean = 14/numUser * (id+1); //14 for not reach 15
+    double mean = 14.0/numUser * (id+1); //14 for not reach 15
     p = mean/15; //n = 15;
-
+    EV<< "Mean: " << mean << "   " << "P:" << p << endl;
     simDelay = registerSignal("packetDelay");
     simThroughput = registerSignal("userThroughput");
     simThroughputTotal = registerSignal("userThroughputTotal");
@@ -61,12 +61,15 @@ void User::collectStatistics(Packet* packet){
 void User::sendCQI() {
     if(par("useBinomialDistribution").boolValue()){
         cqi = binomial(15, p, indexRNGCQI);
+        if(cqi < 1){
+            cqi = 1;
+        }
     }else{
         cqi = intuniform(1, 15, indexRNGCQI);
-        cqi = 15;
     }
     CqiMsg *cqiMsg = new CqiMsg("CQI");
     cqiMsg->setValue(cqi);
+
     send(cqiMsg, "out");
 }
 

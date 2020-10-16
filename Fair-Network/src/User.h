@@ -26,7 +26,7 @@ class User : public cSimpleModule
 
     int indexRNGCQI;
     //for binomial
-    int p;
+    double p;
 
     void collectStatistics(Packet* packet);
     void sendCQI();

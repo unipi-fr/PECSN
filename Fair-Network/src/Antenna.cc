@@ -196,6 +196,7 @@ void Antenna::updateCQI(cMessage *msg)
     CqiMsg *cqiMsg = check_and_cast<CqiMsg*>(msg);
 
     int index = cqiMsg->getValue()-1; // -1 because we saved the cqiTable starting from 0 instead of 1
+
     UserQueue *uq = queuesOrderedByUser[destination];
 
     uq->RBsize = CQITable[index];
