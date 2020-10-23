@@ -51,6 +51,10 @@ def constructConfidenceInterval(data):
 
     return confidenceInterval
 
+def plotConfidence():
+    for lower,upper,y in zip(dataset['lower'],dataset['upper'],range(len(dataset))):
+        plt.plot((lower,upper),(y,y),'ro-',color='orange')
+    plt.yticks(range(len(dataset)),list(dataset['category']))
 
 if __name__ == '__main__':
     main()

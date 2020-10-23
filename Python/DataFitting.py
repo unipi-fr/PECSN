@@ -13,7 +13,8 @@ def main():
     jsonKeys = list(jsonConverted.keys())
     firstKey = jsonKeys[4]
 
-    values = jsonConverted[firstKey]["userThroughputTotalStat"]["values"]
+    statToTest = "userThroughputTotalStat"
+    values = jsonConverted[firstKey][statToTest]["values"]
 
     orderedValues = sorted(values)
     
@@ -23,6 +24,10 @@ def main():
     sns.lmplot(x='normalq', y='ordinatestat', data=qqDf, fit_reg=True)
     #qqDf.plot()
     plt.show()
+
+    filename = "Documentation/qqPlot" + statToTest
+    plt.savefig(filename + '.svg', bbox_inches='tight')
+    plt.savefig(filename + '.png', bbox_inches='tight')
 
 def getNormalQuantile(i, mean = None, variance = None):
     normalQuantile = 4.91*((i**(0.14)) - ((1-i)**(0.14)))
