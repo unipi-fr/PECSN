@@ -1,15 +1,19 @@
 import factorialAnalysis as fa
 import omnetDataExtractor as ode
 from scipy import stats
+import pandas as pd
+import matplotlib.pyplot as plt
 import math
 
 def main():
     factors = fa.getFactors()
 
-    jsonConverted = fa.prepareData(csvFile = "data/results.csv", factors=factors)
+    jsonConverted = fa.prepareData(csvFile = "data/resultGeneral.csv", factors=factors)
     confidenceIntervalsJSON = constructConfidenceIntervals(jsonConverted)
 
     ode.saveJsonToFile(confidenceIntervalsJSON, "debug/confidenceIntervals.json")
+
+    plotConfidence(confidenceIntervalsJSON, "userThroughputTotalStat")
 
 def constructConfidenceIntervals(data):
     confidenceIntervals = dict()
@@ -51,10 +55,26 @@ def constructConfidenceInterval(data):
 
     return confidenceInterval
 
-def plotConfidence():
+def plotConfidence(data, statToVisualize):
+    data_dict = {}
+    data_dict['RunConf'] = list()
+    data_dict['lower'] = list()
+    data_dict['upper'] = list()
+
+    for runK in data.keys():
+        data_dict['RunConf'].append(runK)
+        
+        lowerValue = data[runK][statToVisualize][0]
+        upperValue = data[runK][statToVisualize][1]
+
+        data_dict['lower'].append(lowerValue)
+        data_dict['upper'].append(upperValue)
+        
+    dataset = pd.DataFrame(data_dict)
+
     for lower,upper,y in zip(dataset['lower'],dataset['upper'],range(len(dataset))):
         plt.plot((lower,upper),(y,y),'ro-',color='orange')
-    plt.yticks(range(len(dataset)),list(dataset['category']))
+    plt.yticks(range(len(dataset)),list(dataset['RunConf']))
 
 if __name__ == '__main__':
     main()
