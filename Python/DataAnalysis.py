@@ -13,7 +13,7 @@ def main():
 
     ode.saveJsonToFile(confidenceIntervalsJSON, "debug/confidenceIntervals.json")
 
-    plotConfidence(confidenceIntervalsJSON, "userThroughputTotalStat")
+    plotConfidence(confidenceIntervalsJSON, 'userThroughputTotalStat', "0.01")
 
 def constructConfidenceIntervals(data):
     confidenceIntervals = dict()
@@ -51,11 +51,11 @@ def constructConfidenceInterval(data):
         lowerBound = sampleMean - interval
         upperBound = sampleMean + interval
         bounds = [lowerBound, upperBound]
-        confidenceInterval[alpha] = bounds
+        confidenceInterval[str(alpha)] = bounds
 
     return confidenceInterval
 
-def plotConfidence(data, statToVisualize):
+def plotConfidence(data, statToVisualize, confidenceLevel):
     data_dict = {}
     data_dict['RunConf'] = list()
     data_dict['lower'] = list()
@@ -64,8 +64,8 @@ def plotConfidence(data, statToVisualize):
     for runK in data.keys():
         data_dict['RunConf'].append(runK)
         
-        lowerValue = data[runK][statToVisualize][0]
-        upperValue = data[runK][statToVisualize][1]
+        lowerValue = data[runK][statToVisualize][confidenceLevel][0]
+        upperValue = data[runK][statToVisualize][confidenceLevel][1]
 
         data_dict['lower'].append(lowerValue)
         data_dict['upper'].append(upperValue)
@@ -73,8 +73,13 @@ def plotConfidence(data, statToVisualize):
     dataset = pd.DataFrame(data_dict)
 
     for lower,upper,y in zip(dataset['lower'],dataset['upper'],range(len(dataset))):
-        plt.plot((lower,upper),(y,y),'ro-',color='orange')
+        plt.plot((lower,upper),(y,y),'ro-')
     plt.yticks(range(len(dataset)),list(dataset['RunConf']))
+
+    filename = "Documentation/qqPlot" + statToVisualize
+    plt.savefig(filename + '.svg', format = 'svg', bbox_inches='tight')
+
+    plt.show()
 
 if __name__ == '__main__':
     main()

@@ -24,10 +24,11 @@ def main():
     sns.lmplot(x='normalq', y='ordinatestat', data=qqDf, fit_reg=True)
     #qqDf.plot()
     plt.show()
-
-    filename = "Documentation/qqPlot" + statToTest
+    
     plt.savefig(filename + '.svg', bbox_inches='tight')
     plt.savefig(filename + '.png', bbox_inches='tight')
+
+    filename = "Documentation/qqPlot" + statToTest
 
 def getNormalQuantile(i, mean = None, variance = None):
     normalQuantile = 4.91*((i**(0.14)) - ((1-i)**(0.14)))
