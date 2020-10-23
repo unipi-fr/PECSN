@@ -14,7 +14,10 @@ DEFAULT_FACTORS = ["nUser","userLambda","timeslot"]
 def main():
     vectorName = "userThroughputTotalStat"
     #vectorName = "packetDelayStat"
-    factorialAnalysis(csvFile = "data/results.csv", vectorName = vectorName, outputFileName = f"factorialAnalysis{vectorName.capitalize()}.csv")
+    resultType = "General"
+    #resultType = "Binomial"
+    fileName = f"data/result{resultType}.csv"
+    factorialAnalysis(csvFile = fileName, vectorName = vectorName, outputFileName = f"{resultType}-FA-{vectorName.capitalize()}.csv")
     return
 
 def prepareData(csvFile, factors):
