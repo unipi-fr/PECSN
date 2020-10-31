@@ -15,6 +15,7 @@ class Antenna : public cSimpleModule
 {
   private:
     simsignal_t simQueue;
+    simsignal_t simFrame;
 
     cMessage *beep;
     Frame *frame;

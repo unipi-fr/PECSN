@@ -5,6 +5,7 @@ Define_Module(Antenna);
 void Antenna::initialize()
 {
     simQueue = registerSignal("packetQueue");
+    simFrame = registerSignal("blockPerFrame");
 
     CQITable = new int[15];
     CQITable[0] = 3;
@@ -168,6 +169,10 @@ void Antenna::prepareFrame()
 void Antenna::sendFrame(cMessage *msg)
 {
     prepareFrame();
+
+    int blockUsed = frame->getRBused();
+
+    emit(simFrame, blockUsed);
 
     int nUser= getParentModule()->par("NUM_USER").intValue();
     for(int i=0; i<nUser; ++i){

@@ -9,16 +9,16 @@ import configurator as cfg
 from pathlib import Path
 from omnetConfIni import OmnetConfIni
 
-DEFAULT_FACTORS = ["nUser","userLambda","timeslot"]
+DEFAULT_FACTORS = ["nUser","userLambda"]
 VECTOR_NAMES = ["userThroughputTotalStat","packetDelayStat"]
-TYPES_OF_RUNS = ["General","Binomial"]
+TYPES_OF_RUNS = ["General"]#,"Binomial"]
 
 def main():
     for resultType in TYPES_OF_RUNS:
         for vectorName in VECTOR_NAMES:
             factorialAnalysis(csvFile = f"data/result{resultType}.csv", 
                             vectorName = vectorName, 
-                            outputFileName = f"factorialAnalisysResults/{resultType}-{vectorName.capitalize()}.csv")
+                            outputFileName = f"factorialAnalysisResults/{resultType}-{vectorName.capitalize()}.csv")
     return
 
 def prepareData(csvFile, factors):
