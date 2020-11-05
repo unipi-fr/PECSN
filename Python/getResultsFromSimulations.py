@@ -3,20 +3,30 @@ import configurator as cfg
 import os
 import json
 
+MODES = ["General", "Binomial"]
+
 def main():
     conf = dict()
     conf = cfg.getConfiguration()
-    resultsDir = "{projectDir}/simulations/results".format(projectDir = conf["PROJECT_FOLDER"])
+    inputFolder = f"{conf['PROJECT_FOLDER']}/simulations/results"
+    outputFolder = conf["OUTPUT_PATH"]
+    omnetPath = conf["OMNET_PATH"]
+
+    for mode in MODES:
+        extractResult(omnetPath = omnetPath, inputFolder = f"{inputFolder}/{mode}", outputFolder = outputFolder, additionalResultName = mode)
+   
+    return
+
+def extractResult(omnetPath,inputFolder, outputFolder, skipStatistics = False, skipVector = True , additionalResultName = ""):
     print("Moving into results directory")
-    os.chdir(resultsDir)
-    print("Moved into => {dir}".format(dir=os.getcwd()))
+    os.chdir(inputFolder)
+    print(f"Moved into => {os.getcwd()}")
     print("Extracting results")
-    outputPath = conf["OUTPUT_PATH"]
-    #command = '{path}/bin/scavetool x *.sca *.vec -o {outputPath}/results_all.csv -v'.format(path = conf["OMNET_PATH"],outputPath = outputPath)
-    command = '{path}/bin/scavetool x *.sca -o {outputPath}/results.csv -v'.format(path = conf["OMNET_PATH"],outputPath = outputPath)
+    skipString = ("*.sca" if not skipStatistics else "") +" "+ ("*.vec" if not skipVector else "")
+    command = f'{omnetPath}/bin/scavetool x {skipString} -o {outputFolder}/results{additionalResultName}.csv -v'
     print(f"[DEBUG] trying to execute:\n{command}")
     os.system(command)
-    print("Results extracted ind => {outputPath}/results.csv".format(outputPath = outputPath))
+    print(f"Results extracted ind => {outputFolder}/results{additionalResultName}.csv")
     return
 
 def loadJsonFromFile(filename):

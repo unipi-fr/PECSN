@@ -11,12 +11,12 @@ from omnetConfIni import OmnetConfIni
 
 DEFAULT_FACTORS = ["nUser","userLambda"]
 VECTOR_NAMES = ["userThroughputTotalStat","packetDelayStat"]
-TYPES_OF_RUNS = ["General"]#,"Binomial"]
+TYPES_OF_RUNS = ["General","Binomial"]
 
 def main():
     for resultType in TYPES_OF_RUNS:
         for vectorName in VECTOR_NAMES:
-            factorialAnalysis(csvFile = f"data/result{resultType}.csv", 
+            factorialAnalysis(csvFile = f"data/results{resultType}.csv", 
                             vectorName = vectorName, 
                             outputFileName = f"factorialAnalysisResults/{resultType}-{vectorName.capitalize()}.csv")
     return

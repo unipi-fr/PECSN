@@ -268,6 +268,8 @@ def baseElaborateVectorsOfCSV(filename, handlingVectorsFunction = None, handling
             if handlingStatisticFunction is not None and 'statistic' in row:
                 user = row[2].split(".")[1]
                 vectorName = row[3].split(":")[0]
+                if row[9] == "NaN":
+                    print(row)
                 statistics = {
                     "count": ast.literal_eval(row[7]),
                     "mean": ast.literal_eval(row[9]),
