@@ -60,10 +60,8 @@ void User::collectStatistics(Packet* packet){
 
 void User::sendCQI() {
     if(par("useBinomialDistribution").boolValue()){
-        cqi = binomial(15, p, indexRNGCQI);
-        if(cqi < 1){
-            cqi = 1;
-        }
+        cqi = binomial(14, p, indexRNGCQI);
+            cqi += 1; // cqi must be within [1, 15]
     }else{
         cqi = intuniform(1, 15, indexRNGCQI);
     }
