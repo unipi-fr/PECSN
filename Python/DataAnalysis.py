@@ -8,14 +8,14 @@ import math
 def main():
     factors = fa.getFactors()
 
-    jsonConverted = fa.prepareData(csvFile = "data/resultGeneral.csv", factors=factors)
-    confidenceIntervalsJSON = constructConfidenceIntervals(jsonConverted)
+    jsonConverted = fa.prepareData(csvFile = "data/resultsGeneral.csv", factors=factors, takeAllRuns = True)
+    confidenceIntervalsJSON = constructConfidenceIntervals(jsonConverted, vectorFilter = ["blockPerFrameStat"])
 
     ode.saveJsonToFile(confidenceIntervalsJSON, "debug/confidenceIntervals.json")
 
-    plotConfidence(confidenceIntervalsJSON, 'userThroughputTotalStat', "0.01")
+    #plotConfidence(confidenceIntervalsJSON, 'userThroughputTotalStat', "0.01")
 
-def constructConfidenceIntervals(data):
+def constructConfidenceIntervals(data, vectorFilter = None):
     confidenceIntervals = dict()
     for runk in data.keys():
         run = data[runk]
@@ -23,6 +23,10 @@ def constructConfidenceIntervals(data):
 
         for statk in run.keys():
             runStat = run[statk]
+            #print(f"[DEBUG] vectorFilter is not None = {vectorFilter is not None} vect = {vectorFilter}")
+            #print(f"[DEBUG] runStat[{statk}] not in vectorFilter = {statk not in vectorFilter}")
+            if vectorFilter is not None and statk not in vectorFilter:
+                continue
 
             confidenceIntervalsForStat = constructConfidenceInterval(runStat)
 

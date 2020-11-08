@@ -21,7 +21,7 @@ def main():
                             outputFileName = f"factorialAnalysisResults/{resultType}-{vectorName.capitalize()}.csv")
     return
 
-def prepareData(csvFile, factors):
+def prepareData(csvFile, factors, takeAllRuns = False):
     #print(factorDF)
     print("[INFO] creating JSON from csvFile")
     jsonData = ode.createJsonFromCSV(filename = csvFile, skipVectors = True, skipStatistics = False)
@@ -29,7 +29,7 @@ def prepareData(csvFile, factors):
     print("[DEBUG] saved JSON in 'debug/test.json'")
 
     print("[INFO] converting JSON in a new format for factorial analysis")
-    jsonConverted = odc.convertJsonOmnetDataForFactorialAnalisys(jsonData, factors)   
+    jsonConverted = odc.convertJsonOmnetDataForFactorialAnalisys(jsonData, factors, takeAllRuns)   
     ode.saveJsonToFile(jsonConverted, "debug/testNew.json")
     print("[DEBUG] saved JSON in 'debug/testNew.json'")
     return jsonConverted
