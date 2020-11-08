@@ -6,13 +6,13 @@ void Sender::initialize()
 {
     beep = new cMessage("beep");
 
-    rate = 1/par("lambda").doubleValue();
+    mean = 1/par("lambda").doubleValue();
 
     int numUser = getParentModule()->getParentModule()->par("NUM_USER").intValue();
     indexRNGExp = getIndex()+0*numUser;
     indexRNGUnif = getIndex()+1*numUser;
 
-    double time = exponential(rate, indexRNGExp);
+    double time = exponential(mean, indexRNGExp);
     scheduleAt(simTime() + time, beep);
 }
 
@@ -35,7 +35,8 @@ void Sender::handleMessage(cMessage *msg)
 
         send(packet, "out");
 
-        double time = exponential(rate, indexRNGExp);
+        double time = exponential(mean, indexRNGExp);
+        //EV<<"Time = "<<time<<endl;
         scheduleAt(simTime() + time, beep);
     }
 }

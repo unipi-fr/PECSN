@@ -9,7 +9,7 @@ using namespace omnetpp;
 class Sender : public cSimpleModule
 {
   private:
-    double rate;
+    double mean;
     cMessage *beep;
 
     int indexRNGExp;

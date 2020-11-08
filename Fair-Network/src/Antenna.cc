@@ -187,7 +187,7 @@ void Antenna::savePacket(cMessage *msg)
 {
     Packet *packet = check_and_cast<Packet*>(msg);
 
-    EV_INFO<<packet->getName()<<" size: "<<packet->getSize()<<" "<<packet->getDestination();
+    //EV_INFO<<packet->getName()<<" size: "<<packet->getSize()<<" - Destination:  "<<packet->getDestination();
 
     packet->setArrivalTime(simTime());
 
