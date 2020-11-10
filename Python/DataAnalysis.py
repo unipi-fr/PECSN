@@ -6,14 +6,20 @@ import matplotlib.pyplot as plt
 import math
 
 def main():
+    getConfidenceIntervals()
+
+def getConfidenceIntervals(saveToFile = True):
     factors = fa.getFactors()
 
     jsonConverted = fa.prepareData(csvFile = "data/resultsGeneral.csv", factors=factors, takeAllRuns = True)
     confidenceIntervalsJSON = constructConfidenceIntervals(jsonConverted, vectorFilter = ["blockPerFrameStat"])
 
-    ode.saveJsonToFile(confidenceIntervalsJSON, "debug/confidenceIntervals.json")
+    if saveToFile:
+        ode.saveJsonToFile(confidenceIntervalsJSON, "debug/confidenceIntervals.json")
 
     #plotConfidence(confidenceIntervalsJSON, 'userThroughputTotalStat', "0.01")
+
+    return confidenceIntervalsJSON
 
 def constructConfidenceIntervals(data, vectorFilter = None):
     confidenceIntervals = dict()

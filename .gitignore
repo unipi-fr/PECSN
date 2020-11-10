@@ -34,4 +34,5 @@
 #Progetto PECSN
 .metadata
 .vscode
+.DS_Store
 __pycache__
