@@ -9,8 +9,8 @@ void User::initialize()
     int numUser = getParentModule()->par("NUM_USER").intValue();
     indexRNGCQI = id+2*numUser;
 
-    double mean = 14.0/numUser * (id+1); //14 for not reach 15
-    p = mean/15; //n = 15;
+    double mean = 15.0/numUser * (id+1);
+    p = mean/15; //n = 15; da 0 a 14
     EV<< "Mean: " << mean << "   " << "P:" << p << endl;
     simDelay = registerSignal("packetDelay");
     simThroughput = registerSignal("userThroughput");
