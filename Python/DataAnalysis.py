@@ -12,7 +12,7 @@ def main():
 def getConfidenceIntervals(saveToFile = True):
     factors = fa.getFactors()
 
-    jsonConverted = odc.prepareData(csvFile = "data/resultsGeneral.csv", factors=factors, takeAllRuns = True)
+    jsonConverted = odc.prepareStatisticData(csvFile = "data/resultsGeneral.csv", factors=factors, takeAllRuns = True)
     confidenceIntervalsJSON = constructConfidenceIntervals(jsonConverted, vectorFilter = ["blockPerFrameStat"])
 
     if saveToFile:
