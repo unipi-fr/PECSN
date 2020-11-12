@@ -1,35 +1,20 @@
 import omnetDataExtractor as ode
 from omnetConfIni import OmnetConfIni
 
-def aggregateJsonOmnetDataOnSameConfigurationRun(dataJson, factors, takeAllRuns = True):
-    return convertDataJson(dataJson, factors, takeAllRuns, detailedInformations = True)
- 
-def convertJsonOmnetDataForFactorialAnalisys(dataJson, factors):
-    '''
-    trasform a dictionary of Json for omnet data into an new Dictionary with runs aggregated by params
+def prepareStatisticData(csvFile, factors, takeAllRuns = False, detailedInformations = False, activateDebug = False):
+    fileName = csvFile.split('/')[-1]
+    print("[INFO] creating JSON from csvFile")
+    jsonData = ode.createJsonFromCSV(filename = csvFile, skipVectors = True, skipStatistics = False)
+    if activateDebug:
+        ode.saveJsonToFile(jsonData, f"debug/{fileName}.json")
+        print(f"[DEBUG] saved JSON in 'debug/{fileName}.json'")
 
-    Note: all values are refeared to mean values
-    example:
-    {
-        "factor1(value1)factor2(value2)...":{
-            "vector1": {
-                "sumValues": float
-                "Values": [float]
-                "repetitions": int
-                "mean": float
-            },
-            "vector2": {
-                "sumValues": float
-                "Values": [float]
-                "repetitions": int
-                "mean": float
-            }
-            ...
-        },
-    }
-    '''
-    return convertDataJson(dataJson, factors, takeAllRuns = False, detailedInformations = False )
-
+    activateDebug: print("[INFO] processing JSON for other elaborations")
+    jsonConverted = convertDataJson(jsonData, factors, takeAllRuns, detailedInformations)  
+    if activateDebug: 
+        ode.saveJsonToFile(jsonConverted, f"debug/{fileName}Processed.json")
+        print(f"[DEBUG] saved JSON in 'debug/{fileName}Processed.json'")
+    return jsonConverted
 
 def convertDataJson(dataJson, factors, takeAllRuns = False, detailedInformations = False):
     dataConverted = dict()
@@ -67,7 +52,21 @@ def collectAggregateInformation(vectorSummary, meanAccomulator, meanCount):
 
     return vectorSummary
 
-def extractInformationFromComponent(runSummary, component, numberOfTotalComponents, detailedInformations):
+def collectDetailedInformation(vectorSummary, componentKey, meanValue):
+    components = componentKey.split('[')[0]+"s"
+    componentsRunMeanKey = f"{components}RunMeanValues"
+
+    componentsRunMeanValues = ode.checkOrCreateKeyAsValue(vectorSummary, componentsRunMeanKey, dict())
+    actualComponent = ode.checkOrCreateKeyAsValue(componentsRunMeanValues, componentKey, list())
+    actualComponent.append(meanValue)
+
+    componentsRunMeanValues[componentKey] = actualComponent
+    vectorSummary[componentsRunMeanKey] = componentsRunMeanValues
+    return vectorSummary
+
+def extractInformationFromComponent(runSummary, run, componentKey, numberOfTotalComponents, detailedInformations):
+    component = run[componentKey]
+
     for vectorK in component.keys():
             vectorSummary = ode.checkOrCreateKeyAsDictionary(runSummary, vectorK)
             
@@ -80,7 +79,8 @@ def extractInformationFromComponent(runSummary, component, numberOfTotalComponen
 
             tmpMeanAccomulator += currentValue
             tmpMeanCount += 1
-            
+            if detailedInformations :
+                vectorSummary = collectDetailedInformation(vectorSummary = vectorSummary, componentKey = componentKey, meanValue = currentValue)
             # when tmpMeanCount reach the number of components means that all users was visited, so i can calculate aggregate information
             if tmpMeanCount == numberOfTotalComponents:
                 vectorSummary = collectAggregateInformation(vectorSummary = vectorSummary, meanAccomulator = tmpMeanAccomulator, meanCount = tmpMeanCount)
@@ -105,9 +105,9 @@ def takeAllRunInformations(dataConverted, run, runKeyWithFactors, detailedInform
         userKey = f"user[{i}]"
         actualUser = run[userKey]
 
-        runSummary = extractInformationFromComponent(runSummary, component = actualUser, numberOfTotalComponents = nUser, detailedInformations = detailedInformations)
+        runSummary = extractInformationFromComponent(runSummary, run = run, componentKey = userKey, numberOfTotalComponents = nUser, detailedInformations = detailedInformations)
     # ANTENNA
-    runSummary = extractInformationFromComponent(runSummary, component = run["antenna"], numberOfTotalComponents = 1, detailedInformations = detailedInformations)
+    runSummary = extractInformationFromComponent(runSummary, run = run, componentKey = "antenna", numberOfTotalComponents = 1, detailedInformations = detailedInformations)
         
     return dataConverted
 

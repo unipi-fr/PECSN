@@ -1,5 +1,6 @@
 import factorialAnalysis as fa
 import omnetDataExtractor as ode
+import omnetDataConverter as odc
 from scipy import stats
 import pandas as pd
 import matplotlib.pyplot as plt
@@ -11,7 +12,7 @@ def main():
 def getConfidenceIntervals(saveToFile = True):
     factors = fa.getFactors()
 
-    jsonConverted = fa.prepareData(csvFile = "data/resultsGeneral.csv", factors=factors, takeAllRuns = True)
+    jsonConverted = odc.prepareData(csvFile = "data/resultsGeneral.csv", factors=factors, takeAllRuns = True)
     confidenceIntervalsJSON = constructConfidenceIntervals(jsonConverted, vectorFilter = ["blockPerFrameStat"])
 
     if saveToFile:
