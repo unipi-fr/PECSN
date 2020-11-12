@@ -8,7 +8,7 @@ def main():
     factors = fa.getFactors()
     for resultType in TYPES_OF_RUNS:
         csvFile = f"data/results{resultType}.csv"
-        jsonProcessed = odc.prepareStatisticData(csvFile,factors, takeAllRuns=True, detailedInformations=True, activateDebug=True)
+        jsonProcessed = odc.prepareStatisticData(csvFile,factors, takeAllRuns=True, levelOfDetail=0, activateDebug=True)
     return
 
 if __name__ == '__main__':
