@@ -47,7 +47,7 @@ def convertDataJson(dataJson, factors, takeAllRuns = False, levelOfDetail = 0):
     return dataConverted
 
 
-def collectAggregateInformation(vectorSummary, tmpVectorSummary, meanAccomulator, meanCount, levelOfDetail):
+def collectAggregateInformation(vectorSummary, tmpVectorSummary, meanAccomulator, meanCount, minValue, maxValue, levelOfDetail):
     # levelOfDetail = 0
     sumValues = ode.checkOrCreateKeyAsValue(tmpVectorSummary, "sumValues", 0)
     repetition = ode.checkOrCreateKeyAsValue(vectorSummary, "repetitions", 0)
@@ -56,6 +56,8 @@ def collectAggregateInformation(vectorSummary, tmpVectorSummary, meanAccomulator
     sumValues += currentMean
     repetition += 1
 
+    # directly inserted overwrite
+    vectorSummary["mean"] = sumValues / repetition
     if levelOfDetail > 0:
         values = ode.checkOrCreateKeyAsValue(vectorSummary, "values", list())
         values.append(currentMean)
@@ -63,7 +65,8 @@ def collectAggregateInformation(vectorSummary, tmpVectorSummary, meanAccomulator
     
     tmpVectorSummary["sumValues"] = sumValues
     vectorSummary["repetitions"] = repetition
-    vectorSummary["mean"] = sumValues / repetition
+    vectorSummary["min"] = minValue
+    vectorSummary["max"] = maxValue
 
     return vectorSummary
 
@@ -77,23 +80,31 @@ def collectDetailedInformation(vectorSummary, tmpVectorSummary , componentKey, m
 
     tmpCompRunMeanValues = ode.checkOrCreateKeyAsValue(tmpVectorSummary, componentsRunMeanKey, dict())
     actualComponent = ode.checkOrCreateKeyAsValue(componentsRunMeanValues, componentKey, dict())
+    minValue = ode.checkOrCreateKeyAsValue(actualComponent, "minValue", meanValue)
+    maxValue = ode.checkOrCreateKeyAsValue(actualComponent, "maxValue", meanValue)
 
     tmpActualComponent = ode.checkOrCreateKeyAsValue(tmpCompRunMeanValues, componentKey, dict())
     tmpSumOfValues = ode.checkOrCreateKeyAsValue(tmpActualComponent, "tmpSumOfValues", 0)
     tmpCountOfValues = ode.checkOrCreateKeyAsValue(tmpActualComponent, "tmpCountOfValues", 0)
 
+    
     tmpSumOfValues += meanValue
     tmpCountOfValues += 1
+    # directly inserted
+    actualComponent["meanOfRepetitions"] = tmpSumOfValues / tmpCountOfValues
+    minValue = meanValue if meanValue < minValue else minValue
+    maxValue = meanValue if meanValue > maxValue else maxValue
     if levelOfDetail > 1:
         valueList = ode.checkOrCreateKeyAsValue(actualComponent, "valueList", list())
         valueList.append(meanValue)
         actualComponent["valueList"] = valueList
-
+    
     tmpActualComponent["tmpSumOfValues"] = tmpSumOfValues
     tmpActualComponent["tmpCountOfValues"] = tmpCountOfValues
     tmpCompRunMeanValues[componentKey] = tmpActualComponent
 
-    actualComponent["meanOfRepetitions"] = tmpSumOfValues / tmpCountOfValues
+    actualComponent["minValue"] = minValue
+    actualComponent["maxValue"] = maxValue
     componentsRunMeanValues[componentKey] = actualComponent
     vectorSummary[componentsRunMeanKey] = componentsRunMeanValues
     return vectorSummary
@@ -104,26 +115,36 @@ def extractInformationFromComponent(runSummary, runTmp, run, componentKey, numbe
     for vectorK in component.keys():
             vectorSummary = ode.checkOrCreateKeyAsDictionary(runSummary, vectorK)
             tmpVectorSum = ode.checkOrCreateKeyAsDictionary(runTmp, vectorK)
+
+            currentStats = component[vectorK]["statistics"]
+            currentValue = currentStats["mean"]
             
             # those are needed to calculate the mean value of the vector among all users in the current run
             tmpMeanAccomulator = ode.checkOrCreateKeyAsValue(tmpVectorSum, "tmpMeanAccomulatorValues", 0)
             tmpMeanCount = ode.checkOrCreateKeyAsValue(tmpVectorSum, "tmpMeanCount", 0)
+            
+            tmpMin = ode.checkOrCreateKeyAsValue(tmpVectorSum, "tmpMin", currentValue)
+            tmpMax = ode.checkOrCreateKeyAsValue(tmpVectorSum, "tmpMax", currentValue) 
 
-            currentStats = component[vectorK]["statistics"]
-            currentValue = currentStats["mean"]
-
+            tmpMin = currentValue if currentValue < tmpMin else tmpMin
+            tmpMax = currentValue if currentValue > tmpMax else tmpMax
             tmpMeanAccomulator += currentValue
             tmpMeanCount += 1
             vectorSummary = collectDetailedInformation(vectorSummary = vectorSummary, tmpVectorSummary = tmpVectorSum, componentKey = componentKey, meanValue = currentValue, levelOfDetail = levelOfDetail)
-            # when tmpMeanCount reach the number of components means that all users was visited, so i can calculate aggregate information
+            # when tmpMeanCount reach the number of components means that all users for that specific run was visited, so i can calculate aggregate information
             if tmpMeanCount == numberOfTotalComponents:
-                vectorSummary = collectAggregateInformation(vectorSummary = vectorSummary, tmpVectorSummary = tmpVectorSum, meanAccomulator = tmpMeanAccomulator, meanCount = tmpMeanCount, levelOfDetail = levelOfDetail)
+                vectorSummary = collectAggregateInformation(vectorSummary = vectorSummary, tmpVectorSummary = tmpVectorSum, meanAccomulator = tmpMeanAccomulator, meanCount = tmpMeanCount, minValue = tmpMin, maxValue = tmpMax, levelOfDetail = levelOfDetail)
                 #reset accomulator for next run
-                tmpMeanCount = 0
-                tmpMeanAccomulator = 0
-            
-            tmpVectorSum["tmpMeanCount"] = tmpMeanCount
-            tmpVectorSum["tmpMeanAccomulatorValues"] = tmpMeanAccomulator
+                del tmpVectorSum["tmpMin"]
+                del tmpVectorSum["tmpMax"]
+                tmpVectorSum["tmpMeanCount"] = 0
+                tmpVectorSum["tmpMeanAccomulatorValues"] = 0
+            else:
+                tmpVectorSum["tmpMin"] = tmpMin
+                tmpVectorSum["tmpMax"] = tmpMax
+                tmpVectorSum["tmpMeanCount"] = tmpMeanCount
+                tmpVectorSum["tmpMeanAccomulatorValues"] = tmpMeanAccomulator
+
     return runSummary
 
 def takeAllRunInformations(dataConverted, run, runKeyWithFactors, levelOfDetail):
