@@ -7,13 +7,13 @@ import matplotlib.pyplot as plt
 import math
 
 def main():
-    getConfidenceIntervals()
-
-def getConfidenceIntervals(saveToFile = True):
     factors = fa.getFactors()
-
     jsonConverted = odc.prepareStatisticData(csvFile = "data/resultsGeneral.csv", factors=factors, takeAllRuns = True, levelOfDetail = 2, useJsonFileIfExists = True)
-    confidenceIntervalsJSON = constructConfidenceIntervals(jsonConverted, vectorFilter = ["userThroughputTotalStat", "blockPerFrameStat"])
+
+    getConfidenceIntervals(jsonConverted, ["userThroughputTotalStat", "blockPerFrameStat"])
+
+def getConfidenceIntervals(jsonConverted, vectorFilter = ["userThroughputTotalStat"], saveToFile = True):
+    confidenceIntervalsJSON = constructConfidenceIntervals(jsonConverted, vectorFilter)
 
     if saveToFile:
         ode.saveJsonToFile(confidenceIntervalsJSON, "debug/confidenceIntervals.json")
