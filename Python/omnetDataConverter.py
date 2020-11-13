@@ -130,7 +130,8 @@ def extractInformationFromComponent(runSummary, runTmp, run, componentKey, numbe
             tmpMax = currentValue if currentValue > tmpMax else tmpMax
             tmpMeanAccomulator += currentValue
             tmpMeanCount += 1
-            vectorSummary = collectDetailedInformation(vectorSummary = vectorSummary, tmpVectorSummary = tmpVectorSum, componentKey = componentKey, meanValue = currentValue, levelOfDetail = levelOfDetail)
+            if numberOfTotalComponents > 1:
+                vectorSummary = collectDetailedInformation(vectorSummary = vectorSummary, tmpVectorSummary = tmpVectorSum, componentKey = componentKey, meanValue = currentValue, levelOfDetail = levelOfDetail)
             # when tmpMeanCount reach the number of components means that all users for that specific run was visited, so i can calculate aggregate information
             if tmpMeanCount == numberOfTotalComponents:
                 vectorSummary = collectAggregateInformation(vectorSummary = vectorSummary, tmpVectorSummary = tmpVectorSum, meanAccomulator = tmpMeanAccomulator, meanCount = tmpMeanCount, minValue = tmpMin, maxValue = tmpMax, levelOfDetail = levelOfDetail)
