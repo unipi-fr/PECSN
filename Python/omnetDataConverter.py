@@ -1,19 +1,30 @@
 import omnetDataExtractor as ode
 from omnetConfIni import OmnetConfIni
+from pathlib import Path
 
-def prepareStatisticData(csvFile, factors, takeAllRuns = False, levelOfDetail = 0, activateDebug = False):
-    fileName = csvFile.split('/')[-1]
-    print("[INFO] creating JSON from csvFile")
-    jsonData = ode.createJsonFromCSV(filename = csvFile, skipVectors = True, skipStatistics = False)
-    if activateDebug:
-        ode.saveJsonToFile(jsonData, f"debug/{fileName}.json")
-        print(f"[DEBUG] saved JSON in 'debug/{fileName}.json'")
+def prepareStatisticData(csvFile, factors, takeAllRuns = False, levelOfDetail = 0, useJsonFileIfExists = False, useJsonProcessedIfExists = False):
+    csvFilename = csvFile.split('/')[-1]
+    outputJsonFile = f"debug/{csvFilename}.json"
+    outputJsonProcessedFile = f"debug/{csvFilename}Processed.json"
 
-    activateDebug: print("[INFO] processing JSON for other elaborations")
-    jsonConverted = convertDataJson(jsonData, factors, takeAllRuns, levelOfDetail)  
-    if activateDebug: 
-        ode.saveJsonToFile(jsonConverted, f"debug/{fileName}Processed.json")
-        print(f"[DEBUG] saved JSON in 'debug/{fileName}Processed.json'")
+    if useJsonFileIfExists and Path(outputJsonFile).is_file():
+        print(f"[INFO] loaded file '{outputJsonFile}' from cache")
+        jsonData = ode.loadJsonFromFile(outputJsonFile)
+    else:
+        print(f"[INFO] creating JSON from '{csvFile}''")
+        jsonData = ode.createJsonFromCSV(filename = csvFile, skipVectors = True, skipStatistics = False)
+        ode.saveJsonToFile(jsonData, outputJsonFile)
+        print(f"[INFO] saved JSON in '{outputJsonFile}'")
+
+    if useJsonProcessedIfExists and Path(outputJsonProcessedFile).is_file():
+        print(f"[INFO] loaded file '{outputJsonProcessedFile}' from cache")
+        jsonConverted = ode.loadJsonFromFile(outputJsonProcessedFile)
+    else:
+        print("[INFO] processing JSON for other elaborations")
+        jsonConverted = convertDataJson(jsonData, factors, takeAllRuns, levelOfDetail)  
+        ode.saveJsonToFile(jsonConverted, outputJsonProcessedFile)
+        print(f"[INFO] saved JSON in '{outputJsonProcessedFile}'")
+
     return jsonConverted
 
 def convertDataJson(dataJson, factors, takeAllRuns = False, levelOfDetail = 0):
@@ -26,10 +37,11 @@ def convertDataJson(dataJson, factors, takeAllRuns = False, levelOfDetail = 0):
         (result, dictKey) = checkIfRunHasGivenParams(actualRun, factors)
         
         if takeAllRuns or result :
-            dataConverted = convertRun(dataConverted, actualRun, dictKey, levelOfDetail)
+            dataConverted = takeAllRunInformations(dataConverted, actualRun, dictKey, levelOfDetail = levelOfDetail)
         else:
             skipped += 1
         total += 1
+    del dataConverted["tmp"]
         
     print(f"[INFO] skipped {skipped}/{total} runs")
     return dataConverted
@@ -113,10 +125,6 @@ def extractInformationFromComponent(runSummary, runTmp, run, componentKey, numbe
             tmpVectorSum["tmpMeanCount"] = tmpMeanCount
             tmpVectorSum["tmpMeanAccomulatorValues"] = tmpMeanAccomulator
     return runSummary
-
-def convertRun(dataConverted, run, runKeyWithFactors, levelOfDetail):
-    dataConverted = takeAllRunInformations(dataConverted, run, runKeyWithFactors, levelOfDetail = levelOfDetail)
-    return dataConverted
 
 def takeAllRunInformations(dataConverted, run, runKeyWithFactors, levelOfDetail):
     runSummary = ode.checkOrCreateKeyAsDictionary(dataConverted, runKeyWithFactors)

@@ -6,7 +6,7 @@ INTERVAL_OF_VALIDITY_OF_THE_RUN = [0, 25]
 INTERVAL_OF_CONFIDENCE_USED = "0.1"
 
 def main():
-    data = da.getConfidenceIntervals(saveToFile = False)
+    data = da.getConfidenceIntervals(saveToFile = True)
     goodRuns = filterRun(data)
 
     print("The run in the interaval:", INTERVAL_OF_VALIDITY_OF_THE_RUN, "of the stat", STAT_TO_SEE, "at confidence level:", INTERVAL_OF_CONFIDENCE_USED , "are:")
