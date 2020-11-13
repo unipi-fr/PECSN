@@ -12,8 +12,8 @@ def main():
 def getConfidenceIntervals(saveToFile = True):
     factors = fa.getFactors()
 
-    jsonConverted = odc.prepareStatisticData(csvFile = "data/resultsGeneral.csv", factors=factors, takeAllRuns = True, levelOfDetail = 1, useJsonFileIfExists = True)
-    confidenceIntervalsJSON = constructConfidenceIntervals(jsonConverted, vectorFilter = ["blockPerFrameStat"])
+    jsonConverted = odc.prepareStatisticData(csvFile = "data/resultsGeneral.csv", factors=factors, takeAllRuns = True, levelOfDetail = 2, useJsonFileIfExists = True)
+    confidenceIntervalsJSON = constructConfidenceIntervals(jsonConverted, vectorFilter = ["userThroughputTotalStat", "blockPerFrameStat"])
 
     if saveToFile:
         ode.saveJsonToFile(confidenceIntervalsJSON, "debug/confidenceIntervals.json")
@@ -22,7 +22,7 @@ def getConfidenceIntervals(saveToFile = True):
 
     return confidenceIntervalsJSON
 
-def constructConfidenceIntervals(data, vectorFilter = None):
+def constructConfidenceIntervals(data, vectorFilter = None, usersIntervals = True):
     confidenceIntervals = dict()
     for runk in data.keys():
         run = data[runk]
@@ -35,7 +35,10 @@ def constructConfidenceIntervals(data, vectorFilter = None):
             if vectorFilter is not None and statk not in vectorFilter:
                 continue
 
-            confidenceIntervalsForStat = constructConfidenceInterval(runStat)
+            if "usersRunMeanValues" in runStat.keys():
+                confidenceIntervalsForStat = constructConfidenceInterval(runStat, usersIntervals)
+            else:
+                confidenceIntervalsForStat = constructConfidenceInterval(runStat, False)
 
             runConfidenceIntervals[statk] = confidenceIntervalsForStat
 
@@ -43,12 +46,36 @@ def constructConfidenceIntervals(data, vectorFilter = None):
 
     return confidenceIntervals
 
-def constructConfidenceInterval(data):
-    sampleMean = data["mean"]
-    n = data["repetitions"]
+def constructConfidenceInterval(data, usersIntervals = True):
+    runConfidenceIntervals = dict()
 
+    repetitions = data["repetitions"]
+    if usersIntervals:
+        runConfidenceIntervals = constructUsersConfidenceIntervals(data["usersRunMeanValues"], repetitions)
+    runConfidenceIntervals.update(constructTotalConfidenceInterval(data, repetitions))
+
+    return runConfidenceIntervals
+
+def constructUsersConfidenceIntervals(data, n):
+    usersConfidenceIntervals = dict()
+
+    usersConfidenceIntervals["usersConfidenceIntervals"] = dict()
+
+    for userK in data.keys():
+        sampleMean = data[userK]["meanOfRepetitions"]
+        values = data[userK]["valueList"]
+
+        usersConfidenceIntervals["usersConfidenceIntervals"][userK] = calculateConfidenceIntervals(sampleMean, values, n)
+
+    return usersConfidenceIntervals
+
+def constructTotalConfidenceInterval(data, n):
+    sampleMean = data["mean"]
     values = data["values"]
 
+    return calculateConfidenceIntervals(sampleMean, values, n)
+
+def calculateConfidenceIntervals(sampleMean, values, n):
     sampleVariance = 0
     for value in values:
         sampleVariance += (value - sampleMean)**2
