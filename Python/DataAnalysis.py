@@ -12,7 +12,7 @@ def main():
 
     getConfidenceIntervals(jsonConverted, ["userThroughputTotalStat", "blockPerFrameStat"])
 
-def getConfidenceIntervals(jsonConverted, vectorFilter = ["userThroughputTotalStat"], saveToFile = True):
+def getConfidenceIntervals(jsonConverted, vectorFilter, saveToFile = True):
     confidenceIntervalsJSON = constructConfidenceIntervals(jsonConverted, vectorFilter)
 
     if saveToFile:

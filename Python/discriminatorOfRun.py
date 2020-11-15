@@ -4,14 +4,14 @@ import omnetDataConverter as odc
 import factorialAnalysis as fa
 
 STAT_TO_SEE = "blockPerFrameStat"
-INTERVAL_OF_VALIDITY_OF_THE_RUN = [0, 25]
+INTERVAL_OF_VALIDITY_OF_THE_RUN = [15, 24.9]
 INTERVAL_OF_CONFIDENCE_USED = "0.1"
 
 def main():
     factors = fa.getFactors()
-    jsonConverted = odc.prepareStatisticData(csvFile = "data/resultsGeneral.csv", factors=factors, takeAllRuns = True, levelOfDetail = 2, useJsonFileIfExists = True)
+    jsonConverted = odc.prepareStatisticData(csvFile = "data/resultsGeneral.csv", factors=factors, takeAllRuns = True, levelOfDetail = 4, useJsonFileIfExists = True)
 
-    data = da.getConfidenceIntervals(jsonConverted, saveToFile = True)
+    data = da.getConfidenceIntervals(jsonConverted, [STAT_TO_SEE], saveToFile = True)
     goodRuns = filterRun(data)
 
     print("The run in the interaval:", INTERVAL_OF_VALIDITY_OF_THE_RUN, "of the stat", STAT_TO_SEE, "at confidence level:", INTERVAL_OF_CONFIDENCE_USED , "are:")

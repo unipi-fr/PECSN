@@ -47,14 +47,19 @@ def convertDataJson(dataJson, factors, takeAllRuns = False, levelOfDetail = 0):
     return dataConverted
 
 
-def collectAggregateInformation(vectorSummary, tmpVectorSummary, meanAccomulator, meanCount, minValue, maxValue, levelOfDetail):
+def collectAggregateInformation(vectorSummary, tmpVectorSummary, meanAccomulator, meanCount, currentValue, levelOfDetail):
     # levelOfDetail = 0
     sumValues = ode.checkOrCreateKeyAsValue(tmpVectorSummary, "sumValues", 0)
     repetition = ode.checkOrCreateKeyAsValue(vectorSummary, "repetitions", 0)
+    savedMin = ode.checkOrCreateKeyAsValue(vectorSummary, "min", currentValue)
+    savedMax = ode.checkOrCreateKeyAsValue(vectorSummary, "max", currentValue)
 
     currentMean = meanAccomulator / meanCount
     sumValues += currentMean
     repetition += 1
+
+    savedMin = currentValue if currentValue < savedMin else savedMin
+    savedMax = currentValue if currentValue > savedMax else savedMax
 
     # directly inserted overwrite
     vectorSummary["mean"] = sumValues / repetition
@@ -65,8 +70,8 @@ def collectAggregateInformation(vectorSummary, tmpVectorSummary, meanAccomulator
     
     tmpVectorSummary["sumValues"] = sumValues
     vectorSummary["repetitions"] = repetition
-    vectorSummary["min"] = minValue
-    vectorSummary["max"] = maxValue
+    vectorSummary["min"] = savedMin
+    vectorSummary["max"] = savedMax
 
     return vectorSummary
 
@@ -123,26 +128,18 @@ def extractInformationFromComponent(runSummary, runTmp, run, componentKey, numbe
             tmpMeanAccomulator = ode.checkOrCreateKeyAsValue(tmpVectorSum, "tmpMeanAccomulatorValues", 0)
             tmpMeanCount = ode.checkOrCreateKeyAsValue(tmpVectorSum, "tmpMeanCount", 0)
             
-            tmpMin = ode.checkOrCreateKeyAsValue(tmpVectorSum, "tmpMin", currentValue)
-            tmpMax = ode.checkOrCreateKeyAsValue(tmpVectorSum, "tmpMax", currentValue) 
 
-            tmpMin = currentValue if currentValue < tmpMin else tmpMin
-            tmpMax = currentValue if currentValue > tmpMax else tmpMax
             tmpMeanAccomulator += currentValue
             tmpMeanCount += 1
             if numberOfTotalComponents > 1:
                 vectorSummary = collectDetailedInformation(vectorSummary = vectorSummary, tmpVectorSummary = tmpVectorSum, componentKey = componentKey, meanValue = currentValue, levelOfDetail = levelOfDetail)
             # when tmpMeanCount reach the number of components means that all users for that specific run was visited, so i can calculate aggregate information
             if tmpMeanCount == numberOfTotalComponents:
-                vectorSummary = collectAggregateInformation(vectorSummary = vectorSummary, tmpVectorSummary = tmpVectorSum, meanAccomulator = tmpMeanAccomulator, meanCount = tmpMeanCount, minValue = tmpMin, maxValue = tmpMax, levelOfDetail = levelOfDetail)
+                vectorSummary = collectAggregateInformation(vectorSummary = vectorSummary, tmpVectorSummary = tmpVectorSum, meanAccomulator = tmpMeanAccomulator, meanCount = tmpMeanCount, currentValue = currentValue, levelOfDetail = levelOfDetail)
                 #reset accomulator for next run
-                del tmpVectorSum["tmpMin"]
-                del tmpVectorSum["tmpMax"]
                 tmpVectorSum["tmpMeanCount"] = 0
                 tmpVectorSum["tmpMeanAccomulatorValues"] = 0
             else:
-                tmpVectorSum["tmpMin"] = tmpMin
-                tmpVectorSum["tmpMax"] = tmpMax
                 tmpVectorSum["tmpMeanCount"] = tmpMeanCount
                 tmpVectorSum["tmpMeanAccomulatorValues"] = tmpMeanAccomulator
 
