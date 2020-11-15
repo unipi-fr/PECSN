@@ -8,21 +8,35 @@ import matplotlib.cm as cm
 import matplotlib.colors as colors
 import numpy as np
 
-TYPES_OF_RUNS = ["General"]#,"Binomial"]
+#TYPES_OF_RUNS = ["General","Binomial"]
+TYPES_OF_RUNS = ["Binomial"]
 
 def main():
     factors = fa.getFactors()
 
-    runFilter = ["nUser(25)userLambda(350)", "nUser(50)userLambda(350)", "nUser(100)userLambda(350)", "nUser(150)userLambda(350)", "nUser(200)userLambda(350)"]
+    #runFilter = ["nUser(25)userLambda(350)", "nUser(50)userLambda(350)", "nUser(100)userLambda(350)", "nUser(150)userLambda(350)", "nUser(200)userLambda(350)"]
 
     for resultType in TYPES_OF_RUNS:
         csvFile = f"data/results{resultType}.csv"
         jsonProcessed = odc.prepareStatisticData(csvFile,factors, takeAllRuns=True, levelOfDetail=2, useJsonFileIfExists = True, useJsonProcessedIfExists = False)
         #confidenceIntervals = da.getConfidenceIntervals(jsonProcessed)
-
+        groupedUserKeys = extractKeysWithSameUusersNumber(jsonProcessed)
+        for userKeys in groupedUserKeys:
+            checkFairnessOnEnumeratePlot(jsonProcessed, runFilter = groupedUserKeys[userKeys], statFilter = ["userThroughputTotalStat"])
         #checkFairnessOnScatterPlot(confidenceIntervals, runFilter = runFilter, statFilter = ["userThroughputTotalStat"], confidenceLevel="0.01")
-        checkFairnessOnEnumeratePlot(jsonProcessed, runFilter = runFilter, statFilter = ["userThroughputTotalStat"])
+        checkFairnessOnEnumeratePlot(jsonProcessed, runFilter = jsonProcessed, statFilter = ["userThroughputTotalStat"])
     return
+
+def extractKeysWithSameUusersNumber(jsonProcessed):
+    extracted = dict()
+    for i,run in enumerate(jsonProcessed):
+        nuser = run.split(")")[0]+")"
+        #print(f"i={i} nuser = '{nuser}'")
+        filteredList = ode.checkOrCreateKeyAsValue(extracted, nuser, list())
+        filteredList.append(run)
+        extracted[nuser] = filteredList
+    return extracted
+        
 
 def confidenceIntervalsToDataFrameFromJSONScatterPlot(conficenceIntervalsJson, confidenceLevel):
     confDict = dict()
@@ -72,6 +86,9 @@ def checkFairnessOnScatterPlot(confidenceIntervals, runFilter, statFilter, confi
     plt.xlim((375, 20000)) # default 93000
     plt.ylim((375, 15000)) # default 93000
 
+    filename = "Documentation/fairnessScatterPLot"
+    plt.savefig(filename + '.eps', format = 'eps', bbox_inches='tight')
+
     plt.show()
 
 def processedJsonToDataFrameFromJSONEnumeratePlot(processedJson):
@@ -119,6 +136,9 @@ def checkFairnessOnEnumeratePlot(processedJson, runFilter, statFilter):
     #plt.xlim((375, 300)) # default 200
     #plt.ylim((375, 15000)) # default 93000
 
+    filename = "Documentation/fairnessEnumeratePLot"
+    plt.savefig(filename + '.eps', format = 'eps', bbox_inches='tight')
+    
     plt.show()
 
 def getPlotColors(howMany):
