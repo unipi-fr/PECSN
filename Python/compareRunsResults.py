@@ -22,7 +22,7 @@ def main():
         confidenceIntervals = da.getConfidenceIntervals(jsonProcessed, ["userThroughputTotalStat", "userThroughputStat", "packetDelayStat"])
         groupedUserKeys = extractKeysWithSameUusersNumber(jsonProcessed)
         for userKeys in groupedUserKeys:
-            checkFairnessOnEnumeratePlot(jsonProcessed, confidenceIntervals, runFilter = groupedUserKeys[userKeys], statFilter = ["userThroughputTotalStat"], numUser = userKeys, plotConfidence = False)
+            checkFairnessOnEnumeratePlot(jsonProcessed, confidenceIntervals, runFilter = groupedUserKeys[userKeys], statFilter = ["userThroughputTotalStat"], numUser = userKeys, plotConfidence = True)
 
         #checkFairnessOnScatterPlot(confidenceIntervals, runFilter = runFilter, statFilter = ["userThroughputTotalStat"], confidenceLevel="0.01")
         #checkFairnessOnEnumeratePlot(jsonProcessed, confidenceIntervals, runFilter = jsonProcessed, statFilter = ["userThroughputTotalStat"], plotConfidence = True)
@@ -144,19 +144,23 @@ def checkFairnessOnEnumeratePlot(processedJson, confidenceIntervalsJson, runFilt
     for i,runK in enumerate(runFilter):
         plotDF = precessedDataFrame[runK]
         for statK in statFilter:
+            commonLabel = f"{runK.split('(')[1].split(')')[0]}-{runK.split('(')[2].split(')')[0]}"
             Xkey = f"{statK}.X"
             Ykey = f"{statK}.Y"
 
-            plotDF.plot.scatter(x = Xkey, y = Ykey, ax = ax, c = colorList[i], label = runK)
+            plotDF.plot.scatter(x = Xkey, y = Ykey, ax = ax, c = colorList[i], label = commonLabel)
 
             if plotConfidence:
+                
                 upKey = f"{statK}.UP"
                 downKey = f"{statK}.DOWN"
-                plotDF.plot.scatter(x = Xkey, y = upKey, ax = ax, c = colorList[i], label = runK)
-                plotDF.plot.scatter(x = Xkey, y = downKey, ax = ax, c = colorList[i], label = runK)
+                #plotDF.plot.line(x = Xkey, y = upKey, ax = ax, c = colorList[i], label = f"{commonLabel} Upper Conf")
+                #plotDF.plot.line(x = Xkey, y = downKey, ax = ax, c = colorList[i], label = f"{commonLabel} Lower Conf")
+                plt.fill_between(plotDF[Xkey], plotDF[downKey], plotDF[upKey], color = colorList[i], alpha=.2)
 
     #plt.xlim((375, 300)) # default 200
     #plt.ylim((375, 15000)) # default 93000
+
 
     filename = f"Documentation/fairnessEnumeratePLot{numUser}"
     plt.savefig(filename + '.svg', format = 'svg', bbox_inches='tight')
