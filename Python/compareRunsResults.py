@@ -9,7 +9,7 @@ import matplotlib.colors as colors
 import numpy as np
 
 #TYPES_OF_RUNS = ["General","Binomial"]
-TYPES_OF_RUNS = ["Binomial"]
+TYPES_OF_RUNS = ["General"]
 
 def main():
     factors = fa.getFactors()
@@ -19,12 +19,13 @@ def main():
     for resultType in TYPES_OF_RUNS:
         csvFile = f"data/results{resultType}.csv"
         jsonProcessed = odc.prepareStatisticData(csvFile,factors, takeAllRuns=True, levelOfDetail=2, useJsonFileIfExists = True, useJsonProcessedIfExists = False)
-        #confidenceIntervals = da.getConfidenceIntervals(jsonProcessed)
+        confidenceIntervals = da.getConfidenceIntervals(jsonProcessed, ["userThroughputTotalStat", "userThroughputStat", "packetDelayStat"])
         groupedUserKeys = extractKeysWithSameUusersNumber(jsonProcessed)
         for userKeys in groupedUserKeys:
-            checkFairnessOnEnumeratePlot(jsonProcessed, runFilter = groupedUserKeys[userKeys], statFilter = ["userThroughputTotalStat"])
+            checkFairnessOnEnumeratePlot(jsonProcessed, confidenceIntervals, runFilter = groupedUserKeys[userKeys], statFilter = ["userThroughputTotalStat"], numUser = userKeys, plotConfidence = True)
+
         #checkFairnessOnScatterPlot(confidenceIntervals, runFilter = runFilter, statFilter = ["userThroughputTotalStat"], confidenceLevel="0.01")
-        checkFairnessOnEnumeratePlot(jsonProcessed, runFilter = jsonProcessed, statFilter = ["userThroughputTotalStat"])
+        #checkFairnessOnEnumeratePlot(jsonProcessed, confidenceIntervals, runFilter = jsonProcessed, statFilter = ["userThroughputTotalStat"], plotConfidence = True)
     return
 
 def extractKeysWithSameUusersNumber(jsonProcessed):
@@ -91,37 +92,51 @@ def checkFairnessOnScatterPlot(confidenceIntervals, runFilter, statFilter, confi
 
     plt.show()
 
-def processedJsonToDataFrameFromJSONEnumeratePlot(processedJson):
+def processedJsonToDataFrameFromJSONEnumeratePlot(processedJson, confidenceIntervalsJson, plotConfidence):
     plotDict = dict()
 
     for runK in processedJson:
         plotDF = pd.DataFrame()
         runStat = processedJson[runK]
+        confStat = confidenceIntervalsJson[runK]
 
         for statK in runStat:
             enumList = list()
             meanList = list()
+            confUpList = list()
+            confDownList = list()
 
             if "usersRunMeanValues" not in runStat[statK]:
                 continue
 
             usersDetailStat = runStat[statK]["usersRunMeanValues"]
+            confDetailStat = confStat[statK]["usersConfidenceIntervals"]
 
             for i, userK in enumerate(usersDetailStat):
-                meanValue = usersDetailStat[userK]["meanOfRepetitions"]
+                meanValue = usersDetailStat[userK]["meanOfRepetitions"] 
 
                 enumList.append(i)
                 meanList.append(meanValue)
 
+                if plotConfidence:
+                    confUp = confDetailStat[userK]["0.01"][1]
+                    confDown = confDetailStat[userK]["0.01"][0]
+                    confUpList.append(confUp)
+                    confDownList.append(confDown)  
+
             plotDF[ f"{statK}.X" ] = enumList
             plotDF[ f"{statK}.Y" ] = meanList
+
+            if plotConfidence:
+                plotDF[ f"{statK}.UP" ] = confUpList
+                plotDF[ f"{statK}.DOWN" ] = confDownList
 
         plotDict[runK] = plotDF
             
     return plotDict
 
-def checkFairnessOnEnumeratePlot(processedJson, runFilter, statFilter):
-    precessedDataFrame = processedJsonToDataFrameFromJSONEnumeratePlot(processedJson)
+def checkFairnessOnEnumeratePlot(processedJson, confidenceIntervalsJson, runFilter, statFilter, numUser = 0, plotConfidence = False):
+    precessedDataFrame = processedJsonToDataFrameFromJSONEnumeratePlot(processedJson, confidenceIntervalsJson, plotConfidence)
 
     ax = plt.axes()
     colorList = getPlotColors(len(runFilter))
@@ -129,15 +144,26 @@ def checkFairnessOnEnumeratePlot(processedJson, runFilter, statFilter):
     for i,runK in enumerate(runFilter):
         plotDF = precessedDataFrame[runK]
         for statK in statFilter:
+            commonLabel = f"{runK.split('(')[1].split(')')[0]}-{runK.split('(')[2].split(')')[0]}"
             Xkey = f"{statK}.X"
             Ykey = f"{statK}.Y"
-            plotDF.plot.scatter(x = Xkey, y = Ykey, ax = ax, c = colorList[i], label = runK)
+
+            plotDF.plot.scatter(x = Xkey, y = Ykey, ax = ax, c = colorList[i], label = commonLabel)
+
+            if plotConfidence:
+                
+                upKey = f"{statK}.UP"
+                downKey = f"{statK}.DOWN"
+                #plotDF.plot.line(x = Xkey, y = upKey, ax = ax, c = colorList[i], label = f"{commonLabel} Upper Conf")
+                #plotDF.plot.line(x = Xkey, y = downKey, ax = ax, c = colorList[i], label = f"{commonLabel} Lower Conf")
+                plt.fill_between(plotDF[Xkey], plotDF[downKey], plotDF[upKey], color = colorList[i], alpha=.2)
 
     #plt.xlim((375, 300)) # default 200
     #plt.ylim((375, 15000)) # default 93000
 
-    filename = "Documentation/fairnessEnumeratePLot"
-    plt.savefig(filename + '.eps', format = 'eps', bbox_inches='tight')
+
+    filename = f"Documentation/fairnessEnumeratePLot{numUser}"
+    plt.savefig(filename + '.svg', format = 'svg', bbox_inches='tight')
     
     plt.show()
 
