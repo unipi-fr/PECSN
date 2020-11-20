@@ -129,6 +129,8 @@ def checkFairnessOnEnumeratePlot(processedJson, confidenceIntervalsJson, runFilt
         #plt.savefig(filename + '.emp', format = 'emp', bbox_inches='tight')
         if not skipVideoPrint:
             plt.show()
+        else:
+            plt.clf()
                 
     
 
