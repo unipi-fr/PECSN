@@ -127,7 +127,7 @@ def checkFairnessOnEnumeratePlot(processedJson, confidenceIntervalsJson, runFilt
         filename = f"Documentation/images/{runMode}.{statK}.{numUser}"
         plt.savefig(filename + '.svg', format = 'svg', bbox_inches='tight')
         #plt.savefig(filename + '.emp', format = 'emp', bbox_inches='tight')
-        if not skipVideoPrint
+        if not skipVideoPrint:
             plt.show()
                 
     
