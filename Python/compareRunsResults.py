@@ -9,7 +9,7 @@ import matplotlib.colors as colors
 import numpy as np
 
 #TYPES_OF_RUNS = ["General","Binomial"]
-TYPES_OF_RUNS = ["General"]
+TYPES_OF_RUNS = ["Binomial"]
 
 def main():
     factors = fa.getFactors()
@@ -22,7 +22,7 @@ def main():
         confidenceIntervals = da.getConfidenceIntervals(jsonProcessed, ["userThroughputTotalStat", "userThroughputStat", "packetDelayStat"])
         groupedUserKeys = extractKeysWithSameUusersNumber(jsonProcessed)
         for userKeys in groupedUserKeys:
-            checkFairnessOnEnumeratePlot(jsonProcessed, confidenceIntervals, runFilter = groupedUserKeys[userKeys], statFilter = ["userThroughputTotalStat"], numUser = userKeys, plotConfidence = True)
+            checkFairnessOnEnumeratePlot(jsonProcessed, confidenceIntervals, runFilter = groupedUserKeys[userKeys], statFilter = ["userThroughputTotalStat"], numUser = userKeys, confidenceLevel="0.01", graphTitle = userKeys)
 
         #checkFairnessOnScatterPlot(confidenceIntervals, runFilter = runFilter, statFilter = ["userThroughputTotalStat"], confidenceLevel="0.01")
         #checkFairnessOnEnumeratePlot(jsonProcessed, confidenceIntervals, runFilter = jsonProcessed, statFilter = ["userThroughputTotalStat"], plotConfidence = True)
@@ -70,29 +70,8 @@ def confidenceIntervalsToDataFrameFromJSONScatterPlot(conficenceIntervalsJson, c
         confDict[runK] = confDF
             
     return confDict
-    
-def checkFairnessOnScatterPlot(confidenceIntervals, runFilter, statFilter, confidenceLevel):
-    conficenceIntervalsDataFrame = confidenceIntervalsToDataFrameFromJSONScatterPlot(confidenceIntervals, confidenceLevel)
-    
-    ax = plt.axes()
-    colorList = getPlotColors(len(runFilter))
 
-    for i,runK in enumerate(runFilter):
-        confDF = conficenceIntervalsDataFrame[runK]
-        for statK in statFilter:
-            Xkey = f"{statK}.X"
-            Ykey = f"{statK}.Y"
-            confDF.plot.scatter(x = Xkey, y = Ykey, ax = ax, c = colorList[i], label = runK)
-
-    plt.xlim((375, 20000)) # default 93000
-    plt.ylim((375, 15000)) # default 93000
-
-    filename = "Documentation/fairnessScatterPLot"
-    plt.savefig(filename + '.eps', format = 'eps', bbox_inches='tight')
-
-    plt.show()
-
-def processedJsonToDataFrameFromJSONEnumeratePlot(processedJson, confidenceIntervalsJson, plotConfidence):
+def processedJsonToDataFrameFromJSONEnumeratePlot(processedJson, confidenceIntervalsJson, confidenceLevel):
     plotDict = dict()
 
     for runK in processedJson:
@@ -118,16 +97,16 @@ def processedJsonToDataFrameFromJSONEnumeratePlot(processedJson, confidenceInter
                 enumList.append(i)
                 meanList.append(meanValue)
 
-                if plotConfidence:
-                    confUp = confDetailStat[userK]["0.01"][1]
-                    confDown = confDetailStat[userK]["0.01"][0]
+                if confidenceLevel is not None:
+                    confUp = confDetailStat[userK][confidenceLevel][1]
+                    confDown = confDetailStat[userK][confidenceLevel][0]
                     confUpList.append(confUp)
                     confDownList.append(confDown)  
 
             plotDF[ f"{statK}.X" ] = enumList
             plotDF[ f"{statK}.Y" ] = meanList
 
-            if plotConfidence:
+            if confidenceLevel is not None:
                 plotDF[ f"{statK}.UP" ] = confUpList
                 plotDF[ f"{statK}.DOWN" ] = confDownList
 
@@ -135,36 +114,50 @@ def processedJsonToDataFrameFromJSONEnumeratePlot(processedJson, confidenceInter
             
     return plotDict
 
-def checkFairnessOnEnumeratePlot(processedJson, confidenceIntervalsJson, runFilter, statFilter, numUser = 0, plotConfidence = False):
-    precessedDataFrame = processedJsonToDataFrameFromJSONEnumeratePlot(processedJson, confidenceIntervalsJson, plotConfidence)
+def checkFairnessOnEnumeratePlot(processedJson, confidenceIntervalsJson, runFilter, statFilter, numUser = 0, confidenceLevel = "0.01", graphTitle = ""):
+    precessedDataFrame = processedJsonToDataFrameFromJSONEnumeratePlot(processedJson, confidenceIntervalsJson, confidenceLevel)
 
-    ax = plt.axes()
+    ax = plt.axes(title = graphTitle)
     colorList = getPlotColors(len(runFilter))
 
     for i,runK in enumerate(runFilter):
         plotDF = precessedDataFrame[runK]
         for statK in statFilter:
-            commonLabel = f"{runK.split('(')[1].split(')')[0]}-{runK.split('(')[2].split(')')[0]}"
             Xkey = f"{statK}.X"
             Ykey = f"{statK}.Y"
 
-            plotDF.plot.scatter(x = Xkey, y = Ykey, ax = ax, c = colorList[i], label = commonLabel)
+            plotDF.plot.scatter(x = Xkey, y = Ykey, ax = ax, c = colorList[i], label = runK)
 
-            if plotConfidence:
-                
+            if confidenceLevel is not None:
                 upKey = f"{statK}.UP"
                 downKey = f"{statK}.DOWN"
-                #plotDF.plot.line(x = Xkey, y = upKey, ax = ax, c = colorList[i], label = f"{commonLabel} Upper Conf")
-                #plotDF.plot.line(x = Xkey, y = downKey, ax = ax, c = colorList[i], label = f"{commonLabel} Lower Conf")
                 plt.fill_between(plotDF[Xkey], plotDF[downKey], plotDF[upKey], color = colorList[i], alpha=.2)
-
-    #plt.xlim((375, 300)) # default 200
-    #plt.ylim((375, 15000)) # default 93000
-
 
     filename = f"Documentation/fairnessEnumeratePLot{numUser}"
     plt.savefig(filename + '.svg', format = 'svg', bbox_inches='tight')
+    #plt.savefig(filename + '.emp', format = 'emp', bbox_inches='tight')
     
+    plt.show()
+
+def checkFairnessOnScatterPlot(confidenceIntervals, runFilter, statFilter, confidenceLevel):
+    conficenceIntervalsDataFrame = confidenceIntervalsToDataFrameFromJSONScatterPlot(confidenceIntervals, confidenceLevel)
+    
+    ax = plt.axes()
+    colorList = getPlotColors(len(runFilter))
+
+    for i,runK in enumerate(runFilter):
+        confDF = conficenceIntervalsDataFrame[runK]
+        for statK in statFilter:
+            Xkey = f"{statK}.X"
+            Ykey = f"{statK}.Y"
+            confDF.plot.scatter(x = Xkey, y = Ykey, ax = ax, c = colorList[i], label = runK)
+
+    plt.xlim((375, 20000)) # default 93000
+    plt.ylim((375, 15000)) # default 93000
+
+    #filename = "Documentation/fairnessScatterPLot"
+    #plt.savefig(filename + '.eps', format = 'eps', bbox_inches='tight')
+
     plt.show()
 
 def getPlotColors(howMany):
