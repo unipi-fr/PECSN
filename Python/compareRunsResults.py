@@ -14,25 +14,19 @@ TYPES_OF_RUNS = ["Binomial"]
 def main():
     factors = fa.getFactors()
 
-    #runFilter = ["nUser(25)userLambda(350)", "nUser(50)userLambda(350)", "nUser(100)userLambda(350)", "nUser(150)userLambda(350)", "nUser(200)userLambda(350)"]
-
     for resultType in TYPES_OF_RUNS:
         csvFile = f"data/results{resultType}.csv"
         jsonProcessed = odc.prepareStatisticData(csvFile,factors, takeAllRuns=True, levelOfDetail=2, useJsonFileIfExists = True, useJsonProcessedIfExists = False)
         confidenceIntervals = da.getConfidenceIntervals(jsonProcessed, ["userThroughputTotalStat", "userThroughputStat", "packetDelayStat"])
         groupedUserKeys = extractKeysWithSameUusersNumber(jsonProcessed)
         for userKeys in groupedUserKeys:
-            checkFairnessOnEnumeratePlot(jsonProcessed, confidenceIntervals, runFilter = groupedUserKeys[userKeys], statFilter = ["userThroughputTotalStat"], numUser = userKeys, confidenceLevel="0.01", graphTitle = userKeys)
-
-        #checkFairnessOnScatterPlot(confidenceIntervals, runFilter = runFilter, statFilter = ["userThroughputTotalStat"], confidenceLevel="0.01")
-        #checkFairnessOnEnumeratePlot(jsonProcessed, confidenceIntervals, runFilter = jsonProcessed, statFilter = ["userThroughputTotalStat"], plotConfidence = True)
+            checkFairnessOnEnumeratePlot(jsonProcessed, confidenceIntervals, runFilter = groupedUserKeys[userKeys], statFilter = ["userThroughputTotalStat","packetDelayStat"], numUser = userKeys, confidenceLevel="0.01", graphTitle = userKeys, runMode = resultType, skipVideoPrint = True)
     return
 
 def extractKeysWithSameUusersNumber(jsonProcessed):
     extracted = dict()
-    for i,run in enumerate(jsonProcessed):
+    for run in jsonProcessed:
         nuser = run.split(")")[0]+")"
-        #print(f"i={i} nuser = '{nuser}'")
         filteredList = ode.checkOrCreateKeyAsValue(extracted, nuser, list())
         filteredList.append(run)
         extracted[nuser] = filteredList
@@ -114,30 +108,29 @@ def processedJsonToDataFrameFromJSONEnumeratePlot(processedJson, confidenceInter
             
     return plotDict
 
-def checkFairnessOnEnumeratePlot(processedJson, confidenceIntervalsJson, runFilter, statFilter, numUser = 0, confidenceLevel = "0.01", graphTitle = ""):
+def checkFairnessOnEnumeratePlot(processedJson, confidenceIntervalsJson, runFilter, statFilter, numUser = 0, confidenceLevel = "0.01", graphTitle = "", runMode = "", skipVideoPrint = False):
     precessedDataFrame = processedJsonToDataFrameFromJSONEnumeratePlot(processedJson, confidenceIntervalsJson, confidenceLevel)
 
-    ax = plt.axes(title = graphTitle)
-    colorList = getPlotColors(len(runFilter))
-
-    for i,runK in enumerate(runFilter):
-        plotDF = precessedDataFrame[runK]
-        for statK in statFilter:
+    colorList = getPlotColors(len(runFilter)) 
+    for statK in statFilter:        
+        ax = plt.axes(title = graphTitle)
+        for i,runK in enumerate(runFilter):
+            plotDF = precessedDataFrame[runK]
             Xkey = f"{statK}.X"
-            Ykey = f"{statK}.Y"
-
+            Ykey = f"{statK}.Y" 
             plotDF.plot.scatter(x = Xkey, y = Ykey, ax = ax, c = colorList[i], label = runK)
-
             if confidenceLevel is not None:
                 upKey = f"{statK}.UP"
                 downKey = f"{statK}.DOWN"
                 plt.fill_between(plotDF[Xkey], plotDF[downKey], plotDF[upKey], color = colorList[i], alpha=.2)
 
-    filename = f"Documentation/fairnessEnumeratePLot{numUser}"
-    plt.savefig(filename + '.svg', format = 'svg', bbox_inches='tight')
-    #plt.savefig(filename + '.emp', format = 'emp', bbox_inches='tight')
+        filename = f"Documentation/images/{runMode}.{statK}.{numUser}"
+        plt.savefig(filename + '.svg', format = 'svg', bbox_inches='tight')
+        #plt.savefig(filename + '.emp', format = 'emp', bbox_inches='tight')
+        if not skipVideoPrint
+            plt.show()
+                
     
-    plt.show()
 
 def checkFairnessOnScatterPlot(confidenceIntervals, runFilter, statFilter, confidenceLevel):
     conficenceIntervalsDataFrame = confidenceIntervalsToDataFrameFromJSONScatterPlot(confidenceIntervals, confidenceLevel)
