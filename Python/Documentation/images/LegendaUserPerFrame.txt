@@ -1,0 +1,5 @@
+Legenda:
+Giallo -> UL: 50
+Rosso -> UL: 100
+Verde -> UL: 150
+Blu -> UL: 250
