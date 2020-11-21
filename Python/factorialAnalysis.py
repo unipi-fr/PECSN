@@ -28,7 +28,7 @@ def factorialAnalysis(csvFile, vectorName, outputFileName):
 
     factorDF = generateDataFrameWithFactors(factors)
 
-    jsonConverted = odc.prepareStatisticData(csvFile, factors, activateDebug = True)
+    jsonConverted = odc.prepareStatisticData(csvFile, factors)
     
     print(f"[INFO] The number of experiments should be {numberOfExperiments}")
 

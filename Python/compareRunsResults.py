@@ -9,7 +9,7 @@ import matplotlib.colors as colors
 import numpy as np
 
 #TYPES_OF_RUNS = ["General","Binomial"]
-TYPES_OF_RUNS = ["Binomial"]
+TYPES_OF_RUNS = ["General"]
 
 def main():
     factors = fa.getFactors()
