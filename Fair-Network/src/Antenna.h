@@ -17,6 +17,10 @@ class Antenna : public cSimpleModule
     simsignal_t simQueue;
     simsignal_t simFrame;
 
+    // TO BE REMOVED
+    simsignal_t simUser;
+    simsignal_t simCQI;
+
     cMessage *beep;
     Frame *frame;
 

@@ -6,6 +6,8 @@ void Antenna::initialize()
 {
     simQueue = registerSignal("packetQueue");
     simFrame = registerSignal("blockPerFrame");
+    simUser = registerSignal("userPerFrame");
+    simCQI = registerSignal("cqiPerFrame");
 
     CQITable = new int[15];
     CQITable[0] = 3;
@@ -143,6 +145,8 @@ void Antenna::prepareFrame()
     std::vector<UserQueue*> indexQueue;
 
     bool isReady = false;
+    int userServed = 0;
+    int cqiPerFrameSum = 0;
     for(int i = 0; i < nQueues && !isReady; i++)
     {
         UserQueue *uq = check_and_cast<UserQueue*>(queuesOrderedByBytesSent->get(i));
@@ -152,8 +156,19 @@ void Antenna::prepareFrame()
 
         indexQueue.push_back(uq); // indexQueue contains index of queue to remove and to reinsert
 
+        int rbBefore = frame->getRBused();
         isReady = loadPacketIntoFrame(frame, uq);
+        int rbAfter = frame->getRBused();
+
+        if(rbBefore != rbAfter)
+            userServed += 1;
+            int diff = rbAfter - rbBefore;
+            cqiPerFrameSum += (uq->index*diff);
     }
+
+    emit(simUser, userServed);
+    float cqiPerFrameAVGm = cqiPerFrameSum / frame->getRBused();
+    emit(simCQI, cqiPerFrameAVGm);
 
     for(int i = 0; i < indexQueue.size(); i++)
     {
@@ -205,6 +220,7 @@ void Antenna::updateCQI(cMessage *msg)
     UserQueue *uq = queuesOrderedByUser[destination];
 
     uq->RBsize = CQITable[index];
+    uq->index = index + 1;
 
     delete(cqiMsg);
 }

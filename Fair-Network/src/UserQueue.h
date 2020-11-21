@@ -6,6 +6,7 @@
 class UserQueue: public omnetpp::cQueue{
   public:
     int RBsize;
+    int index;
     long byteSent;
 
     UserQueue(const char *name);
