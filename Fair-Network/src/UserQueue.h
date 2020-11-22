@@ -8,10 +8,13 @@ class UserQueue: public omnetpp::cQueue{
     int RBsize;
     int index;
     long byteSent;
+    int selectedUserCount;
 
     UserQueue(const char *name);
     virtual ~UserQueue();
 
+    void userSelected();
+    int getSelectedUserCount();
     static int compareUserQueue(cObject *a, cObject *b);
 };
 

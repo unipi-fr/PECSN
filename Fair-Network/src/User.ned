@@ -9,6 +9,8 @@ simple User
         @statistic[userThroughputStat](title="User throughput"; source="userThroughput"; record=vector,stats;);
         @signal[userThroughputTotal](type="double");
         @statistic[userThroughputTotalStat](title="User throughput"; source="userThroughputTotal"; record=stats;);
+        @signal[userSelected](type="int");
+        @statistic[userSelectedStat](title="How many times user is selected"; source="userSelected"; record=stats;);
         
         bool useBinomialDistribution = default(false);
     gates:

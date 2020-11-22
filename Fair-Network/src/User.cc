@@ -15,7 +15,9 @@ void User::initialize()
     simDelay = registerSignal("packetDelay");
     simThroughput = registerSignal("userThroughput");
     simThroughputTotal = registerSignal("userThroughputTotal");
+    simUserSelectedTotal = registerSignal("userSelected");
 
+    userSelectedCount = 0;
     byteReceived = 0;
 
     timeSlot = getParentModule()->par("TIMESLOT").doubleValueInUnit("s");
@@ -33,14 +35,20 @@ void User::handleMessage(cMessage *msg)
 
     //search for packets with this user destination
     long bytesReceivedFrame = 0;
+    bool aPacketBelongToMe = false;
     while(packets.size() != 0){
         Packet* currentPacket = packets.back();
         packets.pop_back();
 
         if(currentPacket->getDestination() == id){
+            aPacketBelongToMe = true;
             collectStatistics(currentPacket);
             bytesReceivedFrame += currentPacket->getSize();
         }
+    }
+
+    if (aPacketBelongToMe){
+        ++userSelectedCount;
     }
 
     emit(simThroughput,bytesReceivedFrame/timeSlot);
@@ -74,5 +82,6 @@ void User::sendCQI() {
 void User::finish()
 {
     emit(simThroughputTotal, byteReceived/(simTime()-warmUp));
+    emit(simUserSelectedTotal, userSelectedCount);
 }
 

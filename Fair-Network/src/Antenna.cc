@@ -8,6 +8,7 @@ void Antenna::initialize()
     simFrame = registerSignal("blockPerFrame");
     simUser = registerSignal("userPerFrame");
     simCQI = registerSignal("cqiPerFrame");
+    simSelUser = registerSignal("usersSelectingCount");
 
     CQITable = new int[15];
     CQITable[0] = 3;
@@ -161,6 +162,7 @@ void Antenna::prepareFrame()
         int rbAfter = frame->getRBused();
 
         if(rbBefore != rbAfter)
+            uq->userSelected();
             userServed += 1;
             int diff = rbAfter - rbBefore;
             cqiPerFrameSum += (uq->index*diff);
@@ -254,4 +256,13 @@ void Antenna::handleMessage(cMessage *msg)
         updateCQI(msg);
     }
 
+}
+
+void Antenna::finish()
+{
+    int nQueues = getParentModule()->par("NUM_USER");
+
+    int numPacketInQueue = 0;
+    for(int i = 0; i < nQueues; i++)
+        emit(simSelUser, queuesOrderedByUser[i]->getSelectedUserCount());
 }

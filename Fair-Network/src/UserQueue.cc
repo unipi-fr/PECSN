@@ -1,5 +1,12 @@
 #include "UserQueue.h"
 
+void UserQueue::userSelected(){
+    ++this->selectedUserCount;
+}
+int UserQueue::getSelectedUserCount(){
+    return this->selectedUserCount;
+}
+
 int UserQueue::compareUserQueue(cObject *a, cObject *b) {
     UserQueue *ua = omnetpp::check_and_cast<UserQueue*>(a);
     UserQueue *ub = omnetpp::check_and_cast<UserQueue*>(b);
@@ -15,6 +22,7 @@ int UserQueue::compareUserQueue(cObject *a, cObject *b) {
 
 UserQueue::UserQueue(const char *name):cQueue(name) {
     byteSent = 0;
+    this->selectedUserCount = 0;
 }
 
 UserQueue::~UserQueue() {

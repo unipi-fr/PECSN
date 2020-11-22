@@ -16,6 +16,7 @@ class Antenna : public cSimpleModule
   private:
     simsignal_t simQueue;
     simsignal_t simFrame;
+    simsignal_t simSelUser;
 
     // TO BE REMOVED
     simsignal_t simUser;
@@ -41,6 +42,7 @@ class Antenna : public cSimpleModule
   protected:
     virtual void initialize();
     virtual void handleMessage(cMessage *msg);
+    virtual void finish();
 };
 
 #endif

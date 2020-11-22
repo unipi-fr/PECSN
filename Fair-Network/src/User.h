@@ -17,6 +17,9 @@ class User : public cSimpleModule
     simsignal_t simThroughputTotal;
     long byteReceived;
 
+    simsignal_t simUserSelectedTotal;
+    int userSelectedCount;
+
     simsignal_t simThroughput;
 
     int cqi;

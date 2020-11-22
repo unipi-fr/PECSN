@@ -7,6 +7,8 @@ simple Antenna
         @statistic[packetQueueStat](title="Packet In Queue"; source="packetQueue"; record=vector,stats;);
         @signal[blockPerFrame](type="int");
         @statistic[blockPerFrameStat](title="Blocks used in current frame"; source="blockPerFrame"; record=vector,stats;);
+        @signal[usersSelectingCount](type="int");
+        @statistic[usersSelectingCountStat](title="how many times a user is selected"; source="usersSelectingCount"; record=vector,stats;);
 
         // TO BE REMOVED
         @signal[userPerFrame](type="int");
