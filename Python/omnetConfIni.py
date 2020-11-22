@@ -35,6 +35,8 @@ class OmnetRunAttr:
         self.min = min(self.value)
         self.max = max(self.value)
         return
+    def getName(self):
+        return self.name
 
     def getMinAndMax(self):
         return (self.min, self.max)
@@ -44,6 +46,9 @@ class OmnetRunAttr:
 
     def getMax(self):
         return self.max
+
+    def getValues(self):
+        return self.value
 
     def getMinOrMaxByIndex(self, index):
         '''
