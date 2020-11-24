@@ -20,7 +20,7 @@ def main():
         confidenceIntervals = da.getConfidenceIntervals(jsonProcessed, ["userThroughputTotalStat", "userThroughputStat", "packetDelayStat"])
         groupedUserKeys = extractKeysWithSameUusersNumber(jsonProcessed)
         for userKeys in groupedUserKeys:
-            checkFairnessOnEnumeratePlot(jsonProcessed, confidenceIntervals, runFilter = groupedUserKeys[userKeys], statFilter = ["userThroughputTotalStat","packetDelayStat"], numUser = userKeys, confidenceLevel="0.01", graphTitle = userKeys, runMode = resultType, skipVideoPrint = True)
+            checkFairnessOnEnumeratePlot(jsonProcessed, confidenceIntervals, runFilter = groupedUserKeys[userKeys], statFilter = ["userThroughputTotalStat","packetDelayStat"], numUser = userKeys, confidenceLevel=None, graphTitle = userKeys, runMode = resultType, skipVideoPrint = True)
     return
 
 def extractKeysWithSameUusersNumber(jsonProcessed):
@@ -123,7 +123,7 @@ def checkFairnessOnEnumeratePlot(processedJson, confidenceIntervalsJson, runFilt
                 upKey = f"{statK}.UP"
                 downKey = f"{statK}.DOWN"
                 plt.fill_between(plotDF[Xkey], plotDF[downKey], plotDF[upKey], color = colorList[i], alpha=.2)
-
+            plotDF.to_csv(f"Documentation/{runMode}.{numUser}.csv", sep = ";")
         filename = f"Documentation/images/{runMode}.{statK}.{numUser}"
         plt.savefig(filename + '.svg', format = 'svg', bbox_inches='tight')
         #plt.savefig(filename + '.emp', format = 'emp', bbox_inches='tight')
