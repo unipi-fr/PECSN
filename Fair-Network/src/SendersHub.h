@@ -8,9 +8,15 @@ using namespace omnetpp;
 
 class SendersHub : public cSimpleModule
 {
+  private:
+    simsignal_t simProduced;
+
+    int* senderBytesProduced;
+
   protected:
     virtual void initialize();
     virtual void handleMessage(cMessage *msg);
+    virtual void finish();
 };
 
 #endif

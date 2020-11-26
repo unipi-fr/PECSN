@@ -22,7 +22,8 @@ Packet* Sender::generatePacket()
 
     int maxDim = getParentModule()->par("MAXIMUM_PACKET_SIZE").intValue();
 
-    packet->setSize(intuniform(1, maxDim, indexRNGUnif));
+    int size = intuniform(1, maxDim, indexRNGUnif);
+    packet->setSize(size);
 
     return packet;
 }
@@ -40,3 +41,4 @@ void Sender::handleMessage(cMessage *msg)
         scheduleAt(simTime() + time, beep);
     }
 }
+
