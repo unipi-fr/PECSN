@@ -34,6 +34,7 @@ def ecdfGraphsGroupByUserNumber(firstQuartile, secondQuartile, printToVideo = Fa
         generateQuantilesTables(plotDictionary, runFilter = jsonProcessed.keys(), statFilter = ["userThroughputTotalStat","packetDelayStat"], 
                                 firstQuartile = firstQuartile, 
                                 secondQuartile = secondQuartile,  
+                                runMode = resultType,
                                 printToScreen = True)
     return
 
@@ -147,7 +148,7 @@ def processedJsonToDataFrameFromJSONEnumeratePlot(processedJson, confidenceLevel
             
     return plotDict
 
-def generateQuantilesTables(plotDicttionary, runFilter, statFilter, firstQuartile = .025, secondQuartile = .975, printToScreen = False, saveToFile = True):
+def generateQuantilesTables(plotDicttionary, runFilter, statFilter, firstQuartile = .025, secondQuartile = .975, runMode = "", printToScreen = False, saveToFile = True):
     for statK in statFilter:
         actualDF = pd.DataFrame( columns = [f"Quantile({firstQuartile})", f"Quantile({secondQuartile})", "ratio"])
         for runK in runFilter:
@@ -166,7 +167,7 @@ def generateQuantilesTables(plotDicttionary, runFilter, statFilter, firstQuartil
             print(f"======= {statK} =======")
             print(actualDF)
         if saveToFile:
-            actualDF.to_csv(f"Documentation/{statK}quartiles.csv", sep = ";")
+            actualDF.to_csv(f"Documentation/{runMode}{statK}quartiles.csv", sep = ";")
     return
 
 def checkFairnessOnEnumeratePlot(plotDicttionary, runFilter, statFilter, numUser = 0, graphTitle = "", runMode = "", skipVideoPrint = False, plotECDF = False):
