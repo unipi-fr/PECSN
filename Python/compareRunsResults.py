@@ -8,19 +8,46 @@ import matplotlib.cm as cm
 import matplotlib.colors as colors
 import numpy as np
 
-#TYPES_OF_RUNS = ["General","Binomial"]
-TYPES_OF_RUNS = ["General"]
+TYPES_OF_RUNS = ["General","Binomial"]
+#TYPES_OF_RUNS = ["General"]
 
 def main():
+    fairnessHrizzontalGraphsGroupByUserNumber(printToVideo = False)
+    ecdfGraphsGroupByUserNumber(printToVideo = False)
+
+def ecdfGraphsGroupByUserNumber(printToVideo = False):
     factors = fa.getFactors()
 
     for resultType in TYPES_OF_RUNS:
         csvFile = f"data/results{resultType}.csv"
         jsonProcessed = odc.prepareStatisticData(csvFile,factors, takeAllRuns=True, levelOfDetail=2, useJsonFileIfExists = True, useJsonProcessedIfExists = False)
-        confidenceIntervals = da.getConfidenceIntervals(jsonProcessed, ["userThroughputTotalStat", "userThroughputStat", "packetDelayStat"])
         groupedUserKeys = extractKeysWithSameUusersNumber(jsonProcessed)
+        plotDictionary = processedJsonToDataFrameFromJSONEnumeratePlot(jsonProcessed)
         for userKeys in groupedUserKeys:
-            checkFairnessOnEnumeratePlot(jsonProcessed, confidenceIntervals, runFilter = groupedUserKeys[userKeys], statFilter = ["userThroughputTotalStat","packetDelayStat"], numUser = userKeys, confidenceLevel=None, graphTitle = userKeys, runMode = resultType, skipVideoPrint = True)
+            pass
+            checkFairnessOnEnumeratePlot(plotDictionary, runFilter = groupedUserKeys[userKeys], statFilter = ["userThroughputTotalStat","packetDelayStat"], 
+                                        numUser = userKeys,
+                                        graphTitle = userKeys, 
+                                        runMode = resultType, 
+                                        skipVideoPrint = not printToVideo, 
+                                        plotECDF = True)
+        generateQuantilesTables(plotDictionary, runFilter = jsonProcessed.keys(), statFilter = ["userThroughputTotalStat","packetDelayStat"], printToScreen = True)
+    return
+
+def fairnessHrizzontalGraphsGroupByUserNumber(printToVideo = False):
+    factors = fa.getFactors()
+
+    for resultType in TYPES_OF_RUNS:
+        csvFile = f"data/results{resultType}.csv"
+        jsonProcessed = odc.prepareStatisticData(csvFile,factors, takeAllRuns=True, levelOfDetail=2, useJsonFileIfExists = True, useJsonProcessedIfExists = False)
+        groupedUserKeys = extractKeysWithSameUusersNumber(jsonProcessed)
+        plotDictionary = processedJsonToDataFrameFromJSONEnumeratePlot(jsonProcessed, confidenceLevel = "0.01", vectorsToBuildConfidenceIntervals = ["userThroughputTotalStat", "userThroughputStat", "packetDelayStat"])
+        for userKeys in groupedUserKeys: 
+            checkFairnessOnEnumeratePlot(plotDictionary, runFilter = groupedUserKeys[userKeys], statFilter = ["userThroughputTotalStat","packetDelayStat"], 
+                                            numUser = userKeys, 
+                                            graphTitle = userKeys, 
+                                            runMode = resultType, 
+                                            skipVideoPrint = not printToVideo)
     return
 
 def extractKeysWithSameUusersNumber(jsonProcessed):
@@ -65,13 +92,17 @@ def confidenceIntervalsToDataFrameFromJSONScatterPlot(conficenceIntervalsJson, c
             
     return confDict
 
-def processedJsonToDataFrameFromJSONEnumeratePlot(processedJson, confidenceIntervalsJson, confidenceLevel):
+def processedJsonToDataFrameFromJSONEnumeratePlot(processedJson, confidenceLevel = None, vectorsToBuildConfidenceIntervals = []):
+    if confidenceLevel is not None:
+        confidenceIntervalsJson = da.getConfidenceIntervals(processedJson, vectorsToBuildConfidenceIntervals)
+    
     plotDict = dict()
 
     for runK in processedJson:
         plotDF = pd.DataFrame()
         runStat = processedJson[runK]
-        confStat = confidenceIntervalsJson[runK]
+        if confidenceLevel is not None:
+            confStat = confidenceIntervalsJson[runK]
 
         for statK in runStat:
             enumList = list()
@@ -83,7 +114,8 @@ def processedJsonToDataFrameFromJSONEnumeratePlot(processedJson, confidenceInter
                 continue
 
             usersDetailStat = runStat[statK]["usersRunMeanValues"]
-            confDetailStat = confStat[statK]["usersConfidenceIntervals"]
+            if confidenceLevel is not None:
+                confDetailStat = confStat[statK]["usersConfidenceIntervals"]
 
             for i, userK in enumerate(usersDetailStat):
                 meanValue = usersDetailStat[userK]["meanOfRepetitions"] 
@@ -100,6 +132,10 @@ def processedJsonToDataFrameFromJSONEnumeratePlot(processedJson, confidenceInter
             plotDF[ f"{statK}.X" ] = enumList
             plotDF[ f"{statK}.Y" ] = meanList
 
+            (ecdfX, ecdfY) = ecdf(meanList)
+            plotDF[ f"{statK}.ecdf.X" ] = ecdfX
+            plotDF[ f"{statK}.ecdf.Y" ] = ecdfY
+
             if confidenceLevel is not None:
                 plotDF[ f"{statK}.UP" ] = confUpList
                 plotDF[ f"{statK}.DOWN" ] = confDownList
@@ -108,25 +144,48 @@ def processedJsonToDataFrameFromJSONEnumeratePlot(processedJson, confidenceInter
             
     return plotDict
 
-def checkFairnessOnEnumeratePlot(processedJson, confidenceIntervalsJson, runFilter, statFilter, numUser = 0, confidenceLevel = "0.01", graphTitle = "", runMode = "", skipVideoPrint = False):
-    precessedDataFrame = processedJsonToDataFrameFromJSONEnumeratePlot(processedJson, confidenceIntervalsJson, confidenceLevel)
+def generateQuantilesTables(plotDicttionary, runFilter, statFilter, firstQuartile = .025, secondQuartile = .975, printToScreen = False, saveToFile = True):
+    for statK in statFilter:
+        actualDF = pd.DataFrame( columns = [f"Quantile({firstQuartile})", f"Quantile({secondQuartile})", "ratio"])
+        for runK in runFilter:
+            listOfValues = list() 
+            plotDF = plotDicttionary[runK]
+            orderedDataK = f"{statK}.ecdf.X"
+            actualQuartiles = plotDF[orderedDataK].quantile([firstQuartile, secondQuartile])
+            firstQValue = actualQuartiles[firstQuartile]
+            secondQValue = actualQuartiles[secondQuartile]
+            listOfValues.append(firstQValue)
+            listOfValues.append(secondQValue)
+            listOfValues.append(firstQValue/secondQValue)
+            # add a row with index 'runK'
+            actualDF.loc[runK] = listOfValues
+        if printToScreen:
+            print(f"======= {statK} =======")
+            print(actualDF)
+        if saveToFile:
+            actualDF.to_csv(f"Documentation/{statK}quartiles.csv", sep = ";")
+    return
 
+def checkFairnessOnEnumeratePlot(plotDicttionary, runFilter, statFilter, numUser = 0, graphTitle = "", runMode = "", skipVideoPrint = False, plotECDF = False):
     colorList = getPlotColors(len(runFilter)) 
     for statK in statFilter:        
         ax = plt.axes(title = graphTitle)
         for i,runK in enumerate(runFilter):
-            plotDF = precessedDataFrame[runK]
-            Xkey = f"{statK}.X"
-            Ykey = f"{statK}.Y" 
+            plotDF = plotDicttionary[runK]
+            baseKey = statK
+            if plotECDF:
+                baseKey = f"{baseKey}.ecdf"
+            Xkey = f"{baseKey}.X"
+            Ykey = f"{baseKey}.Y" 
             plotDF.plot.scatter(x = Xkey, y = Ykey, ax = ax, c = colorList[i], label = runK)
-            if confidenceLevel is not None:
-                upKey = f"{statK}.UP"
-                downKey = f"{statK}.DOWN"
+
+            upKey = f"{statK}.UP"
+            downKey = f"{statK}.DOWN"
+            if upKey in plotDF and plotECDF is False: 
                 plt.fill_between(plotDF[Xkey], plotDF[downKey], plotDF[upKey], color = colorList[i], alpha=.2)
-            plotDF.to_csv(f"Documentation/{runMode}.{numUser}.csv", sep = ";")
-        filename = f"Documentation/images/{runMode}.{statK}.{numUser}"
+        ecdf = "ecdf" if plotECDF else ""
+        filename = f"Documentation/images/{ecdf}.{runMode}.{statK}.{numUser}"
         plt.savefig(filename + '.svg', format = 'svg', bbox_inches='tight')
-        #plt.savefig(filename + '.emp', format = 'emp', bbox_inches='tight')
         if not skipVideoPrint:
             plt.show()
         else:
@@ -159,6 +218,13 @@ def getPlotColors(howMany):
     colormap = cm.viridis
     colorlist = [colors.rgb2hex(colormap(i)) for i in np.linspace(0, 0.9, howMany)]
     return colorlist
-    
+
+def ecdf(data):
+    """ Compute ECDF """
+    x = np.sort(data)
+    n = x.size
+    y = np.arange(1, n+1) / n
+    return(x,y) 
+
 if __name__ == '__main__':
     main()
