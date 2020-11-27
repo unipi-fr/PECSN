@@ -13,9 +13,9 @@ TYPES_OF_RUNS = ["General","Binomial"]
 
 def main():
     fairnessHrizzontalGraphsGroupByUserNumber(printToVideo = False)
-    ecdfGraphsGroupByUserNumber(printToVideo = False)
+    ecdfGraphsGroupByUserNumber(firstQuartile = .025, secondQuartile = .975, printToVideo = False)
 
-def ecdfGraphsGroupByUserNumber(printToVideo = False):
+def ecdfGraphsGroupByUserNumber(firstQuartile, secondQuartile, printToVideo = False):
     factors = fa.getFactors()
 
     for resultType in TYPES_OF_RUNS:
@@ -31,7 +31,10 @@ def ecdfGraphsGroupByUserNumber(printToVideo = False):
                                         runMode = resultType, 
                                         skipVideoPrint = not printToVideo, 
                                         plotECDF = True)
-        generateQuantilesTables(plotDictionary, runFilter = jsonProcessed.keys(), statFilter = ["userThroughputTotalStat","packetDelayStat"], printToScreen = True)
+        generateQuantilesTables(plotDictionary, runFilter = jsonProcessed.keys(), statFilter = ["userThroughputTotalStat","packetDelayStat"], 
+                                firstQuartile = firstQuartile, 
+                                secondQuartile = secondQuartile,  
+                                printToScreen = True)
     return
 
 def fairnessHrizzontalGraphsGroupByUserNumber(printToVideo = False):
