@@ -24,7 +24,6 @@ def ecdfGraphsGroupByUserNumber(firstQuartile, secondQuartile, printToVideo = Fa
         groupedUserKeys = extractKeysWithSameUusersNumber(jsonProcessed)
         plotDictionary = processedJsonToDataFrameFromJSONEnumeratePlot(jsonProcessed)
         for userKeys in groupedUserKeys:
-            pass
             checkFairnessOnEnumeratePlot(plotDictionary, runFilter = groupedUserKeys[userKeys], statFilter = ["userThroughputTotalStat","packetDelayStat"], 
                                         numUser = userKeys,
                                         graphTitle = userKeys, 
